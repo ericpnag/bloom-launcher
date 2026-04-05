@@ -228,17 +228,13 @@ fn install_mods(client: &Client, _game_dir: &PathBuf, mc_version: &str) -> Resul
     let mods_dir = version_game_dir(mc_version).join("mods");
     fs::create_dir_all(&mods_dir).map_err(|e| e.to_string())?;
 
-    // Always overwrite bloom-core so updates take effect
+    // Embed bloom-core JARs directly in binary
     let bloom_dest = mods_dir.join("bloom-core-1.0.0.jar");
-    // Try version-specific build first, then fall back to default
-    let base = PathBuf::from(env!("CARGO_MANIFEST_DIR")).parent().unwrap().to_path_buf();
-    let version_path = base.join(format!("bloom-core-{}/build/libs/bloom-core-1.0.0.jar", mc_version));
-    let default_path = base.join("bloom-core/build/libs/bloom-core-1.0.0.jar");
-    if version_path.exists() {
-        let _ = fs::copy(&version_path, &bloom_dest);
-    } else if default_path.exists() {
-        let _ = fs::copy(&default_path, &bloom_dest);
-    }
+    let bloom_jar: &[u8] = match mc_version {
+        "1.21.11" => include_bytes!("../../bloom-core-1.21.11/build/libs/bloom-core-1.0.0.jar"),
+        _ => include_bytes!("../../bloom-core/build/libs/bloom-core-1.0.0.jar"),
+    };
+    let _ = fs::write(&bloom_dest, bloom_jar);
 
     // Download Fabric API from Modrinth
     let fabric_api_dest = mods_dir.join("fabric-api.jar");
