@@ -58,10 +58,12 @@ export default function App() {
     setProgress(0);
     setStatus("Starting...");
 
-    const unlisten = await listen<{ pct: number; msg: string }>("launch_progress", e => {
+    // Don't await listen — just set it up, invoke separately
+    let unlistenFn: any = null;
+    listen<{ pct: number; msg: string }>("launch_progress", e => {
       setProgress(e.payload.pct);
       setStatus(e.payload.msg);
-    });
+    }).then(fn => { unlistenFn = fn; }).catch(() => {});
 
     try {
       await invoke("launch_minecraft", {
@@ -72,12 +74,11 @@ export default function App() {
       });
       setPhase("done");
       setStatus("Game launched!");
-      setTimeout(() => { setPhase("idle"); setStatus("Ready"); }, 3000);
+      setTimeout(() => { setPhase("idle"); setStatus("Ready"); if (unlistenFn) unlistenFn(); }, 3000);
     } catch (e: any) {
       setPhase("error");
       setStatus(String(e));
-    } finally {
-      unlisten();
+      if (unlistenFn) unlistenFn();
     }
   }
 
