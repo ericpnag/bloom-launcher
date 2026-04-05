@@ -83,7 +83,7 @@ public class BloomPauseScreen extends Screen {
 
         // Panel
         int panelW = 200;
-        int panelH = 210;
+        int panelH = 240;
         int px = cx - panelW / 2;
         int py = h / 2 - panelH / 2;
 
@@ -115,8 +115,9 @@ public class BloomPauseScreen extends Screen {
 
         drawBtn(context, "Resume", cx, startY, btnW, btnH, mouseX, mouseY, false);
         drawBtn(context, "Bloom Mods", cx, startY + btnH + gap, btnW, btnH, mouseX, mouseY, false);
-        drawBtn(context, "Settings", cx, startY + (btnH + gap) * 2, btnW, btnH, mouseX, mouseY, false);
-        drawBtn(context, "Disconnect", cx, startY + (btnH + gap) * 3 + 10, btnW, btnH, mouseX, mouseY, true);
+        drawBtn(context, "Cosmetics", cx, startY + (btnH + gap) * 2, btnW, btnH, mouseX, mouseY, false);
+        drawBtn(context, "Settings", cx, startY + (btnH + gap) * 3, btnW, btnH, mouseX, mouseY, false);
+        drawBtn(context, "Disconnect", cx, startY + (btnH + gap) * 4 + 10, btnW, btnH, mouseX, mouseY, true);
 
         super.render(context, mouseX, mouseY, delta);
     }
@@ -150,19 +151,20 @@ public class BloomPauseScreen extends Screen {
         int btnW = 160;
         int btnH = 24;
         int gap = 3;
-        int panelH = 210;
+        int panelH = 240;
         int py = this.height / 2 - panelH / 2;
         int startY = py + 40;
         int x = cx - btnW / 2;
 
-        for (int i = 0; i < 4; i++) {
-            int by = startY + (btnH + gap) * i + (i == 3 ? 10 : 0);
+        for (int i = 0; i < 5; i++) {
+            int by = startY + (btnH + gap) * i + (i == 4 ? 10 : 0);
             if (mouseX >= x && mouseX <= x + btnW && mouseY >= by && mouseY <= by + btnH) {
                 switch (i) {
                     case 0 -> client.setScreen(null);
                     case 1 -> client.setScreen(new ModuleScreen());
-                    case 2 -> client.setScreen(new OptionsScreen(this, client.options));
-                    case 3 -> {
+                    case 2 -> client.setScreen(new CosmeticsScreen(this));
+                    case 3 -> client.setScreen(new OptionsScreen(this, client.options));
+                    case 4 -> {
                         client.world.disconnect();
                         client.disconnect();
                         client.setScreen(new BloomTitleScreen());

@@ -23,57 +23,86 @@ export function SettingsPage() {
   }
 
   return (
-    <div style={{ padding: "28px", overflowY: "auto", height: "100%" }}>
-      <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: "#FFD1DC" }}>Settings</h2>
-      <p style={{ margin: "0 0 24px", fontSize: "13px", color: "#776070" }}>Configure your Bloom Client</p>
+    <div className="fade-in" style={{ padding: "28px 32px", overflowY: "auto", height: "100%", maxWidth: "560px" }}>
+      <h2 className="page-title">Settings</h2>
+      <p className="page-subtitle" style={{ marginBottom: "24px" }}>Configure your Bloom Client</p>
 
-      <div style={{ marginBottom: "24px" }}>
-        <label style={{ fontSize: "13px", fontWeight: "600", color: "#caa", display: "block", marginBottom: "8px" }}>
-          Memory (RAM): {settings.ram / 1024}GB
-        </label>
+      {/* RAM */}
+      <div className="bloom-card" style={{ padding: "20px", marginBottom: "12px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px" }}>
+          <label style={{ fontSize: "13px", fontWeight: "600", color: "var(--text)" }}>Memory (RAM)</label>
+          <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--pink)" }}>{settings.ram / 1024} GB</span>
+        </div>
         <input type="range" min={1024} max={16384} step={512} value={settings.ram}
           onChange={e => save({ ram: parseInt(e.target.value) })}
-          style={{ width: "100%", accentColor: "#FFB7C9" }}
+          style={{ width: "100%", accentColor: "var(--pink)", height: "4px" }}
         />
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "#554455" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: "var(--text-faint)", marginTop: "6px" }}>
           <span>1 GB</span><span>4 GB</span><span>8 GB</span><span>16 GB</span>
         </div>
       </div>
 
-      <div style={{ marginBottom: "24px" }}>
-        <label style={{ fontSize: "13px", fontWeight: "600", color: "#caa", display: "block", marginBottom: "8px" }}>
-          Java Path (leave empty for auto-detect)
+      {/* Java Path */}
+      <div className="bloom-card" style={{ padding: "20px", marginBottom: "12px" }}>
+        <label style={{ fontSize: "13px", fontWeight: "600", color: "var(--text)", display: "block", marginBottom: "10px" }}>
+          Java Path
         </label>
-        <input type="text" value={settings.javaPath} onChange={e => save({ javaPath: e.target.value })}
-          placeholder="Auto-detect" style={{
-            width: "100%", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,176,192,0.12)",
-            color: "#fff", borderRadius: "8px", padding: "10px 14px", fontSize: "13px", outline: "none", boxSizing: "border-box",
-          }}
+        <input
+          className="bloom-input"
+          type="text"
+          value={settings.javaPath}
+          onChange={e => save({ javaPath: e.target.value })}
+          placeholder="Auto-detect"
+          style={{ width: "100%" }}
         />
+        <div style={{ fontSize: "11px", color: "var(--text-faint)", marginTop: "6px" }}>Leave empty to auto-detect Java installation</div>
       </div>
 
-      <div style={{
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "12px 0", borderBottom: "1px solid rgba(255,176,192,0.06)",
-      }}>
-        <span style={{ fontSize: "13px", color: "#caa" }}>Close launcher when game starts</span>
-        <div onClick={() => save({ closeOnLaunch: !settings.closeOnLaunch })} style={{
-          width: "40px", height: "22px", borderRadius: "11px", cursor: "pointer",
-          background: settings.closeOnLaunch ? "#FFB7C9" : "rgba(255,255,255,0.1)",
-          transition: "background 0.2s", position: "relative",
-        }}>
-          <div style={{
-            width: "18px", height: "18px", borderRadius: "9px", background: "#fff",
-            position: "absolute", top: "2px",
-            left: settings.closeOnLaunch ? "20px" : "2px", transition: "left 0.2s",
-          }} />
+      {/* Close on launch */}
+      <div className="bloom-card" style={{ padding: "18px 20px", marginBottom: "12px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text)" }}>Close launcher when game starts</span>
+          <div onClick={() => save({ closeOnLaunch: !settings.closeOnLaunch })} style={{
+            width: "42px", height: "24px", borderRadius: "12px", cursor: "pointer",
+            background: settings.closeOnLaunch
+              ? "linear-gradient(135deg, var(--pink), var(--pink-soft))"
+              : "rgba(255,255,255,0.08)",
+            transition: "background 0.2s", position: "relative",
+            border: settings.closeOnLaunch ? "none" : "1px solid var(--border)",
+          }}>
+            <div style={{
+              width: "18px", height: "18px", borderRadius: "9px", background: "#fff",
+              position: "absolute", top: settings.closeOnLaunch ? "3px" : "2px",
+              left: settings.closeOnLaunch ? "21px" : "3px",
+              transition: "left 0.2s",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
+            }} />
+          </div>
         </div>
       </div>
 
-      <div style={{ marginTop: "32px", padding: "16px", borderRadius: "10px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,176,192,0.08)" }}>
-        <div style={{ fontSize: "14px", fontWeight: "700", color: "#FFD1DC", marginBottom: "4px" }}>Bloom Client v1.0.0</div>
-        <div style={{ fontSize: "12px", color: "#776070" }}>Cherry blossom Minecraft experience</div>
-        <div style={{ fontSize: "12px", color: "#554455", marginTop: "4px" }}>github.com/ericpnag/bloom-launcher</div>
+      {/* About */}
+      <div className="bloom-card" style={{ padding: "20px", marginTop: "24px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="3.5" fill="#FFB7C9"/>
+            <ellipse cx="12" cy="5.5" rx="3" ry="4" fill="#FFB7C9" opacity="0.6"/>
+            <ellipse cx="18" cy="9.5" rx="3" ry="4" fill="#F8A4B8" opacity="0.5" transform="rotate(72 12 12)"/>
+            <ellipse cx="15.5" cy="17" rx="3" ry="4" fill="#FFD1DC" opacity="0.4" transform="rotate(144 12 12)"/>
+            <ellipse cx="8.5" cy="17" rx="3" ry="4" fill="#F8A4B8" opacity="0.5" transform="rotate(216 12 12)"/>
+            <ellipse cx="6" cy="9.5" rx="3" ry="4" fill="#FFB7C9" opacity="0.6" transform="rotate(288 12 12)"/>
+          </svg>
+          <div>
+            <div style={{ fontSize: "15px", fontWeight: "800", color: "var(--pink-light)" }}>Bloom Client</div>
+            <div style={{ fontSize: "11px", color: "var(--text-dim)" }}>v1.0.0</div>
+          </div>
+        </div>
+        <div style={{ fontSize: "12px", color: "var(--text-dim)", lineHeight: 1.6 }}>
+          A cherry blossom Minecraft experience.
+        </div>
+        <div style={{ fontSize: "11px", color: "var(--text-faint)", marginTop: "8px" }}>
+          github.com/ericpnag/bloom-launcher
+        </div>
       </div>
     </div>
   );

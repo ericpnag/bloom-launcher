@@ -131,6 +131,16 @@ struct FabricVersionJson {
     #[serde(rename = "mainClass")]
     main_class: String,
     libraries: Vec<FabricLibrary>,
+    #[serde(default)]
+    arguments: FabricArguments,
+}
+
+#[derive(Deserialize, Default)]
+struct FabricArguments {
+    #[serde(default)]
+    jvm: Vec<String>,
+    #[serde(default)]
+    game: Vec<String>,
 }
 
 #[derive(Deserialize, Clone)]
@@ -287,8 +297,13 @@ pub fn get_versions() -> Result<Vec<String>, String> {
 pub fn launch_minecraft(app: AppHandle, version: String, username: Option<String>, uuid: Option<String>, access_token: Option<String>) -> Result<(), String> {
     // Run everything in a background thread so we don't block Tauri IPC
     std::thread::spawn(move || {
-        if let Err(e) = do_launch(&app, &version, username, uuid, access_token) {
-            let _ = app.emit("launch_progress", serde_json::json!({ "pct": 0, "msg": format!("Error: {}", e) }));
+        match do_launch(&app, &version, username, uuid, access_token) {
+            Ok(()) => {
+                let _ = app.emit("launch_done", serde_json::json!({ "success": true }));
+            }
+            Err(e) => {
+                let _ = app.emit("launch_error", serde_json::json!({ "error": format!("{}", e) }));
+            }
         }
     });
     Ok(())
@@ -566,9 +581,18 @@ fn do_launch(app: &AppHandle, version: &str, username: Option<String>, uuid: Opt
     let mut jvm_args: Vec<String> = Vec::new();
     #[cfg(target_os = "macos")]
     jvm_args.push("-XstartOnFirstThread".to_string());
+    // Apply Fabric JVM arguments (e.g. -DFabricMcEmu)
+    for arg in &fabric_json.arguments.jvm {
+        jvm_args.push(arg.trim().to_string());
+    }
     jvm_args.push("-Xmx2048M".to_string());
     jvm_args.push("-Xms512M".to_string());
     jvm_args.push(format!("-Djava.library.path={}", natives_dir_str));
+    jvm_args.push(format!("-Djna.tmpdir={}", natives_dir_str));
+    jvm_args.push(format!("-Dorg.lwjgl.system.SharedLibraryExtractPath={}", natives_dir_str));
+    jvm_args.push(format!("-Dio.netty.native.workdir={}", natives_dir_str));
+    jvm_args.push("-Dminecraft.launcher.brand=bloom-launcher".to_string());
+    jvm_args.push("-Dminecraft.launcher.version=1.0.0".to_string());
     jvm_args.push("-cp".to_string());
     jvm_args.push(classpath);
     jvm_args.push(fabric_json.main_class.clone());
@@ -583,10 +607,27 @@ fn do_launch(app: &AppHandle, version: &str, username: Option<String>, uuid: Opt
     jvm_args.push("--userType".to_string()); jvm_args.push(user_type.to_string());
     jvm_args.push("--versionType".to_string()); jvm_args.push("release".to_string());
 
-    Command::new(&java_cmd)
+    let mut child = Command::new(&java_cmd)
         .args(&jvm_args)
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
         .spawn()
-        .map_err(|e| e.to_string())?;
+        .map_err(|e| format!("Failed to start Java: {}", e))?;
+
+    // Wait a moment and check if the process crashed immediately
+    thread::sleep(std::time::Duration::from_secs(3));
+    match child.try_wait() {
+        Ok(Some(exit)) if !exit.success() => {
+            let stderr = child.stderr.take()
+                .map(|mut s| { let mut buf = String::new(); io::Read::read_to_string(&mut s, &mut buf).ok(); buf })
+                .unwrap_or_default();
+            let last_lines: String = stderr.lines().rev().take(10).collect::<Vec<_>>().into_iter().rev().collect::<Vec<_>>().join("\n");
+            return Err(format!("Game crashed (exit {}): {}", exit.code().unwrap_or(-1), last_lines));
+        }
+        Ok(Some(_)) => {} // exited successfully (unlikely this fast, but ok)
+        Ok(None) => {}     // still running — good
+        Err(e) => return Err(format!("Failed to check game process: {}", e)),
+    }
 
     Ok(())
 }

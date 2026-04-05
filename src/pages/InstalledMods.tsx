@@ -30,55 +30,62 @@ export function InstalledModsPage({ versions, selectedVersion }: Props) {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", padding: "28px", gap: "16px", overflowY: "auto" }}>
+    <div className="fade-in" style={{ display: "flex", flexDirection: "column", height: "100%", padding: "28px", gap: "16px", overflowY: "auto" }}>
       <div>
-        <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: "#FFD1DC" }}>Installed Mods</h2>
-        <p style={{ margin: 0, fontSize: "13px", color: "#776070" }}>Manage mods for each version</p>
+        <h2 className="page-title">Installed Mods</h2>
+        <p className="page-subtitle">Manage mods for each version</p>
       </div>
 
-      <select value={ver} onChange={e => setVer(e.target.value)} style={{
-        background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,176,192,0.12)",
-        color: "#fff", borderRadius: "6px", padding: "8px 12px", fontSize: "13px",
-        outline: "none", width: "160px",
-      }}>
-        {versions.map(v => <option key={v} value={v} style={{ background: "#0d0810" }}>{v}</option>)}
+      <select className="bloom-select" value={ver} onChange={e => setVer(e.target.value)} style={{ width: "160px" }}>
+        {versions.map(v => <option key={v} value={v}>{v}</option>)}
       </select>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
         {mods.length === 0 && (
-          <div style={{ textAlign: "center", padding: "48px", color: "#554455", fontSize: "13px" }}>
-            No mods installed for {ver}
-          </div>
+          <div className="bloom-empty">No mods installed for {ver}</div>
         )}
-        {mods.map(mod => (
-          <div key={mod} style={{
-            display: "flex", alignItems: "center", gap: "12px",
-            background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,176,192,0.08)",
-            borderRadius: "8px", padding: "10px 16px",
-          }}>
-            <div style={{
-              width: "36px", height: "36px", borderRadius: "6px",
-              background: "rgba(255,176,192,0.08)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "16px", color: "#FFB7C9",
-            }}>⊞</div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: "600", fontSize: "13px", color: "#caa" }}>{mod.replace(".jar", "")}</div>
-              <div style={{ fontSize: "11px", color: "#554455" }}>{mod}</div>
+        {mods.map(mod => {
+          const isCore = mod.includes("bloom-core");
+          return (
+            <div key={mod} className="bloom-list-item">
+              <div className="bloom-icon-placeholder">
+                {isCore ? (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="3" fill="#FFB7C9"/>
+                    <ellipse cx="12" cy="6" rx="2.5" ry="3.5" fill="#FFB7C9" opacity="0.6"/>
+                    <ellipse cx="17" cy="10" rx="2.5" ry="3.5" fill="#F8A4B8" opacity="0.5" transform="rotate(72 12 12)"/>
+                    <ellipse cx="15" cy="17" rx="2.5" ry="3.5" fill="#FFD1DC" opacity="0.4" transform="rotate(144 12 12)"/>
+                    <ellipse cx="9" cy="17" rx="2.5" ry="3.5" fill="#F8A4B8" opacity="0.5" transform="rotate(216 12 12)"/>
+                    <ellipse cx="7" cy="10" rx="2.5" ry="3.5" fill="#FFB7C9" opacity="0.6" transform="rotate(288 12 12)"/>
+                  </svg>
+                ) : (
+                  <span style={{ fontSize: "14px" }}>+</span>
+                )}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontWeight: "600", fontSize: "13px", color: isCore ? "var(--pink-light)" : "var(--text)" }}>
+                  {mod.replace(".jar", "").replace(/-\d+\.\d+\.\d+/, "")}
+                </div>
+                <div style={{ fontSize: "11px", color: "var(--text-faint)" }}>{mod}</div>
+              </div>
+              {isCore ? (
+                <span style={{ fontSize: "11px", color: "var(--text-faint)", padding: "4px 10px" }}>Core</span>
+              ) : (
+                <button
+                  className="bloom-btn-ghost"
+                  onClick={() => removeMod(mod)}
+                  disabled={removing[mod]}
+                  style={{
+                    borderColor: "rgba(255,80,80,0.15)", color: "var(--red)",
+                    fontSize: "11px", padding: "5px 12px",
+                  }}
+                >
+                  {removing[mod] ? "..." : "Remove"}
+                </button>
+              )}
             </div>
-            <button onClick={() => removeMod(mod)} disabled={removing[mod] || mod.includes("bloom-core")}
-              style={{
-                background: mod.includes("bloom-core") ? "transparent" : "rgba(255,80,80,0.1)",
-                border: `1px solid ${mod.includes("bloom-core") ? "rgba(255,176,192,0.1)" : "rgba(255,80,80,0.2)"}`,
-                color: mod.includes("bloom-core") ? "#554455" : "#FF8888",
-                borderRadius: "6px", padding: "6px 12px", fontSize: "11px",
-                cursor: mod.includes("bloom-core") ? "default" : "pointer",
-              }}
-            >
-              {mod.includes("bloom-core") ? "Core" : removing[mod] ? "..." : "Remove"}
-            </button>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

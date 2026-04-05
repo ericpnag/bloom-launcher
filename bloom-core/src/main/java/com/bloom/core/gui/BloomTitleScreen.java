@@ -146,8 +146,9 @@ public class BloomTitleScreen extends Screen {
         drawButton(context, "Singleplayer", cx, startY, btnW, btnH, mouseX, mouseY, time);
         drawButton(context, "Multiplayer", cx, startY + btnH + gap, btnW, btnH, mouseX, mouseY, time);
         drawButton(context, "Bloom Mods", cx, startY + (btnH + gap) * 2, btnW, btnH, mouseX, mouseY, time);
-        drawButton(context, "Settings", cx, startY + (btnH + gap) * 3, btnW, btnH, mouseX, mouseY, time);
-        drawButton(context, "Quit Game", cx, startY + (btnH + gap) * 4 + 6, btnW, btnH, mouseX, mouseY, time);
+        drawButton(context, "Cosmetics", cx, startY + (btnH + gap) * 3, btnW, btnH, mouseX, mouseY, time);
+        drawButton(context, "Settings", cx, startY + (btnH + gap) * 4, btnW, btnH, mouseX, mouseY, time);
+        drawButton(context, "Quit Game", cx, startY + (btnH + gap) * 5 + 6, btnW, btnH, mouseX, mouseY, time);
 
         // Bottom bar
         context.fill(0, h - 24, w, h - 23, 0x15FFB0C0);
@@ -226,15 +227,16 @@ public class BloomTitleScreen extends Screen {
         int startY = this.height / 2 - 18;
         int x = cx - btnW / 2;
 
-        for (int i = 0; i < 5; i++) {
-            int by = startY + (btnH + gap) * i + (i == 4 ? 6 : 0);
+        for (int i = 0; i < 6; i++) {
+            int by = startY + (btnH + gap) * i + (i == 5 ? 6 : 0);
             if (mouseX >= x && mouseX <= x + btnW && mouseY >= by && mouseY <= by + btnH) {
                 switch (i) {
                     case 0 -> client.setScreen(new SelectWorldScreen(this));
                     case 1 -> client.setScreen(new MultiplayerScreen(this));
                     case 2 -> client.setScreen(new ModuleScreen());
-                    case 3 -> client.setScreen(new OptionsScreen(this, client.options));
-                    case 4 -> client.scheduleStop();
+                    case 3 -> client.setScreen(new CosmeticsScreen(this));
+                    case 4 -> client.setScreen(new OptionsScreen(this, client.options));
+                    case 5 -> client.scheduleStop();
                 }
                 return true;
             }

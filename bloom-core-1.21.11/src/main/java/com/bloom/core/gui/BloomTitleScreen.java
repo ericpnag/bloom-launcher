@@ -97,13 +97,14 @@ public class BloomTitleScreen extends Screen {
         int gap = 2;
         int startY = h / 2 - 8;
 
-        context.fill(cx - btnW / 2 - 6, startY - 4, cx + btnW / 2 + 6, startY + (btnH + gap) * 5 + 10, 0xBB0d0810);
+        context.fill(cx - btnW / 2 - 6, startY - 4, cx + btnW / 2 + 6, startY + (btnH + gap) * 6 + 14, 0xBB0d0810);
 
         drawButton(context, "Singleplayer", cx, startY, btnW, btnH, mouseX, mouseY);
         drawButton(context, "Multiplayer", cx, startY + btnH + gap, btnW, btnH, mouseX, mouseY);
         drawButton(context, "Bloom Mods", cx, startY + (btnH + gap) * 2, btnW, btnH, mouseX, mouseY);
-        drawButton(context, "Settings", cx, startY + (btnH + gap) * 3, btnW, btnH, mouseX, mouseY);
-        drawButton(context, "Quit Game", cx, startY + (btnH + gap) * 4 + 4, btnW, btnH, mouseX, mouseY);
+        drawButton(context, "Cosmetics", cx, startY + (btnH + gap) * 3, btnW, btnH, mouseX, mouseY);
+        drawButton(context, "Settings", cx, startY + (btnH + gap) * 4, btnW, btnH, mouseX, mouseY);
+        drawButton(context, "Quit Game", cx, startY + (btnH + gap) * 5 + 4, btnW, btnH, mouseX, mouseY);
 
         // Bottom bar
         context.fill(0, h - 12, w, h, 0xCC0d0810);
@@ -139,15 +140,16 @@ public class BloomTitleScreen extends Screen {
         double mouseX = click.x();
         double mouseY = click.y();
 
-        for (int i = 0; i < 5; i++) {
-            int by = startY + (btnH + gap) * i + (i == 4 ? 4 : 0);
+        for (int i = 0; i < 6; i++) {
+            int by = startY + (btnH + gap) * i + (i == 5 ? 4 : 0);
             if (mouseX >= x && mouseX <= x + btnW && mouseY >= by && mouseY <= by + btnH) {
                 switch (i) {
                     case 0 -> client.setScreen(new SelectWorldScreen(this));
                     case 1 -> client.setScreen(new MultiplayerScreen(this));
                     case 2 -> client.setScreen(new ModuleScreen());
-                    case 3 -> client.setScreen(new OptionsScreen(this, client.options));
-                    case 4 -> client.scheduleStop();
+                    case 3 -> client.setScreen(new CosmeticsScreen(this));
+                    case 4 -> client.setScreen(new OptionsScreen(this, client.options));
+                    case 5 -> client.scheduleStop();
                 }
                 return true;
             }

@@ -9,63 +9,150 @@ import net.minecraft.text.Text;
 import java.util.List;
 
 public class ModuleScreen extends Screen {
-    public ModuleScreen() { super(Text.literal("Bloom Client")); }
+    private int scrollOffset = 0;
+    private String searchQuery = "";
+
+    public ModuleScreen() { super(Text.literal("Bloom Mods")); }
+
+    @Override
+    protected void init() {
+        scrollOffset = 0;
+    }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        int w = this.width; int h = this.height; int cx = w / 2;
-        context.fill(0, 0, w, h, 0xDD0d0810);
+        int w = this.width;
+        int h = this.height;
+        int cx = w / 2;
 
-        context.fill(cx - 80, 4, cx + 80, 30, 0xBB0d0810);
-        String title = "BLOOM MODULES";
+        // Background
+        context.fill(0, 0, w, h, 0xEE0d0810);
+
+        // Title bar
+        String title = "BLOOM MODS";
         int tw = this.textRenderer.getWidth(title);
-        context.drawText(this.textRenderer, title, cx - tw / 2, 8, 0xFFFFFFFF, true);
-        String sub = "Click to toggle | Right Shift to close";
+        context.drawText(this.textRenderer, title, cx - tw / 2, 10, 0xFFFFFFFF, true);
+        String sub = "Click to toggle modules";
         int sw = this.textRenderer.getWidth(sub);
-        context.drawText(this.textRenderer, sub, cx - sw / 2, 20, 0xFF998899, true);
-        context.fill(cx - 60, 31, cx + 60, 32, 0x33FFB0C0);
+        context.drawText(this.textRenderer, sub, cx - sw / 2, 22, 0xFF776070, true);
+        context.fill(cx - 60, 34, cx + 60, 35, 0x33FFB0C0);
 
+        // Module grid
         List<Module> modules = BloomCore.MODULES.getModules();
-        int cols = 2; int cardW = 110; int cardH = 32; int gapX = 4; int gapY = 3;
-        int gridW = cols * cardW + gapX;
-        int startX = cx - gridW / 2; int startY = 36;
+        int cols = Math.max(2, Math.min(4, (w - 40) / 130));
+        int cardW = (w - 40 - (cols - 1) * 8) / cols;
+        int cardH = 70;
+        int gapX = 8;
+        int gapY = 8;
+        int gridW = cols * cardW + (cols - 1) * gapX;
+        int startX = cx - gridW / 2;
+        int startY = 42;
 
         for (int i = 0; i < modules.size(); i++) {
             Module m = modules.get(i);
-            int c = i % cols; int r = i / cols;
-            int x = startX + c * (cardW + gapX); int y = startY + r * (cardH + gapY);
+            int col = i % cols;
+            int row = i / cols;
+            int x = startX + col * (cardW + gapX);
+            int y = startY + row * (cardH + gapY) - scrollOffset;
+
+            if (y + cardH < startY || y > h) continue;
+
             boolean hovered = mouseX >= x && mouseX <= x + cardW && mouseY >= y && mouseY <= y + cardH;
             boolean enabled = m.isEnabled();
 
-            context.fill(x, y, x + cardW, y + cardH, hovered ? 0x55FFB0C0 : 0x440d0810);
-            context.fill(x, y, x + 2, y + cardH, enabled ? 0xCC55DD88 : 0x55554444);
-            context.fill(x, y, x + cardW, y + 1, 0x22FFB0C0);
+            // Card background
+            context.fill(x, y, x + cardW, y + cardH, hovered ? 0x33FFB0C0 : 0x15FFFFFF);
+            // Top border
+            context.fill(x, y, x + cardW, y + 1, hovered ? 0x44FFB0C0 : 0x11FFB0C0);
 
-            context.drawText(this.textRenderer, m.getName(), x + 6, y + 4, hovered ? 0xFFFFFFFF : 0xFFEEDDCC, true);
+            // Highlight border if enabled
+            if (enabled) {
+                context.fill(x, y + cardH - 1, x + cardW, y + cardH, 0x4455DD88);
+            }
+
+            // Module name
+            context.drawText(this.textRenderer, m.getName(), x + 8, y + 8, hovered ? 0xFFFFFFFF : 0xFFDDCCCC, true);
+
+            // Description
             String desc = m.getDescription();
-            if (desc.length() > 18) desc = desc.substring(0, 16) + "..";
-            context.drawText(this.textRenderer, desc, x + 6, y + 14, 0xFF887788, true);
-            context.drawText(this.textRenderer, enabled ? "ON" : "OFF", x + 6, y + 23, enabled ? 0xFF55DD88 : 0xFF776666, true);
+            if (this.textRenderer.getWidth(desc) > cardW - 16) {
+                int maxLen = 0;
+                for (int c = 0; c < desc.length(); c++) {
+                    if (this.textRenderer.getWidth(desc.substring(0, c + 1)) > cardW - 24) break;
+                    maxLen = c + 1;
+                }
+                desc = desc.substring(0, maxLen) + "..";
+            }
+            context.drawText(this.textRenderer, desc, x + 8, y + 22, 0xFF665566, true);
+
+            // Toggle button at bottom
+            int btnW = cardW - 16;
+            int btnH = 16;
+            int btnX = x + 8;
+            int btnY = y + cardH - btnH - 8;
+            boolean btnHovered = mouseX >= btnX && mouseX <= btnX + btnW && mouseY >= btnY && mouseY <= btnY + btnH;
+
+            if (enabled) {
+                context.fill(btnX, btnY, btnX + btnW, btnY + btnH, btnHovered ? 0xCC44CC77 : 0xBB33AA55);
+                String eStr = "Enabled";
+                int esw = this.textRenderer.getWidth(eStr);
+                context.drawText(this.textRenderer, eStr, btnX + btnW / 2 - esw / 2, btnY + 4, 0xFFFFFFFF, true);
+            } else {
+                context.fill(btnX, btnY, btnX + btnW, btnY + btnH, btnHovered ? 0x55FFFFFF : 0x33FFFFFF);
+                String dStr = "Disabled";
+                int dsw = this.textRenderer.getWidth(dStr);
+                context.drawText(this.textRenderer, dStr, btnX + btnW / 2 - dsw / 2, btnY + 4, 0xFF998899, true);
+            }
         }
+
+        // Bottom bar
+        context.fill(0, h - 22, w, h, 0xCC0d0810);
+        context.fill(0, h - 22, w, h - 21, 0x22FFB0C0);
+        String info = modules.size() + " modules  |  ESC to close";
+        int iw = this.textRenderer.getWidth(info);
+        context.drawText(this.textRenderer, info, cx - iw / 2, h - 15, 0xFF776070, true);
+
         super.render(context, mouseX, mouseY, delta);
     }
 
     @Override
     public boolean mouseClicked(Click click, boolean bl) {
         List<Module> modules = BloomCore.MODULES.getModules();
-        int cols = 2; int cardW = 110; int cardH = 32; int gapX = 4; int gapY = 3;
-        int gridW = cols * cardW + gapX;
-        int startX = this.width / 2 - gridW / 2; int startY = 36;
-        double mx = click.x(); double my = click.y();
+        int w = this.width;
+        int cx = w / 2;
+        int cols = Math.max(2, Math.min(4, (w - 40) / 130));
+        int cardW = (w - 40 - (cols - 1) * 8) / cols;
+        int cardH = 70;
+        int gapX = 8;
+        int gapY = 8;
+        int gridW = cols * cardW + (cols - 1) * gapX;
+        int startX = cx - gridW / 2;
+        int startY = 42;
+        double mx = click.x(), my = click.y();
+
         for (int i = 0; i < modules.size(); i++) {
-            int c = i % cols; int r = i / cols;
-            int x = startX + c * (cardW + gapX); int y = startY + r * (cardH + gapY);
+            int col = i % cols;
+            int row = i / cols;
+            int x = startX + col * (cardW + gapX);
+            int y = startY + row * (cardH + gapY) - scrollOffset;
             if (mx >= x && mx <= x + cardW && my >= y && my <= y + cardH) {
                 modules.get(i).toggle();
                 return true;
             }
         }
         return super.mouseClicked(click, bl);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        scrollOffset -= (int)(verticalAmount * 20);
+        if (scrollOffset < 0) scrollOffset = 0;
+        List<Module> modules = BloomCore.MODULES.getModules();
+        int cols = Math.max(2, Math.min(4, (this.width - 40) / 130));
+        int rows = (modules.size() + cols - 1) / cols;
+        int maxScroll = Math.max(0, rows * 78 - (this.height - 80));
+        if (scrollOffset > maxScroll) scrollOffset = maxScroll;
+        return true;
     }
 
     @Override public boolean shouldPause() { return false; }

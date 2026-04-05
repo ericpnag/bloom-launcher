@@ -58,83 +58,65 @@ export function ModStorePage({ versions, selectedVersion }: Props) {
     return "Install";
   }
 
+  function installClass(id: string) {
+    const s = installing[id];
+    if (s === "done") return "bloom-btn-install installed";
+    if (s === "error") return "bloom-btn-install failed";
+    if (s === "loading") return "bloom-btn-install loading";
+    return "bloom-btn-install";
+  }
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", padding: "28px", gap: "16px", overflowY: "auto" }}>
+    <div className="fade-in" style={{ display: "flex", flexDirection: "column", height: "100%", padding: "28px", gap: "16px", overflowY: "auto" }}>
       <div>
-        <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700" }}>Mod Store</h2>
-        <p style={{ margin: 0, fontSize: "13px", color: "#555" }}>Browse Fabric mods from Modrinth</p>
+        <h2 className="page-title">Mod Store</h2>
+        <p className="page-subtitle">Browse Fabric mods from Modrinth</p>
       </div>
 
       <div style={{ display: "flex", gap: "8px" }}>
         <select
+          className="bloom-select"
           value={searchVersion}
           onChange={e => { setSearchVersion(e.target.value); setLoaded(false); setInstalling({}); }}
-          style={{
-            background: "#161616", border: "1px solid #222", color: "#fff",
-            borderRadius: "6px", padding: "10px 12px", fontSize: "13px", outline: "none",
-          }}
         >
           {versions.map(v => <option key={v} value={v}>{v}</option>)}
         </select>
         <input
+          className="bloom-input"
           value={query}
           onChange={e => setQuery(e.target.value)}
           onKeyDown={e => e.key === "Enter" && search(query)}
           placeholder="Search mods..."
-          style={{
-            flex: 1, background: "#161616", border: "1px solid #222", color: "#fff",
-            borderRadius: "6px", padding: "10px 14px", fontSize: "13px", outline: "none",
-          }}
+          style={{ flex: 1 }}
         />
-        <button onClick={() => search(query)} disabled={loading} style={{
-          background: "#fff", color: "#000", border: "none", borderRadius: "6px",
-          padding: "10px 20px", fontSize: "13px", fontWeight: "600", cursor: "pointer",
-          opacity: loading ? 0.6 : 1,
-        }}>
+        <button className="bloom-btn" onClick={() => search(query)} disabled={loading}>
           {loading ? "..." : "Search"}
         </button>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-        {results.map(mod => {
-          const status = installing[mod.project_id];
-          return (
-            <div key={mod.project_id} style={{
-              display: "flex", alignItems: "center", gap: "12px",
-              background: "#161616", border: "1px solid #222", borderRadius: "8px", padding: "12px 16px",
-            }}>
-              {mod.icon_url
-                ? <img src={mod.icon_url} alt="" style={{ width: "40px", height: "40px", borderRadius: "6px", objectFit: "cover" }} />
-                : <div style={{ width: "40px", height: "40px", borderRadius: "6px", background: "#222", flexShrink: 0 }} />
-              }
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: "600", fontSize: "14px", marginBottom: "2px" }}>{mod.title}</div>
-                <div style={{ fontSize: "12px", color: "#555", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{mod.description}</div>
-              </div>
-              <div style={{ fontSize: "12px", color: "#444", flexShrink: 0 }}>{(mod.downloads / 1000).toFixed(0)}k</div>
-              <button
-                onClick={() => handleInstall(mod)}
-                disabled={status === "loading" || status === "done"}
-                style={{
-                  background: status === "done" ? "#1a3a1a" : "transparent",
-                  border: `1px solid ${status === "done" ? "#2a5a2a" : status === "error" ? "#5a2a2a" : "#333"}`,
-                  color: status === "done" ? "#5f5" : status === "error" ? "#f55" : "#888",
-                  borderRadius: "6px", padding: "6px 14px", fontSize: "12px",
-                  cursor: status === "loading" || status === "done" ? "default" : "pointer",
-                  flexShrink: 0, opacity: status === "loading" ? 0.6 : 1,
-                }}
-                onMouseEnter={e => { if (!status) { e.currentTarget.style.borderColor = "#fff"; e.currentTarget.style.color = "#fff"; } }}
-                onMouseLeave={e => { if (!status) { e.currentTarget.style.borderColor = "#333"; e.currentTarget.style.color = "#888"; } }}
-              >
-                {installLabel(mod.project_id)}
-              </button>
+      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+        {results.map(mod => (
+          <div key={mod.project_id} className="bloom-list-item">
+            {mod.icon_url
+              ? <img src={mod.icon_url} alt="" style={{ width: "40px", height: "40px", borderRadius: "6px", objectFit: "cover", flexShrink: 0 }} />
+              : <div className="bloom-icon-placeholder" />
+            }
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: "600", fontSize: "13px", color: "var(--text)", marginBottom: "2px" }}>{mod.title}</div>
+              <div style={{ fontSize: "11px", color: "var(--text-dim)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{mod.description}</div>
             </div>
-          );
-        })}
-        {results.length === 0 && !loading && loaded && (
-          <div style={{ textAlign: "center", padding: "48px", color: "#333", fontSize: "13px" }}>
-            No mods found
+            <div style={{ fontSize: "11px", color: "var(--text-faint)", flexShrink: 0 }}>{(mod.downloads / 1000).toFixed(0)}k</div>
+            <button
+              className={installClass(mod.project_id)}
+              onClick={() => handleInstall(mod)}
+              disabled={installing[mod.project_id] === "loading" || installing[mod.project_id] === "done"}
+            >
+              {installLabel(mod.project_id)}
+            </button>
           </div>
+        ))}
+        {results.length === 0 && !loading && loaded && (
+          <div className="bloom-empty">No mods found</div>
         )}
       </div>
     </div>

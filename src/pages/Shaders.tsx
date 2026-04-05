@@ -53,70 +53,63 @@ export function ShadersPage({ versions, selectedVersion }: Props) {
     return "Install";
   }
 
+  function installClass(id: string) {
+    const s = installing[id];
+    if (s === "done") return "bloom-btn-install installed";
+    if (s === "error") return "bloom-btn-install failed";
+    if (s === "loading") return "bloom-btn-install loading";
+    return "bloom-btn-install";
+  }
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", padding: "28px", gap: "16px", overflowY: "auto" }}>
+    <div className="fade-in" style={{ display: "flex", flexDirection: "column", height: "100%", padding: "28px", gap: "16px", overflowY: "auto" }}>
       <div>
-        <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: "#FFD1DC" }}>Shader Packs</h2>
-        <p style={{ margin: 0, fontSize: "13px", color: "#776070" }}>Browse shaders from Modrinth</p>
+        <h2 className="page-title">Shader Packs</h2>
+        <p className="page-subtitle">Browse shaders from Modrinth</p>
       </div>
 
       <div style={{ display: "flex", gap: "8px" }}>
-        <select value={searchVersion}
+        <select
+          className="bloom-select"
+          value={searchVersion}
           onChange={e => { setSearchVersion(e.target.value); setLoaded(false); setInstalling({}); }}
-          style={{
-            background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,176,192,0.12)",
-            color: "#fff", borderRadius: "6px", padding: "10px 12px", fontSize: "13px", outline: "none",
-          }}>
-          {versions.map(v => <option key={v} value={v} style={{ background: "#0d0810" }}>{v}</option>)}
+        >
+          {versions.map(v => <option key={v} value={v}>{v}</option>)}
         </select>
-        <input value={query} onChange={e => setQuery(e.target.value)}
+        <input
+          className="bloom-input"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
           onKeyDown={e => e.key === "Enter" && search(query)}
-          placeholder="Search shaders..." style={{
-            flex: 1, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,176,192,0.12)",
-            color: "#fff", borderRadius: "6px", padding: "10px 14px", fontSize: "13px", outline: "none",
-          }}
+          placeholder="Search shaders..."
+          style={{ flex: 1 }}
         />
-        <button onClick={() => search(query)} disabled={loading} style={{
-          background: "linear-gradient(135deg, #FFB7C9, #F8A4B8)", color: "#1a0f1a",
-          border: "none", borderRadius: "6px", padding: "10px 20px", fontSize: "13px",
-          fontWeight: "600", cursor: "pointer", opacity: loading ? 0.6 : 1,
-        }}>
+        <button className="bloom-btn" onClick={() => search(query)} disabled={loading}>
           {loading ? "..." : "Search"}
         </button>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-        {results.map(s => {
-          const status = installing[s.project_id];
-          return (
-            <div key={s.project_id} style={{
-              display: "flex", alignItems: "center", gap: "12px",
-              background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,176,192,0.08)",
-              borderRadius: "8px", padding: "12px 16px",
-            }}>
-              {s.icon_url
-                ? <img src={s.icon_url} alt="" style={{ width: "40px", height: "40px", borderRadius: "6px", objectFit: "cover" }} />
-                : <div style={{ width: "40px", height: "40px", borderRadius: "6px", background: "rgba(255,176,192,0.08)", flexShrink: 0 }} />
-              }
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: "600", fontSize: "14px", color: "#caa", marginBottom: "2px" }}>{s.title}</div>
-                <div style={{ fontSize: "12px", color: "#776070", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.description}</div>
-              </div>
-              <div style={{ fontSize: "12px", color: "#554455", flexShrink: 0 }}>{(s.downloads / 1000).toFixed(0)}k</div>
-              <button onClick={() => handleInstall(s)} disabled={status === "loading" || status === "done"}
-                style={{
-                  background: status === "done" ? "rgba(85,221,136,0.1)" : "transparent",
-                  border: `1px solid ${status === "done" ? "rgba(85,221,136,0.3)" : status === "error" ? "rgba(255,80,80,0.3)" : "rgba(255,176,192,0.15)"}`,
-                  color: status === "done" ? "#55DD88" : status === "error" ? "#FF8888" : "#998899",
-                  borderRadius: "6px", padding: "6px 14px", fontSize: "12px",
-                  cursor: status === "loading" || status === "done" ? "default" : "pointer", flexShrink: 0,
-                }}
-              >{label(s.project_id)}</button>
+      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+        {results.map(s => (
+          <div key={s.project_id} className="bloom-list-item">
+            {s.icon_url
+              ? <img src={s.icon_url} alt="" style={{ width: "40px", height: "40px", borderRadius: "6px", objectFit: "cover", flexShrink: 0 }} />
+              : <div className="bloom-icon-placeholder" />
+            }
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: "600", fontSize: "13px", color: "var(--text)", marginBottom: "2px" }}>{s.title}</div>
+              <div style={{ fontSize: "11px", color: "var(--text-dim)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.description}</div>
             </div>
-          );
-        })}
+            <div style={{ fontSize: "11px", color: "var(--text-faint)", flexShrink: 0 }}>{(s.downloads / 1000).toFixed(0)}k</div>
+            <button
+              className={installClass(s.project_id)}
+              onClick={() => handleInstall(s)}
+              disabled={installing[s.project_id] === "loading" || installing[s.project_id] === "done"}
+            >{label(s.project_id)}</button>
+          </div>
+        ))}
         {results.length === 0 && !loading && loaded && (
-          <div style={{ textAlign: "center", padding: "48px", color: "#554455", fontSize: "13px" }}>No shaders found</div>
+          <div className="bloom-empty">No shaders found</div>
         )}
       </div>
     </div>

@@ -8,9 +8,7 @@ pub fn run() {
     use tauri::Manager;
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .setup(|app| {
-            let window = app.get_webview_window("main").unwrap();
-            window.open_devtools();
+        .setup(|_app| {
             Ok(())
         })
         .manage(AccountState(Mutex::new(None)))

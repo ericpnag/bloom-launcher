@@ -43,7 +43,7 @@ public class BloomPauseScreen extends Screen {
             context.fill((int) p[0], (int) p[1], (int) p[0] + s, (int) p[1] + s, Float.floatToIntBits(p[5]));
         }
 
-        int pw = 150; int ph = 130;
+        int pw = 150; int ph = 148;
         int px = cx - pw / 2; int py = h / 2 - ph / 2;
         context.fill(px, py, px + pw, py + ph, 0xDD0d0810);
         context.fill(px, py, px + pw, py + 1, 0x44FFB0C0);
@@ -57,8 +57,9 @@ public class BloomPauseScreen extends Screen {
         int btnW = 120; int btnH = 14; int gap = 2; int sy = py + 26;
         drawBtn(context, "Resume", cx, sy, btnW, btnH, mouseX, mouseY, false);
         drawBtn(context, "Bloom Mods", cx, sy + btnH + gap, btnW, btnH, mouseX, mouseY, false);
-        drawBtn(context, "Settings", cx, sy + (btnH + gap) * 2, btnW, btnH, mouseX, mouseY, false);
-        drawBtn(context, "Disconnect", cx, sy + (btnH + gap) * 3 + 6, btnW, btnH, mouseX, mouseY, true);
+        drawBtn(context, "Cosmetics", cx, sy + (btnH + gap) * 2, btnW, btnH, mouseX, mouseY, false);
+        drawBtn(context, "Settings", cx, sy + (btnH + gap) * 3, btnW, btnH, mouseX, mouseY, false);
+        drawBtn(context, "Disconnect", cx, sy + (btnH + gap) * 4 + 6, btnW, btnH, mouseX, mouseY, true);
         super.render(context, mouseX, mouseY, delta);
     }
 
@@ -79,14 +80,15 @@ public class BloomPauseScreen extends Screen {
         int ph = 130; int py = this.height / 2 - ph / 2; int sy = py + 26;
         int x = cx - btnW / 2;
         double mx = click.x(); double my = click.y();
-        for (int i = 0; i < 4; i++) {
-            int by = sy + (btnH + gap) * i + (i == 3 ? 6 : 0);
+        for (int i = 0; i < 5; i++) {
+            int by = sy + (btnH + gap) * i + (i == 4 ? 6 : 0);
             if (mx >= x && mx <= x + btnW && my >= by && my <= by + btnH) {
                 switch (i) {
                     case 0 -> client.setScreen(null);
                     case 1 -> client.setScreen(new ModuleScreen());
-                    case 2 -> client.setScreen(new OptionsScreen(this, client.options));
-                    case 3 -> { client.disconnect(Text.literal("Disconnected")); client.setScreen(new BloomTitleScreen()); }
+                    case 2 -> client.setScreen(new CosmeticsScreen(this));
+                    case 3 -> client.setScreen(new OptionsScreen(this, client.options));
+                    case 4 -> { client.disconnect(Text.literal("Disconnected")); client.setScreen(new BloomTitleScreen()); }
                 }
                 return true;
             }

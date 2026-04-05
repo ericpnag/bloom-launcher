@@ -1,116 +1,230 @@
-.logo.vite:hover {
-  filter: drop-shadow(0 0 2em #747bff);
-}
+/* ── Bloom Client — Cherry Blossom Theme v2 ── */
 
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafb);
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
 :root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
+  --bg: #0a0611;
+  --bg-surface: rgba(255, 255, 255, 0.02);
+  --bg-surface-hover: rgba(255, 255, 255, 0.04);
+  --bg-elevated: rgba(18, 10, 22, 0.95);
 
-  color: #0f0f0f;
-  background-color: #f6f6f6;
+  --border: rgba(255, 176, 192, 0.06);
+  --border-hover: rgba(255, 176, 192, 0.14);
+  --border-input: rgba(255, 176, 192, 0.1);
+  --border-active: rgba(255, 176, 192, 0.25);
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+  --pink-50: #FFF0F3;
+  --pink-100: #FFE4EC;
+  --pink-200: #FFD1DC;
+  --pink-300: #FFB7C9;
+  --pink-400: #F8A4B8;
+  --pink-500: #E8899A;
+  --pink-600: #D4707E;
+  --pink-glow: rgba(255, 176, 192, 0.2);
+
+  --text-primary: #F0E4E8;
+  --text-secondary: #BBA4AC;
+  --text-muted: #8A7080;
+  --text-faint: #5A4550;
+
+  --accent-green: #6EE7A0;
+  --accent-red: #FF7070;
+  --accent-yellow: #F0CC60;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: var(--bg);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
 }
 
-.container {
-  margin: 0;
-  padding-top: 10vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; overflow: hidden; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 176, 192, 0.1); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 176, 192, 0.2); }
+
+::selection { background: rgba(255, 176, 192, 0.25); color: #fff; }
+
+/* ── Cards ── */
+.bloom-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+}
+.bloom-card:hover {
+  background: var(--bg-surface-hover);
+  border-color: var(--border-hover);
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
-}
-
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
-}
-
-.row {
-  display: flex;
-  justify-content: center;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
-}
-
-h1 {
-  text-align: center;
-}
-
-input,
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-}
-
-button {
-  cursor: pointer;
-}
-
-button:hover {
-  border-color: #396cd8;
-}
-button:active {
-  border-color: #396cd8;
-  background-color: #e8e8e8;
-}
-
-input,
-button {
+/* ── Inputs ── */
+.bloom-input {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-input);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 13px;
   outline: none;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+.bloom-input:focus {
+  border-color: var(--pink-400);
+  box-shadow: 0 0 0 3px rgba(255, 176, 192, 0.06);
+}
+.bloom-input::placeholder { color: var(--text-faint); }
+
+.bloom-select {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-input);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.bloom-select option { background: var(--bg); }
+
+/* ── Buttons ── */
+.bloom-btn {
+  background: linear-gradient(135deg, var(--pink-300), var(--pink-400));
+  color: #1a0a12;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  letter-spacing: 0.02em;
+}
+.bloom-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px var(--pink-glow);
+}
+.bloom-btn:active { transform: translateY(0); }
+.bloom-btn:disabled { opacity: 0.4; cursor: default; transform: none; box-shadow: none; }
+
+.bloom-btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+.bloom-btn-ghost:hover {
+  border-color: var(--pink-300);
+  color: var(--pink-300);
+  background: rgba(255, 176, 192, 0.04);
 }
 
-#greet-input {
-  margin-right: 5px;
+.bloom-btn-install {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+.bloom-btn-install:hover:not(:disabled) {
+  border-color: var(--pink-300);
+  color: var(--pink-200);
+  background: rgba(255, 176, 192, 0.04);
+}
+.bloom-btn-install.installed {
+  border-color: rgba(110, 231, 160, 0.2);
+  color: var(--accent-green);
+  background: rgba(110, 231, 160, 0.04);
+  cursor: default;
+}
+.bloom-btn-install.failed { border-color: rgba(255, 112, 112, 0.2); color: var(--accent-red); }
+.bloom-btn-install.loading { opacity: 0.5; cursor: wait; }
+
+/* ── Typography ── */
+.page-title {
+  margin: 0 0 4px;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--pink-200);
+  letter-spacing: -0.02em;
+}
+.page-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
-  }
-
-  a:hover {
-    color: #24c8db;
-  }
-
-  input,
-  button {
-    color: #ffffff;
-    background-color: #0f0f0f98;
-  }
-  button:active {
-    background-color: #0f0f0f69;
-  }
+/* ── List items ── */
+.bloom-list-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: all 0.15s ease;
 }
+.bloom-list-item:hover {
+  background: var(--bg-surface-hover);
+  border-color: var(--border-hover);
+}
+
+.bloom-icon-placeholder {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 176, 192, 0.04);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pink-400);
+  font-size: 16px;
+}
+
+.bloom-empty {
+  text-align: center;
+  padding: 64px 20px;
+  color: var(--text-faint);
+  font-size: 13px;
+}
+
+/* ── Animations ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 4px 20px rgba(255, 176, 192, 0.15); }
+  50% { box-shadow: 0 4px 32px rgba(255, 176, 192, 0.28); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.fade-in { animation: fadeIn 0.25s ease-out; }

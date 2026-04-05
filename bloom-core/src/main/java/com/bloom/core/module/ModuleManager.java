@@ -19,6 +19,11 @@ public class ModuleManager {
         modules.add(new PotionEffects());
         modules.add(new Keystrokes());
         modules.add(new CosmeticsCape());
+        modules.add(new PerformanceBoost());
+        modules.add(new LowFire());
+        modules.add(new LowShield());
+        modules.add(new ArmorHud());
+        modules.add(new PotionTimer());
     }
 
     public List<Module> getModules() {
