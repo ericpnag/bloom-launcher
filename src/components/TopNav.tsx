@@ -7,6 +7,7 @@ const TABS: { id: Page; label: string; icon: string }[] = [
   { id: "shaders", label: "Shaders", icon: "◆" },
   { id: "texturepacks", label: "Textures", icon: "◈" },
   { id: "shop", label: "Shop", icon: "🌸" },
+  { id: "console", label: "Console", icon: ">_" },
   { id: "settings", label: "Settings", icon: "⚙" },
 ];
 

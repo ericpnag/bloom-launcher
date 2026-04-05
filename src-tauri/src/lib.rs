@@ -5,8 +5,14 @@ use std::sync::Mutex;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    use tauri::Manager;
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .setup(|app| {
+            let window = app.get_webview_window("main").unwrap();
+            window.open_devtools();
+            Ok(())
+        })
         .manage(AccountState(Mutex::new(None)))
         .invoke_handler(tauri::generate_handler![
             launcher::launch_minecraft,
