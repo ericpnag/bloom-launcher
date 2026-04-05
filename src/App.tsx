@@ -1,16 +1,14 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { Sidebar } from "./components/Sidebar";
 import { LoginModal } from "./components/LoginModal";
-import { HomePage } from "./pages/Home";
-import { LibraryPage } from "./pages/Library";
+import { TopNav } from "./components/TopNav";
+import { PlayPage } from "./pages/Play";
 import { ModStorePage } from "./pages/ModStore";
 import { TexturePacksPage } from "./pages/TexturePacks";
-import { VersionsPage } from "./pages/Versions";
 import { SettingsPage } from "./pages/Settings";
 
-export type Page = "home" | "library" | "modstore" | "texturepacks" | "versions" | "settings";
+export type Page = "play" | "mods" | "texturepacks" | "settings";
 export type LaunchPhase = "idle" | "loading" | "done" | "error";
 
 export interface LaunchState {
@@ -19,14 +17,14 @@ export interface LaunchState {
   status: string;
 }
 
-interface AccountInfo {
+export interface AccountInfo {
   username: string;
   uuid: string;
   accessToken: string;
 }
 
 export default function App() {
-  const [page, setPage] = useState<Page>("home");
+  const [page, setPage] = useState<Page>("play");
   const [versions, setVersions] = useState<string[]>([]);
   const [selectedVersion, setSelectedVersion] = useState("1.21.1");
   const [launch, setLaunch] = useState<LaunchState>({ phase: "idle", progress: 0, status: "" });
@@ -58,20 +56,12 @@ export default function App() {
       setLoginModal({ phase: "error", error: e.payload });
     }).then(fn => { unlistenError = fn; });
 
-    return () => {
-      unlistenCode?.();
-      unlistenSuccess?.();
-      unlistenError?.();
-    };
+    return () => { unlistenCode?.(); unlistenSuccess?.(); unlistenError?.(); };
   }, []);
 
   async function handleLogin() {
     setLoginModal({ phase: "waiting" });
-    try {
-      await invoke("start_microsoft_login");
-    } catch (e: any) {
-      setLoginModal({ phase: "error", error: String(e) });
-    }
+    try { await invoke("start_microsoft_login"); } catch (e: any) { setLoginModal({ phase: "error", error: String(e) }); }
   }
 
   function handleLogout() {
@@ -100,20 +90,27 @@ export default function App() {
     }
   }
 
-  const pages: Record<Page, React.ReactNode> = {
-    home: <HomePage launch={launch} versions={versions} selectedVersion={selectedVersion} onVersionChange={setSelectedVersion} onPlay={play} />,
-    library: <LibraryPage selectedVersion={selectedVersion} />,
-    modstore: <ModStorePage versions={versions} selectedVersion={selectedVersion} onVersionChange={setSelectedVersion} />,
-    texturepacks: <TexturePacksPage versions={versions} selectedVersion={selectedVersion} onVersionChange={setSelectedVersion} />,
-    versions: <VersionsPage versions={versions} selected={selectedVersion} onSelect={setSelectedVersion} />,
-    settings: <SettingsPage />,
-  };
-
   return (
-    <div style={{ display: "flex", height: "100vh", width: "100vw", background: "#0d0810", color: "#fff", fontFamily: "system-ui, -apple-system, sans-serif", overflow: "hidden" }}>
-      <Sidebar activePage={page} onNavigate={setPage} account={account} onLogin={handleLogin} onLogout={handleLogout} />
-      <main style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-        {pages[page]}
+    <div style={{
+      display: "flex", flexDirection: "column", height: "100vh", width: "100vw",
+      background: "#0d0810", color: "#fff",
+      fontFamily: "system-ui, -apple-system, sans-serif", overflow: "hidden",
+    }}>
+      <TopNav
+        page={page} onNavigate={setPage}
+        account={account} onLogin={handleLogin} onLogout={handleLogout}
+      />
+      <main style={{ flex: 1, overflow: "hidden" }}>
+        {page === "play" && (
+          <PlayPage
+            launch={launch} versions={versions}
+            selectedVersion={selectedVersion} onVersionChange={setSelectedVersion}
+            onPlay={play}
+          />
+        )}
+        {page === "mods" && <ModStorePage versions={versions} selectedVersion={selectedVersion} onVersionChange={setSelectedVersion} />}
+        {page === "texturepacks" && <TexturePacksPage versions={versions} selectedVersion={selectedVersion} onVersionChange={setSelectedVersion} />}
+        {page === "settings" && <SettingsPage />}
       </main>
       {loginModal && <LoginModal {...loginModal} onClose={() => setLoginModal(null)} />}
     </div>
