@@ -107,7 +107,7 @@ export default function App() {
         page={page} onNavigate={setPage}
         account={account} onLogin={handleLogin} onLogout={handleLogout}
       />
-      <main style={{ flex: 1, overflow: "hidden" }}>
+      <main style={{ flex: 1, overflow: "auto" }}>
         {page === "play" && (
           <PlayPage
             launch={launch} versions={versions}
