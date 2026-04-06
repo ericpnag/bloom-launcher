@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloom Client — Cherry Blossom Minecraft Client</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:#0a0611;color:#F0E4E8;overflow-x:hidden}
+::selection{background:rgba(255,183,201,0.3);color:#fff}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,183,201,0.15);border-radius:3px}
+
+/* ── Petals ── */
+.petal{position:fixed;width:8px;height:8px;background:#FFB7C9;border-radius:50% 0 50% 50%;opacity:0;pointer-events:none;z-index:0;animation:fall linear forwards}
+@keyframes fall{0%{opacity:0;transform:translateY(-20px) rotate(0deg)}10%{opacity:0.6}90%{opacity:0.4}100%{opacity:0;transform:translateY(100vh) rotate(720deg)}}
+
+/* ── Nav ── */
+nav{position:fixed;top:0;width:100%;z-index:100;padding:16px 40px;display:flex;align-items:center;backdrop-filter:blur(20px);background:rgba(10,6,17,0.7);border-bottom:1px solid rgba(255,183,201,0.04);transition:all 0.3s}
+nav.scrolled{background:rgba(10,6,17,0.92);padding:12px 40px}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo svg{width:28px;height:28px}
+.nav-logo span{font-weight:800;font-size:14px;letter-spacing:0.14em;color:#FFD1DC}
+.nav-links{display:flex;gap:32px;margin-left:auto;align-items:center}
+.nav-links a{color:#8A7080;text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s}
+.nav-links a:hover{color:#FFD1DC}
+.nav-cta{background:linear-gradient(135deg,#FFB7C9,#F8A4B8);color:#1a0a12;padding:8px 24px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;transition:all 0.2s;border:none;cursor:pointer}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(255,183,201,0.25)}
+
+/* ── Hero ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;padding:120px 20px 80px}
+.hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 50% 30%,rgba(255,183,201,0.06) 0%,transparent 60%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:20px;background:rgba(255,183,201,0.06);border:1px solid rgba(255,183,201,0.1);font-size:12px;color:#BBA4AC;margin-bottom:32px;animation:fadeUp 0.8s ease-out}
+.hero-badge span{color:#FFB7C9;font-weight:600}
+.hero h1{font-size:clamp(48px,8vw,96px);font-weight:900;letter-spacing:-0.02em;line-height:1;margin-bottom:16px;animation:fadeUp 0.8s ease-out 0.1s both}
+.hero h1 .gradient{background:linear-gradient(135deg,#FFE4EC,#FFB7C9,#F8A4B8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:18px;color:#8A7080;max-width:500px;line-height:1.6;margin-bottom:40px;animation:fadeUp 0.8s ease-out 0.2s both}
+.hero-buttons{display:flex;gap:16px;animation:fadeUp 0.8s ease-out 0.3s both}
+.btn-primary{background:linear-gradient(135deg,#FFB7C9,#F8A4B8);color:#1a0a12;padding:14px 36px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;transition:all 0.25s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,183,201,0.3)}
+.btn-secondary{background:rgba(255,255,255,0.04);border:1px solid rgba(255,183,201,0.1);color:#BBA4AC;padding:14px 36px;border-radius:12px;font-weight:600;font-size:15px;text-decoration:none;transition:all 0.25s}
+.btn-secondary:hover{border-color:rgba(255,183,201,0.25);color:#FFD1DC;background:rgba(255,183,201,0.06)}
+.hero-image{margin-top:60px;width:min(900px,90vw);border-radius:16px;overflow:hidden;border:1px solid rgba(255,183,201,0.08);box-shadow:0 40px 80px rgba(0,0,0,0.4);animation:fadeUp 1s ease-out 0.4s both;position:relative}
+.hero-image .mockup{width:100%;height:400px;background:linear-gradient(135deg,#120a18,#1e1028,#361a38);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.hero-image .mockup-text{font-size:28px;font-weight:800;color:rgba(255,183,201,0.2);letter-spacing:0.1em}
+.hero-glow{position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(255,183,201,0.08) 0%,transparent 60%);top:-200px;left:50%;transform:translateX(-50%);pointer-events:none;animation:pulse 4s ease-in-out infinite}
+
+/* ── Features ── */
+.features{padding:120px 40px;position:relative}
+.features::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,183,201,0.1),transparent)}
+.section-label{font-size:12px;font-weight:700;letter-spacing:0.15em;color:#FFB7C9;text-transform:uppercase;text-align:center;margin-bottom:12px}
+.section-title{font-size:clamp(32px,5vw,48px);font-weight:800;text-align:center;margin-bottom:16px;letter-spacing:-0.02em}
+.section-sub{font-size:16px;color:#8A7080;text-align:center;max-width:500px;margin:0 auto 60px;line-height:1.6}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;max-width:1100px;margin:0 auto}
+.feature-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,183,201,0.06);border-radius:16px;padding:32px;transition:all 0.3s;position:relative;overflow:hidden}
+.feature-card:hover{border-color:rgba(255,183,201,0.15);background:rgba(255,183,201,0.03);transform:translateY(-4px)}
+.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(255,183,201,0.2),transparent);opacity:0;transition:opacity 0.3s}
+.feature-card:hover::before{opacity:1}
+.feature-icon{width:48px;height:48px;border-radius:12px;background:rgba(255,183,201,0.06);display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:20px}
+.feature-card h3{font-size:18px;font-weight:700;margin-bottom:8px}
+.feature-card p{font-size:14px;color:#8A7080;line-height:1.6}
+
+/* ── Stats ── */
+.stats{padding:80px 40px;display:flex;justify-content:center;gap:80px;flex-wrap:wrap}
+.stat{text-align:center}
+.stat-num{font-size:48px;font-weight:900;background:linear-gradient(135deg,#FFD1DC,#FFB7C9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-label{font-size:13px;color:#8A7080;margin-top:4px}
+
+/* ── Modules ── */
+.modules{padding:120px 40px;position:relative}
+.modules::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,183,201,0.1),transparent)}
+.modules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;max-width:900px;margin:0 auto}
+.module-chip{padding:14px 20px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,183,201,0.06);font-size:13px;font-weight:600;color:#BBA4AC;display:flex;align-items:center;gap:8px;transition:all 0.2s}
+.module-chip:hover{border-color:rgba(255,183,201,0.15);color:#FFD1DC;transform:translateY(-2px)}
+.module-dot{width:6px;height:6px;border-radius:50%;background:#6EE7A0}
+
+/* ── CTA ── */
+.cta{padding:120px 40px;text-align:center}
+.cta-box{max-width:700px;margin:0 auto;padding:60px;border-radius:20px;background:linear-gradient(135deg,rgba(255,183,201,0.04),rgba(255,183,201,0.01));border:1px solid rgba(255,183,201,0.08);position:relative;overflow:hidden}
+.cta-box::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(255,183,201,0.06) 0%,transparent 60%);pointer-events:none}
+.cta h2{font-size:36px;font-weight:800;margin-bottom:12px;position:relative}
+.cta p{color:#8A7080;margin-bottom:32px;font-size:16px;position:relative}
+
+/* ── Footer ── */
+footer{padding:40px;border-top:1px solid rgba(255,183,201,0.04);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
+footer .left{display:flex;align-items:center;gap:8px;font-size:13px;color:#5A4550}
+footer .right{display:flex;gap:24px}
+footer .right a{color:#5A4550;text-decoration:none;font-size:13px;transition:color 0.2s}
+footer .right a:hover{color:#FFB7C9}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:0.6}50%{opacity:1}}
+.reveal{opacity:0;transform:translateY(30px);transition:all 0.8s ease-out}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:768px){
+  nav{padding:12px 20px}
+  .nav-links{display:none}
+  .hero{padding:100px 20px 60px}
+  .features,.modules,.cta{padding:80px 20px}
+  .stats{gap:40px}
+  .hero-buttons{flex-direction:column;width:100%}
+  .btn-primary,.btn-secondary{width:100%;text-align:center;justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav id="nav">
+  <a class="nav-logo" href="#">
+    <svg viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="3.5" fill="#FFB7C9" opacity="0.9"/>
+      <ellipse cx="12" cy="5.5" rx="3" ry="4" fill="#FFB7C9" opacity="0.6"/>
+      <ellipse cx="18" cy="9.5" rx="3" ry="4" fill="#F8A4B8" opacity="0.5" transform="rotate(72 12 12)"/>
+      <ellipse cx="15.5" cy="17" rx="3" ry="4" fill="#FFD1DC" opacity="0.4" transform="rotate(144 12 12)"/>
+      <ellipse cx="8.5" cy="17" rx="3" ry="4" fill="#F8A4B8" opacity="0.5" transform="rotate(216 12 12)"/>
+      <ellipse cx="6" cy="9.5" rx="3" ry="4" fill="#FFB7C9" opacity="0.6" transform="rotate(288 12 12)"/>
+    </svg>
+    <span>BLOOM</span>
+  </a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#modules">Modules</a>
+    <a href="https://github.com/ericpnag/bloom-launcher">GitHub</a>
+    <a class="nav-cta" href="#download">Download</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-badge">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" fill="#FFB7C9"/><ellipse cx="12" cy="6" rx="2.5" ry="3.5" fill="#FFB7C9" opacity="0.5"/></svg>
+    <span>v1.0.0</span> — Now available for macOS, Windows & Linux
+  </div>
+  <h1><span class="gradient">Bloom</span> Client</h1>
+  <p>A cherry blossom themed Minecraft client with cosmetics, performance mods, and a beautiful custom UI.</p>
+  <div class="hero-buttons">
+    <a class="btn-primary" href="#download">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      Download Now
+    </a>
+    <a class="btn-secondary" href="https://github.com/ericpnag/bloom-launcher">View on GitHub</a>
+  </div>
+  <div class="hero-image">
+    <div class="mockup">
+      <div class="mockup-text">BLOOM CLIENT</div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="stats">
+  <div class="stat reveal"><div class="stat-num">16+</div><div class="stat-label">Built-in Modules</div></div>
+  <div class="stat reveal"><div class="stat-num">8</div><div class="stat-label">Custom Capes</div></div>
+  <div class="stat reveal"><div class="stat-num">2x</div><div class="stat-label">FPS Boost</div></div>
+  <div class="stat reveal"><div class="stat-num">3</div><div class="stat-label">Platforms</div></div>
+</section>
+
+<!-- Features -->
+<section class="features" id="features">
+  <div class="section-label reveal">Features</div>
+  <h2 class="section-title reveal">Everything you need</h2>
+  <p class="section-sub reveal">Bloom Client comes packed with features to enhance your Minecraft experience.</p>
+  <div class="features-grid">
+    <div class="feature-card reveal">
+      <div class="feature-icon">🌸</div>
+      <h3>Cherry Blossom Theme</h3>
+      <p>Beautiful custom title screen, pause menu, and mod menu with falling petal animations throughout.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">⚡</div>
+      <h3>FPS Boost</h3>
+      <p>One-click performance optimization. Bundled with Sodium, Lithium, and EntityCulling for maximum frames.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">👘</div>
+      <h3>Cosmetics</h3>
+      <p>8 unique capes with in-game preview. Cherry Blossom, Galaxy, Flame, Frost and more — all free.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">🎮</div>
+      <h3>PvP Ready</h3>
+      <p>CPS counter, armor HUD, potion timers, low fire, low shield — everything for competitive play.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">🔧</div>
+      <h3>Mod Store</h3>
+      <p>Browse and install Fabric mods, shaders, and texture packs directly from Modrinth without leaving the launcher.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">🔐</div>
+      <h3>Microsoft Login</h3>
+      <p>Secure Microsoft OAuth2 authentication. Play on any server with your real Minecraft account.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Modules -->
+<section class="modules" id="modules">
+  <div class="section-label reveal">Modules</div>
+  <h2 class="section-title reveal">16 built-in modules</h2>
+  <p class="section-sub reveal">Toggle any module with Right Shift in-game. All customizable.</p>
+  <div class="modules-grid">
+    <div class="module-chip reveal"><div class="module-dot"></div>Toggle Sprint</div>
+    <div class="module-chip reveal"><div class="module-dot"></div>Fullbright</div>
+    <div class="module-chip reveal"><div class="module-dot"></div>FPS Display</div>
+    <div class="module-chip reveal"><div class="module-dot"></div>Coordinates</div>
+    <div class="module-chip reveal"><div class="module-dot"></div>Zoom</div>
+    <div class="module-chip reveal"><div class="module-dot"></div>Armor Status</div>
+    <div class="module-chip reveal"><div class="module-dot"></div>Ping Display</div>
+    <div class="module-chip reveal"><div class="module-dot"></div>CPS Counter</div>
+    <div class="module-chip reveal"><div class="module-dot"></div>Potion Effects</div>
+    <div class="module-chip reveal"><div class="module-dot"></div>Keystrokes</div>
+    <div class="module-chip reveal"><div class="module-dot"></div>Bloom Cape</div>
+    <div class="module-chip reveal"><div class="module-dot"></div>FPS Boost</div>
+    <div class="module-chip reveal"><div class="module-dot"></div>Low Fire</div>
+    <div class="module-chip reveal"><div class="module-dot"></div>Low Shield</div>
+    <div class="module-chip reveal"><div class="module-dot"></div>Armor HUD</div>
+    <div class="module-chip reveal"><div class="module-dot"></div>Potion Timer</div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="download">
+  <div class="cta-box reveal">
+    <h2>Ready to <span class="gradient">bloom</span>?</h2>
+    <p>Download Bloom Client for free. Available on macOS, Windows, and Linux.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a class="btn-primary" href="https://github.com/ericpnag/bloom-launcher/releases" style="font-size:14px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        macOS (.dmg)
+      </a>
+      <a class="btn-secondary" href="https://github.com/ericpnag/bloom-launcher/releases" style="font-size:14px">Windows (.exe)</a>
+      <a class="btn-secondary" href="https://github.com/ericpnag/bloom-launcher/releases" style="font-size:14px">Linux (.AppImage)</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="left">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" fill="#FFB7C9" opacity="0.6"/><ellipse cx="12" cy="6" rx="2.5" ry="3.5" fill="#FFB7C9" opacity="0.4"/></svg>
+    Bloom Client — Cherry Blossom Minecraft Experience
+  </div>
+  <div class="right">
+    <a href="https://github.com/ericpnag/bloom-launcher">GitHub</a>
+    <a href="https://github.com/ericpnag/bloom-launcher/issues">Support</a>
+  </div>
+</footer>
+
+<script>
+// Falling petals
+function spawnPetal(){
+  const p=document.createElement('div');
+  p.className='petal';
+  const size=4+Math.random()*8;
+  p.style.width=size+'px';p.style.height=size+'px';
+  p.style.left=Math.random()*100+'vw';
+  p.style.top='-20px';
+  p.style.animationDuration=(6+Math.random()*8)+'s';
+  p.style.animationDelay=Math.random()*2+'s';
+  const pinks=['#FFB7C9','#FFC0CB','#FFD1DC','#F8A4B8','#FFE4E9'];
+  p.style.background=pinks[Math.floor(Math.random()*pinks.length)];
+  p.style.borderRadius=Math.random()>0.5?'50% 0 50% 50%':'50% 50% 0 50%';
+  document.body.appendChild(p);
+  p.addEventListener('animationend',()=>p.remove());
+}
+setInterval(spawnPetal,400);
+for(let i=0;i<15;i++)setTimeout(spawnPetal,i*200);
+
+// Nav scroll effect
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>50);
+});
+
+// Reveal on scroll
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}});
+},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
