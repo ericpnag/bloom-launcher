@@ -1,3 +1,5 @@
+import { openUrl } from "@tauri-apps/plugin-opener";
+
 interface Props {
   phase: "waiting" | "code" | "error";
   code?: string;
@@ -56,15 +58,26 @@ export function LoginModal({ phase, code, url, error, onClose }: Props) {
 
         {phase === "code" && code && (
           <>
-            <p style={{ color: "var(--text-muted)", fontSize: "13px", margin: "0 0 20px", lineHeight: 1.5 }}>
-              Visit the link below and enter the code:
+            <p style={{ color: "var(--text-muted)", fontSize: "13px", margin: "0 0 12px", lineHeight: 1.5 }}>
+              Click the button to open the login page, then enter the code:
             </p>
-            <a href={url} target="_blank" rel="noreferrer" style={{
-              color: "var(--pink)", fontSize: "13px", display: "block", marginBottom: "16px",
-              textDecoration: "none",
-            }}>
+            <button
+              onClick={() => { if (url) openUrl(url); }}
+              style={{
+                background: "linear-gradient(135deg, var(--pink-300, #FFB7C9), var(--pink-400, #F8A4B8))",
+                color: "#1a0a12", border: "none", borderRadius: "8px",
+                padding: "10px 24px", fontSize: "13px", fontWeight: "700",
+                cursor: "pointer", fontFamily: "inherit", marginBottom: "12px",
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={e => e.currentTarget.style.transform = "translateY(-1px)"}
+              onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}
+            >
+              Open Login Page
+            </button>
+            <div style={{ fontSize: "11px", color: "var(--text-faint)", marginBottom: "16px" }}>
               {url}
-            </a>
+            </div>
             <div style={{
               background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,176,192,0.12)",
               borderRadius: "12px", padding: "20px", marginBottom: "20px",
