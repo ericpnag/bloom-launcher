@@ -12,10 +12,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InGameOverlayRenderer.class)
 public class LowFireMixin {
-    @Inject(method = "renderFireOverlay", at = @At("HEAD"))
+    @Inject(method = "renderFireOverlay", at = @At("HEAD"), cancellable = true)
     private static void bloomLowFire(MatrixStack matrices, VertexConsumerProvider vertexConsumers, Sprite sprite, CallbackInfo ci) {
         if (LowFire.active) {
-            matrices.translate(0, -0.5, 0);
+            // Push matrix, scale fire down to bottom of screen
+            matrices.push();
+            matrices.translate(0.0, -0.4, 0.0);   // push fire lower on screen
+            matrices.scale(1.0f, 0.5f, 1.0f);     // shrink to 50% height
+        }
+    }
+
+    @Inject(method = "renderFireOverlay", at = @At("RETURN"))
+    private static void bloomLowFireEnd(MatrixStack matrices, VertexConsumerProvider vertexConsumers, Sprite sprite, CallbackInfo ci) {
+        if (LowFire.active) {
+            matrices.pop();
         }
     }
 }

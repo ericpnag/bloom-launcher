@@ -7,18 +7,17 @@ import org.lwjgl.glfw.GLFW;
 
 public class Keystrokes extends Module {
     public Keystrokes() {
-        super("Keystrokes", "Show WASD and mouse keys on screen", false);
+        super("Keystrokes", "Show WASD and mouse keys on screen", true);
     }
 
-    @Override
-    public boolean hasHud() { return true; }
+    @Override public boolean hasHud() { return true; }
+    @Override public int getHudHeight() { return 44; }
 
     @Override
     public void renderHud(DrawContext context, MinecraftClient client, int y) {
         if (client.player == null || client.getWindow() == null) return;
-        int screenW = client.getWindow().getScaledWidth();
-        int baseX = screenW / 2 - 26;
-        int baseY = client.getWindow().getScaledHeight() - 70;
+        int baseX = 4;
+        int baseY = y + 2;
         long handle = client.getWindow().getHandle();
 
         drawKey(context, client, "W", baseX + 12, baseY, GLFW.glfwGetKey(handle, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS);
@@ -36,6 +35,6 @@ public class Keystrokes extends Module {
     private void drawKey(DrawContext ctx, MinecraftClient client, String key, int x, int y, boolean pressed) {
         ctx.fill(x, y, x + 11, y + 12, pressed ? 0x88FFB0C0 : 0x44000000);
         int tw = client.textRenderer.getWidth(key);
-        ctx.drawText(client.textRenderer, key, x + (11 - tw) / 2, y + 2, pressed ? 0xFFFFFF : 0x888888, false);
+        ctx.drawText(client.textRenderer, key, x + (11 - tw) / 2, y + 2, pressed ? 0xFFFFFFFF : 0xFF888888, true);
     }
 }

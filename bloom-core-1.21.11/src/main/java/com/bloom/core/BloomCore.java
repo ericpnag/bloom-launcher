@@ -13,16 +13,18 @@ public class BloomCore implements ClientModInitializer {
     public static final String MOD_ID = "bloom-core";
     public static final ModuleManager MODULES = new ModuleManager();
     private boolean wasPressed = false;
+    private boolean configLoaded = false;
 
     @Override
     public void onInitializeClient() {
+        com.bloom.core.config.KeyBindConfig.init();
         MODULES.init();
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.getWindow() == null) return;
 
             boolean pressed = GLFW.glfwGetKey(client.getWindow().getHandle(),
-                    GLFW.GLFW_KEY_RIGHT_SHIFT) == GLFW.GLFW_PRESS;
+                    com.bloom.core.config.KeyBindConfig.getKey("mod_menu")) == GLFW.GLFW_PRESS;
 
             if (pressed && !wasPressed) {
                 if (client.currentScreen instanceof ModuleScreen) {
@@ -34,6 +36,11 @@ public class BloomCore implements ClientModInitializer {
             wasPressed = pressed;
 
             if (client.player != null) {
+                // Load config once when player is available (game dir is set)
+                if (!configLoaded) {
+                    com.bloom.core.config.BloomConfig.load(MODULES);
+                    configLoaded = true;
+                }
                 for (Module m : MODULES.getModules()) {
                     if (m.isEnabled()) {
                         m.onTick(client);
@@ -49,7 +56,7 @@ public class BloomCore implements ClientModInitializer {
             for (Module m : MODULES.getModules()) {
                 if (m.isEnabled() && m.hasHud()) {
                     m.renderHud(context, client, y);
-                    y += 12;
+                    y += m.getHudHeight();
                 }
             }
         });

@@ -9,21 +9,31 @@ public class ModuleManager {
 
     public void init() {
         modules.add(new ToggleSprint());
-        modules.add(new Fullbright());
+        modules.add(new ToggleSneak());
         modules.add(new FpsDisplay());
         modules.add(new Coordinates());
+        modules.add(new DirectionHud());
         modules.add(new Zoom());
-        modules.add(new ArmorStatus());
+        modules.add(new BundledMod("Freelook", "Hold key to look around freely"));
+        modules.add(new BundledMod("Better Hitreg", "Improved hit registration"));
         modules.add(new PingDisplay());
         modules.add(new CpsCounter());
+        modules.add(new ComboCounter());
+        modules.add(new ReachDisplay());
         modules.add(new PotionEffects());
+        modules.add(new PotionTimer());
         modules.add(new Keystrokes());
-        modules.add(new CosmeticsCape());
-        modules.add(new PerformanceBoost());
+        modules.add(new ArmorHud());
+        modules.add(new SaturationDisplay());
+        modules.add(new MemoryDisplay());
+        modules.add(new ServerDisplay());
+        modules.add(new PackDisplay());
+        modules.add(new TimeChanger());
+        modules.add(new Scoreboard());
         modules.add(new LowFire());
         modules.add(new LowShield());
-        modules.add(new ArmorHud());
-        modules.add(new PotionTimer());
+        modules.add(new CosmeticsCape());
+        modules.add(new PerformanceBoost());
     }
 
     public List<Module> getModules() {

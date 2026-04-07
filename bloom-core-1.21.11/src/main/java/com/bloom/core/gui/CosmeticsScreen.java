@@ -13,9 +13,7 @@ import net.minecraft.util.Identifier;
 public class CosmeticsScreen extends Screen {
     private final Screen parent;
     private int selectedCape = 0;
-    private float playerRotation = 155f;
-    private boolean draggingPlayer = false;
-    private double lastMouseX = 0;
+    private boolean showBack = false;
 
     private static final String[] CAPE_NAMES = {
         "Cherry Blossom", "Midnight", "Frost", "Flame",
@@ -57,21 +55,13 @@ public class CosmeticsScreen extends Screen {
         int w = this.width, h = this.height, cx = w / 2;
         ctx.fill(0, 0, w, h, 0xEE0a0611);
 
-        // Track mouse for drag rotation
-        if (draggingPlayer) {
-            playerRotation += (float)(mouseX - lastMouseX) * 2f;
-        }
-        lastMouseX = mouseX;
-
-        // Title
-        String title = "COSMETICS";
+        String title = "WARDROBE";
         ctx.drawText(this.textRenderer, title, cx - this.textRenderer.getWidth(title) / 2, 8, 0xFFFFD1DC, false);
         ctx.fill(cx - 40, 20, cx + 40, 21, 0x22FFB7C9);
 
         // === LEFT: Cape grid ===
         int leftEnd = w / 2 - 5;
-        String ct = "CAPES";
-        ctx.drawText(this.textRenderer, ct, leftEnd / 2 - this.textRenderer.getWidth(ct) / 2, 26, 0xFFFFB7C9, false);
+        ctx.drawText(this.textRenderer, "CAPES", leftEnd / 2 - this.textRenderer.getWidth("CAPES") / 2, 26, 0xFFFFB7C9, false);
 
         int cols = 3, cardW = 50, cardH = 56, gap = 4;
         int gridW = cols * cardW + (cols - 1) * gap;
@@ -91,7 +81,6 @@ public class CosmeticsScreen extends Screen {
                 ctx.fill(x + cardW - 1, y, x + cardW, y + cardH, 0xAAFFB7C9);
             }
 
-            // Mini cape preview gradient
             if (i < CAPE_TOP.length - 1) {
                 int px = x + 12, py = y + 4, pw = 26, ph = 28;
                 for (int r2 = 0; r2 < ph; r2++) {
@@ -106,132 +95,63 @@ public class CosmeticsScreen extends Screen {
                 ctx.drawText(this.textRenderer, "OFF", x + cardW/2 - this.textRenderer.getWidth("OFF")/2, y + 14, 0xFF5A4550, false);
             }
 
-            String name = CAPE_NAMES[i];
-            int nw = this.textRenderer.getWidth(name);
+            String name = CAPE_NAMES[i]; int nw = this.textRenderer.getWidth(name);
             if (nw > cardW - 4) { name = name.substring(0, Math.min(name.length(), 6)) + ".."; nw = this.textRenderer.getWidth(name); }
             ctx.drawText(this.textRenderer, name, x + cardW/2 - nw/2, y + 35, hov||sel ? 0xFFF0E4E8 : 0xFF8A7080, false);
-            if (sel) {
-                String eq = "Equipped";
-                ctx.drawText(this.textRenderer, eq, x + cardW/2 - this.textRenderer.getWidth(eq)/2, y + 46, 0xFF6EE7A0, false);
-            }
+            if (sel) ctx.drawText(this.textRenderer, "Equipped", x + cardW/2 - this.textRenderer.getWidth("Equipped")/2, y + 46, 0xFF6EE7A0, false);
         }
 
-        // === RIGHT: Character preview ===
+        // === RIGHT: 2D Back preview with cape ===
         int previewX = w / 2 + 5, previewW = w / 2 - 15;
         int previewCx = previewX + previewW / 2;
 
         ctx.fill(previewX, 26, previewX + previewW, h - 30, 0x18FFFFFF);
         ctx.fill(previewX, 26, previewX + previewW, 27, 0x22FFB7C9);
+        ctx.drawText(this.textRenderer, "BACK VIEW", previewCx - this.textRenderer.getWidth("BACK VIEW")/2, 30, 0xFF8A7080, false);
 
-        String pt = "PREVIEW";
-        ctx.drawText(this.textRenderer, pt, previewCx - this.textRenderer.getWidth(pt)/2, 30, 0xFF8A7080, false);
-
+        // 3D avatar preview — front view with cape info
         MinecraftClient mc = MinecraftClient.getInstance();
-
-        // Try 3D player model if in-game, otherwise draw 2D preview
         if (mc.player != null) {
             if (CosmeticsCape.showCape && CosmeticsCape.capeFile != null) {
                 Identifier capeId = Identifier.of("bloom-core", "textures/cape/" + CosmeticsCape.capeFile);
                 mc.getTextureManager().registerTexture(capeId, new ResourceTexture(capeId));
             }
-            int entitySize = Math.min(previewW / 3, (h - 100));
-            float origYaw = mc.player.getYaw();
-            float origBodyYaw = mc.player.bodyYaw;
-            float origHeadYaw = mc.player.headYaw;
-            float origPitch = mc.player.getPitch();
-            mc.player.setYaw(playerRotation);
-            mc.player.bodyYaw = playerRotation;
-            mc.player.headYaw = playerRotation;
-            mc.player.setPitch(0);
-            InventoryScreen.drawEntity(ctx, previewX + 8, 42, previewX + previewW - 8, h - 35,
-                entitySize, 0.1f, previewCx, h / 2 - 20, mc.player);
-            mc.player.setYaw(origYaw);
-            mc.player.bodyYaw = origBodyYaw;
-            mc.player.headYaw = origHeadYaw;
-            mc.player.setPitch(origPitch);
-        } else {
-            // 2D skin preview using actual player skin texture
-            int charX = previewCx;
-            int charY = h / 2 + 10;
-            int s = 4; // scale
-
-            // Get skin texture from session
-            Identifier skinTex = null;
-            try {
-                java.util.UUID uuid = mc.getSession().getUuidOrNull();
-                if (uuid != null) {
-                    com.mojang.authlib.GameProfile profile = new com.mojang.authlib.GameProfile(uuid, mc.getSession().getUsername());
-                    var skinTextures = mc.getSkinProvider().supplySkinTextures(profile, false).get();
-                    if (skinTextures != null && skinTextures.body() != null) {
-                        skinTex = skinTextures.body().texturePath();
-                    }
-                }
-            } catch (Exception ignored) {}
-
-            boolean showBack = ((int)((playerRotation % 360 + 360) % 360) > 90 && (int)((playerRotation % 360 + 360) % 360) < 270);
-
-            // Draw cape behind character if showing back
-            if (showBack && selectedCape < CAPE_FILES.length - 1) {
-                int capeW = 10 * s, capeH = 16 * s;
-                int cX = charX - capeW / 2, cY = charY - 28 * s;
-                for (int row = 0; row < capeH; row++) {
-                    float t = (float) row / (capeH - 1);
-                    int rv = (int)(CAPE_TOP[selectedCape][0]*(1-t) + CAPE_BOT[selectedCape][0]*t);
-                    int gv = (int)(CAPE_TOP[selectedCape][1]*(1-t) + CAPE_BOT[selectedCape][1]*t);
-                    int bv = (int)(CAPE_TOP[selectedCape][2]*(1-t) + CAPE_BOT[selectedCape][2]*t);
-                    int widen = row / (s * 3);
-                    ctx.fill(cX - widen, cY + row, cX + capeW + widen, cY + row + 1, 0xFF000000|(rv<<16)|(gv<<8)|bv);
-                }
-            }
-
-            if (skinTex != null) {
-                // Skin texture is 64x64. UV coords for front/back:
-                // Front head: u=8,v=8 w=8,h=8
-                // Back head: u=24,v=8 w=8,h=8
-                // Front body: u=20,v=20 w=8,h=12
-                // Back body: u=32,v=20 w=8,h=12
-                // Front right arm: u=44,v=20 w=4,h=12
-                // Front left arm: u=36,v=52 w=4,h=12
-                // Front right leg: u=4,v=20 w=4,h=12
-                // Front left leg: u=20,v=52 w=4,h=12
-
-                int headU = showBack ? 24 : 8, headV = 8;
-                int bodyU = showBack ? 32 : 20, bodyV = 20;
-                int rArmU = showBack ? 52 : 44, rArmV = 20;
-                int lArmU = showBack ? 44 : 36, lArmV = 52;
-                int rLegU = showBack ? 12 : 4, rLegV = 20;
-                int lLegU = showBack ? 28 : 20, lLegV = 52;
-
-                // drawTexture(Pipeline, Id, x, y, dispW, dispH, u, v, regionW, regionH, texW, texH)
-                var P = net.minecraft.client.gl.RenderPipelines.GUI_TEXTURED;
-                // Head 8x8
-                ctx.drawTexture(P, skinTex, charX-4*s, charY-32*s, (float)headU, (float)headV, 8*s, 8*s, 64, 64);
-                // Body 8x12
-                ctx.drawTexture(P, skinTex, charX-4*s, charY-24*s, (float)bodyU, (float)bodyV, 8*s, 12*s, 64, 64);
-                // Right arm 4x12
-                ctx.drawTexture(P, skinTex, charX-8*s, charY-24*s, (float)rArmU, (float)rArmV, 4*s, 12*s, 64, 64);
-                // Left arm 4x12
-                ctx.drawTexture(P, skinTex, charX+4*s, charY-24*s, (float)lArmU, (float)lArmV, 4*s, 12*s, 64, 64);
-                // Right leg 4x12
-                ctx.drawTexture(P, skinTex, charX-4*s, charY-12*s, (float)rLegU, (float)rLegV, 4*s, 12*s, 64, 64);
-                // Left leg 4x12
-                ctx.drawTexture(P, skinTex, charX, charY-12*s, (float)lLegU, (float)lLegV, 4*s, 12*s, 64, 64);
+            int entitySize = Math.min(previewW / 3, (h - 120));
+            int x1 = previewX + 8, y1 = 44, x2 = previewX + previewW - 8, y2 = h - 40;
+            // Both views use 3D drawEntity with mouse control
+            // Back view: offset mouseX so default position shows back, move mouse to rotate
+            float lookX, lookY;
+            if (showBack) {
+                // Offset mouseX: when mouse is at center of preview, entity faces away
+                int centerX = (x1 + x2) / 2;
+                lookX = (float)(2 * centerX - mouseX); // mirror around center
+                lookY = (float)(y1 + (y2 - y1) / 3); // look at upper third to keep head level
             } else {
-                // Fallback: Steve colors
-                ctx.fill(charX-4*s, charY-32*s, charX+4*s, charY-24*s, 0xFFD4A574);
-                ctx.fill(charX-4*s, charY-24*s, charX+4*s, charY-12*s, 0xFF3B3B3B);
-                ctx.fill(charX-8*s, charY-24*s, charX-4*s, charY-12*s, 0xFF3B3B3B);
-                ctx.fill(charX+4*s, charY-24*s, charX+8*s, charY-12*s, 0xFF3B3B3B);
-                ctx.fill(charX-4*s, charY-12*s, charX, charY, 0xFF2A2A2A);
-                ctx.fill(charX, charY-12*s, charX+4*s, charY, 0xFF2A2A2A);
+                lookX = (float)mouseX;
+                lookY = (float)mouseY;
             }
-
-            String hint = showBack ? "Cape view" : "Front view";
-            ctx.drawText(this.textRenderer, hint, previewCx - this.textRenderer.getWidth(hint)/2, charY + 4, 0xFF5A4550, false);
+            InventoryScreen.drawEntity(ctx, x1, y1, x2, y2, entitySize, 0.1f, lookX, lookY, mc.player);
+        } else {
+            String np = "Join a world to preview";
+            ctx.drawText(this.textRenderer, np, previewCx - this.textRenderer.getWidth(np)/2, h/2, 0xFF5A4550, false);
         }
 
-        String drag = mc.player != null ? "Drag to rotate" : "Click to rotate";
-        ctx.drawText(this.textRenderer, drag, previewCx - this.textRenderer.getWidth(drag)/2, h - 40, 0xFF5A4550, false);
+        // Cape name label
+        if (selectedCape < CAPE_FILES.length - 1) {
+            String capeName = "Cape: " + CAPE_NAMES[selectedCape];
+            ctx.drawText(this.textRenderer, capeName, previewCx - this.textRenderer.getWidth(capeName)/2, h - 55, 0xFF6EE7A0, false);
+        }
+
+        // Front/Back toggle button
+        int toggleW = 80, toggleH = 14;
+        int toggleX = previewCx - toggleW / 2, toggleY = h - 42;
+        boolean toggleHov = mouseX >= toggleX && mouseX <= toggleX + toggleW && mouseY >= toggleY && mouseY <= toggleY + toggleH;
+        ctx.fill(toggleX, toggleY, toggleX + toggleW, toggleY + toggleH, toggleHov ? 0x44FFB7C9 : 0x22FFFFFF);
+        ctx.fill(toggleX, toggleY, toggleX + toggleW, toggleY + 1, toggleHov ? 0x33FFB7C9 : 0x11FFFFFF);
+        String toggleText = showBack ? "Show Front" : "Show Back";
+        ctx.drawText(this.textRenderer, toggleText, previewCx - this.textRenderer.getWidth(toggleText)/2, toggleY + 3, toggleHov ? 0xFFF0E4E8 : 0xFF8A7080, false);
+
+        // Front/Back toggle button render area for click detection later
 
         // Back button
         int backW = 60, backH = 14, bx = cx - backW/2, by = h - 22;
@@ -247,22 +167,8 @@ public class CosmeticsScreen extends Screen {
         double mx = click.x(), my = click.y();
         int w = this.width, cx = w / 2;
 
-        // Preview area - start drag or rotate
-        int previewX = w / 2 + 5, previewW = w / 2 - 15;
-        if (mx >= previewX && mx <= previewX + previewW && my >= 26 && my <= this.height - 30) {
-            MinecraftClient mc = MinecraftClient.getInstance();
-            if (mc.player != null) {
-                draggingPlayer = true;
-            } else {
-                // No player - just flip rotation by 180 on click
-                playerRotation += 180;
-            }
-            return true;
-        }
-
         // Cape cards
-        int leftEnd = w / 2 - 5;
-        int cols = 3, cardW = 50, cardH = 56, gap = 4;
+        int leftEnd = w / 2 - 5, cols = 3, cardW = 50, cardH = 56, gap = 4;
         int gridW = cols * cardW + (cols - 1) * gap;
         int startX = leftEnd / 2 - gridW / 2, startY = 38;
         for (int i = 0; i < CAPE_NAMES.length; i++) {
@@ -270,11 +176,9 @@ public class CosmeticsScreen extends Screen {
             int x = startX + col * (cardW + gap), y = startY + row * (cardH + gap);
             if (mx >= x && mx <= x + cardW && my >= y && my <= y + cardH) {
                 selectedCape = i;
-                if (CAPE_FILES[i] == null) {
-                    CosmeticsCape.showCape = false;
-                } else {
-                    CosmeticsCape.showCape = true;
-                    CosmeticsCape.capeFile = CAPE_FILES[i];
+                if (CAPE_FILES[i] == null) { CosmeticsCape.showCape = false; }
+                else {
+                    CosmeticsCape.showCape = true; CosmeticsCape.capeFile = CAPE_FILES[i];
                     Identifier id = Identifier.of("bloom-core", "textures/cape/" + CAPE_FILES[i]);
                     MinecraftClient.getInstance().getTextureManager().registerTexture(id, new ResourceTexture(id));
                 }
@@ -282,23 +186,18 @@ public class CosmeticsScreen extends Screen {
             }
         }
 
+        // Front/Back toggle
+        int previewCx2 = (w / 2 + 5) + (w / 2 - 15) / 2;
+        int toggleW = 80, toggleH = 14;
+        int toggleX = previewCx2 - toggleW / 2, toggleY = this.height - 42;
+        if (mx >= toggleX && mx <= toggleX + toggleW && my >= toggleY && my <= toggleY + toggleH) {
+            showBack = !showBack; return true;
+        }
+
         // Back button
         int backW = 60, backH = 14, bx = cx - backW/2, by = this.height - 22;
-        if (mx >= bx && mx <= bx+backW && my >= by && my <= by+backH) {
-            client.setScreen(parent); return true;
-        }
+        if (mx >= bx && mx <= bx+backW && my >= by && my <= by+backH) { client.setScreen(parent); return true; }
         return super.mouseClicked(click, bl);
-    }
-
-    @Override
-    public boolean mouseDragged(Click click, double deltaX, double deltaY) {
-        if (draggingPlayer) { playerRotation += (float) deltaX * 2f; return true; }
-        return super.mouseDragged(click, deltaX, deltaY);
-    }
-
-    @Override
-    public boolean mouseReleased(Click click) {
-        draggingPlayer = false; return super.mouseReleased(click);
     }
 
     @Override public boolean shouldCloseOnEsc() { return true; }

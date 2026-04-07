@@ -49,50 +49,60 @@ public class BloomTitleScreen extends Screen {
         int w = this.width, h = this.height, cx = w / 2;
         float time = (System.currentTimeMillis() - openTime) / 1000f;
 
-        // Gradient background
-        ctx.fillGradient(0, 0, w, h / 3, 0xFF0a0611, 0xFF1a1025);
-        ctx.fillGradient(0, h / 3, w, h * 2 / 3, 0xFF1a1025, 0xFF2a1530);
-        ctx.fillGradient(0, h * 2 / 3, w, h, 0xFF2a1530, 0xFF0a0611);
+        // Dark purple gradient matching launcher
+        ctx.fillGradient(0, 0, w, h / 4, 0xFF120a18, 0xFF1a1028);
+        ctx.fillGradient(0, h / 4, w, h / 2, 0xFF1a1028, 0xFF261438);
+        ctx.fillGradient(0, h / 2, w, h * 3 / 4, 0xFF261438, 0xFF1e1030);
+        ctx.fillGradient(0, h * 3 / 4, w, h, 0xFF1e1030, 0xFF0e0814);
 
-        // Petals
+        // Radial glow in center
+        int glowA = (int)(6 + Math.sin(time * 0.8) * 3);
+        ctx.fill(cx - w/3, h/4, cx + w/3, h*3/4, (glowA << 24) | 0x301020);
+
+        // Soft petals (round, not diamond)
         for (int i = petals.size() - 1; i >= 0; i--) {
             Petal p = petals.get(i);
             p.x += p.vx * delta; p.y += p.vy * delta;
             p.phase += p.wobble * delta * 0.04f;
-            p.x += (float) Math.sin(p.phase) * 0.15f * delta;
+            p.x += (float) Math.sin(p.phase) * 0.12f * delta;
             if (p.y > h + 15 || p.x > w + 40) { petals.set(i, newPetal(false)); continue; }
-            int a = (int)(p.alpha * 255) << 24;
+            int a = (int)(p.alpha * 200) << 24;
             int col = a | (p.color & 0x00FFFFFF);
             int s = (int) p.size;
-            ctx.fill((int)p.x - s, (int)p.y, (int)p.x, (int)p.y - s/2, col);
-            ctx.fill((int)p.x, (int)p.y - s/2, (int)p.x + s, (int)p.y, col);
-            ctx.fill((int)p.x - s, (int)p.y, (int)p.x, (int)p.y + s/2, col);
-            ctx.fill((int)p.x, (int)p.y, (int)p.x + s, (int)p.y + s/2, col);
+            // Round petal (small filled circle approximation)
+            ctx.fill((int)p.x - s, (int)p.y - s/2, (int)p.x + s, (int)p.y + s/2, col);
         }
-        if (rng.nextFloat() < 0.2f) petals.add(newPetal(false));
-        if (petals.size() > 60) petals.subList(60, petals.size()).clear();
+        if (rng.nextFloat() < 0.15f) petals.add(newPetal(false));
+        if (petals.size() > 40) petals.subList(40, petals.size()).clear();
 
-        // Logo area
-        int logoY = h / 4 - 10;
-        int ga = (int)(8 + Math.sin(time * 1.2) * 5);
-        ctx.fill(cx - 70, logoY - 2, cx + 70, logoY + 28, (ga << 24) | 0xFFB0C0);
+        // Big BLOOM title
+        int logoY = h / 4 - 20;
 
+        // Subtle glow behind text
+        int ga = (int)(6 + Math.sin(time * 1.0) * 4);
+        ctx.fill(cx - 80, logoY - 4, cx + 80, logoY + 46, (ga << 24) | 0xFFB0C0);
+
+        // Draw "BLOOM" scaled up 3x
+        ctx.getMatrices().pushMatrix();
+        ctx.getMatrices().scale(3.0f, 3.0f);
         String bloom = "BLOOM";
-        int bw = this.textRenderer.getWidth(bloom);
-        ctx.drawText(this.textRenderer, bloom, cx - bw / 2, logoY + 4, 0xFFFFD1DC, false);
+        int bw3 = this.textRenderer.getWidth(bloom);
+        ctx.drawText(this.textRenderer, bloom, (int)(cx / 3.0f - bw3 / 2.0f), (int)(logoY / 3.0f), 0xFFFFD1DC, false);
+        ctx.getMatrices().popMatrix();
 
-        String client = "client";
-        int cw = this.textRenderer.getWidth(client);
-        ctx.drawText(this.textRenderer, client, cx - cw / 2, logoY + 18, 0xFF8A7080, false);
+        // Draw "MINECRAFT CLIENT" at normal size, spaced out
+        String sub = "M I N E C R A F T   C L I E N T";
+        int sw2 = this.textRenderer.getWidth(sub);
+        ctx.drawText(this.textRenderer, sub, cx - sw2 / 2, logoY + 30, 0xFF6A5060, false);
 
-        // Thin separator
-        int sa = (int)(20 + Math.sin(time * 1.8) * 10);
-        ctx.fill(cx - 40, logoY + 32, cx + 40, logoY + 33, (sa << 24) | 0xFFB0C0);
+        // Thin glowing separator
+        int sa = (int)(15 + Math.sin(time * 1.8) * 8);
+        ctx.fill(cx - 50, logoY + 44, cx + 50, logoY + 45, (sa << 24) | 0xFFB0C0);
 
         int btnW = 150;
         int btnH = 16;
         int gap = 3;
-        int startY = h / 4 + 36;
+        int startY = h / 4 + 40;
 
         ctx.fill(cx - btnW/2 - 6, startY - 4, cx + btnW/2 + 6, startY + (btnH + gap) * 5 + gap + 20, 0x880a0611);
 
@@ -142,7 +152,7 @@ public class BloomTitleScreen extends Screen {
     public boolean mouseClicked(Click click, boolean bl) {
         int cx = this.width / 2;
         int btnW = 150, btnH = 16, gap = 3;
-        int startY = this.height / 4 + 36;
+        int startY = this.height / 4 + 40;
         int x = cx - btnW / 2;
         double mouseX = click.x(), mouseY = click.y();
 

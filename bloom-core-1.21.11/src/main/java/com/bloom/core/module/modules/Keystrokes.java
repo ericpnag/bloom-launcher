@@ -10,15 +10,14 @@ public class Keystrokes extends Module {
         super("Keystrokes", "Show WASD and mouse keys on screen", true);
     }
 
-    @Override
-    public boolean hasHud() { return true; }
+    @Override public boolean hasHud() { return true; }
+    @Override public int getHudHeight() { return 44; }
 
     @Override
     public void renderHud(DrawContext context, MinecraftClient client, int y) {
         if (client.player == null || client.getWindow() == null) return;
-        int screenW = client.getWindow().getScaledWidth();
-        int baseX = screenW / 2 - 26;
-        int baseY = client.getWindow().getScaledHeight() - 70;
+        int baseX = 4;
+        int baseY = y + 2;
         long handle = client.getWindow().getHandle();
 
         drawKey(context, client, "W", baseX + 12, baseY, GLFW.glfwGetKey(handle, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS);

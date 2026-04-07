@@ -275,6 +275,7 @@ fn install_mods(client: &Client, _game_dir: &PathBuf, mc_version: &str) -> Resul
     // Auto-install bundled mods from Modrinth
     let bundled_mods = [
         ("betterhitreg", "better-hitreg.jar"),  // Better Hitreg
+        ("freelook", "freelook.jar"),            // Freelook
     ];
     for (project_id, filename) in &bundled_mods {
         let dest = mods_dir.join(filename);
@@ -317,7 +318,7 @@ pub fn get_versions() -> Result<Vec<String>, String> {
     let text = fs::read_to_string(&manifest_path).map_err(|e| e.to_string())?;
     let manifest: VersionManifest = serde_json::from_str(&text).map_err(|e| e.to_string())?;
     let versions: Vec<String> = manifest.versions.iter()
-        .filter(|v| v.r#type == "release" && v.id.starts_with("1.21"))
+        .filter(|v| v.r#type == "release")
         .map(|v| v.id.clone())
         .collect();
     Ok(versions)
@@ -373,42 +374,42 @@ fn do_launch(app: &AppHandle, version: &str, username: Option<String>, uuid: Opt
     let client_jar = versions_dir.join(format!("{}.jar", version));
     download_file(&client, &version_json.downloads.client.url, &client_jar)?;
 
-    // --- Fabric loader ---
-    emit(&app, 12, "Fetching Fabric loader...");
+    // --- Fabric loader (optional — skip for unsupported versions) ---
+    emit(&app, 12, "Checking Fabric support...");
 
-    let fabric_meta_url = format!(
-        "https://meta.fabricmc.net/v2/versions/loader/{}",
-        version
-    );
-    let fabric_meta_text = client.get(&fabric_meta_url)
-        .send().map_err(|e| e.to_string())?
-        .text().map_err(|e| e.to_string())?;
-    let fabric_loaders: Vec<FabricLoaderVersion> = serde_json::from_str(&fabric_meta_text)
-        .map_err(|e| format!("Fabric meta parse: {}", e))?;
-    let loader_version = fabric_loaders.first()
-        .ok_or("No Fabric loader found for this version")?
-        .loader.version.clone();
-
-    let fabric_json_url = format!(
-        "https://meta.fabricmc.net/v2/versions/loader/{}/{}/profile/json",
-        version, loader_version
-    );
-    let fabric_json_text = client.get(&fabric_json_url)
-        .send().map_err(|e| e.to_string())?
-        .text().map_err(|e| e.to_string())?;
-    let fabric_json: FabricVersionJson = serde_json::from_str(&fabric_json_text)
-        .map_err(|e| format!("Fabric JSON parse: {}", e))?;
-
-    // Download Fabric libraries
-    emit(&app, 14, "Downloading Fabric libraries...");
+    let mut fabric_json: Option<FabricVersionJson> = None;
     let mut fabric_classpath: Vec<PathBuf> = Vec::new();
-    for lib in &fabric_json.libraries {
-        if let Some(path) = maven_to_path(&lib.name) {
-            let dest = libraries_dir.join(&path);
-            let url = format!("{}{}", lib.url, path);
-            download_file(&client, &url, &dest)?;
-            fabric_classpath.push(dest);
+
+    let fabric_meta_url = format!("https://meta.fabricmc.net/v2/versions/loader/{}", version);
+    if let Ok(resp) = client.get(&fabric_meta_url).send().and_then(|r| r.text()) {
+        if let Ok(loaders) = serde_json::from_str::<Vec<FabricLoaderVersion>>(&resp) {
+            if let Some(first) = loaders.first() {
+                let loader_version = &first.loader.version;
+                let fabric_json_url = format!(
+                    "https://meta.fabricmc.net/v2/versions/loader/{}/{}/profile/json",
+                    version, loader_version
+                );
+                if let Ok(fj_text) = client.get(&fabric_json_url).send().and_then(|r| r.text()) {
+                    if let Ok(fj) = serde_json::from_str::<FabricVersionJson>(&fj_text) {
+                        emit(&app, 14, "Downloading Fabric libraries...");
+                        for lib in &fj.libraries {
+                            if let Some(path) = maven_to_path(&lib.name) {
+                                let dest = libraries_dir.join(&path);
+                                let url = format!("{}{}", lib.url, path);
+                                let _ = download_file(&client, &url, &dest);
+                                if dest.exists() { fabric_classpath.push(dest); }
+                            }
+                        }
+                        fabric_json = Some(fj);
+                    }
+                }
+            }
         }
+    }
+
+    let has_fabric = fabric_json.is_some();
+    if !has_fabric {
+        emit(&app, 14, "Fabric not available — launching vanilla...");
     }
 
     // --- Vanilla libraries ---
@@ -564,9 +565,11 @@ fn do_launch(app: &AppHandle, version: &str, username: Option<String>, uuid: Opt
         for h in handles { let _ = h.join(); }
     }
 
-    // Install mods (bloom-core + Fabric API)
-    emit(&app, 94, "Installing Bloom mods...");
-    install_mods(&client, &game_dir, &version)?;
+    // Install mods only if Fabric is available
+    if has_fabric {
+        emit(&app, 94, "Installing Bloom mods...");
+        install_mods(&client, &game_dir, &version)?;
+    }
 
     // Build classpath: Fabric libs + vanilla libs + client jar
     emit(&app, 96, "Building classpath...");
@@ -611,9 +614,11 @@ fn do_launch(app: &AppHandle, version: &str, username: Option<String>, uuid: Opt
     let mut jvm_args: Vec<String> = Vec::new();
     #[cfg(target_os = "macos")]
     jvm_args.push("-XstartOnFirstThread".to_string());
-    // Apply Fabric JVM arguments (e.g. -DFabricMcEmu)
-    for arg in &fabric_json.arguments.jvm {
-        jvm_args.push(arg.trim().to_string());
+    // Apply Fabric JVM arguments if available
+    if let Some(ref fj) = fabric_json {
+        for arg in &fj.arguments.jvm {
+            jvm_args.push(arg.trim().to_string());
+        }
     }
     jvm_args.push("-Xmx2048M".to_string());
     jvm_args.push("-Xms512M".to_string());
@@ -625,7 +630,13 @@ fn do_launch(app: &AppHandle, version: &str, username: Option<String>, uuid: Opt
     jvm_args.push("-Dminecraft.launcher.version=1.0.0".to_string());
     jvm_args.push("-cp".to_string());
     jvm_args.push(classpath);
-    jvm_args.push(fabric_json.main_class.clone());
+    // Use Fabric main class if available, otherwise vanilla
+    let main_class = if let Some(ref fj) = fabric_json {
+        fj.main_class.clone()
+    } else {
+        version_json.main_class.clone()
+    };
+    jvm_args.push(main_class);
     let user_type = if access_token.is_some() { "msa" } else { "offline" };
     jvm_args.push("--username".to_string()); jvm_args.push(username.as_deref().unwrap_or("Player").to_string());
     jvm_args.push("--version".to_string()); jvm_args.push(version.to_string());

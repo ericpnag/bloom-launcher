@@ -17,8 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class LowShieldMixin {
     @Inject(method = "renderFirstPersonItem", at = @At("HEAD"))
     private void bloomLowShield(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, OrderedRenderCommandQueue renderQueue, int light, CallbackInfo ci) {
-        if (LowShield.active && item.isOf(Items.SHIELD) && player.isUsingItem()) {
-            matrices.translate(0, 0.3, 0);
+        if (LowShield.active && item.isOf(Items.SHIELD)) {
+            matrices.translate(0.0, -0.4, 0.0);  // push shield lower on screen
         }
     }
 }

@@ -21,6 +21,10 @@ public abstract class Module {
     public void toggle() {
         enabled = !enabled;
         if (enabled) onEnable(); else onDisable();
+        // Auto-save config
+        try {
+            com.bloom.core.config.BloomConfig.save(com.bloom.core.BloomCore.MODULES);
+        } catch (Exception ignored) {}
     }
 
     public void setEnabled(boolean enabled) {
@@ -31,5 +35,6 @@ public abstract class Module {
     public void onDisable() {}
     public void onTick(MinecraftClient client) {}
     public boolean hasHud() { return false; }
+    public int getHudHeight() { return 12; }
     public void renderHud(DrawContext context, MinecraftClient client, int y) {}
 }

@@ -67,9 +67,10 @@ interface Props {
   selectedVersion: string;
   versions: string[];
   onVersionChange: (v: string) => void;
+  onOpenPicker?: () => void;
 }
 
-export function HeroBanner({ selectedVersion, versions, onVersionChange }: Props) {
+export function HeroBanner({ selectedVersion, versions, onVersionChange, onOpenPicker }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -118,14 +119,21 @@ export function HeroBanner({ selectedVersion, versions, onVersionChange }: Props
         <div style={{ fontSize: "11px", fontWeight: "500", color: "var(--text-muted)", letterSpacing: "0.3em", textTransform: "uppercase", marginBottom: "14px" }}>
           Minecraft Client
         </div>
-        <select
-          className="bloom-select"
-          value={selectedVersion}
-          onChange={e => onVersionChange(e.target.value)}
-          style={{ background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,176,192,0.15)", padding: "7px 22px", fontSize: "13px", fontWeight: "600", borderRadius: "8px" }}
+        <button
+          onClick={onOpenPicker}
+          style={{
+            background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,176,192,0.15)",
+            padding: "8px 24px", fontSize: "13px", fontWeight: "600", borderRadius: "8px",
+            color: "#fff", cursor: "pointer", fontFamily: "inherit",
+            display: "flex", alignItems: "center", gap: "8px",
+            transition: "all 0.15s",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,176,192,0.3)"; e.currentTarget.style.background = "rgba(0,0,0,0.5)"; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,176,192,0.15)"; e.currentTarget.style.background = "rgba(0,0,0,0.4)"; }}
         >
-          {versions.map(v => <option key={v} value={v}>{v}</option>)}
-        </select>
+          Minecraft {selectedVersion}
+          <span style={{ fontSize: "10px", opacity: 0.5 }}>&#9660;</span>
+        </button>
       </div>
 
       <style>{`

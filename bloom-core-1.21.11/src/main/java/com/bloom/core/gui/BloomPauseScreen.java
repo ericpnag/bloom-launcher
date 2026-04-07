@@ -32,7 +32,9 @@ public class BloomPauseScreen extends Screen {
     @Override
     public void render(DrawContext ctx, int mx, int my, float delta) {
         int w = this.width, h = this.height, cx = w / 2;
-        ctx.fill(0, 0, w, h, 0xDD0a0611);
+        // Dark purple overlay matching launcher
+        ctx.fillGradient(0, 0, w, h / 2, 0xDD120a18, 0xDD1a1028);
+        ctx.fillGradient(0, h / 2, w, h, 0xDD1a1028, 0xDD0e0814);
 
         // Petals
         for (float[] p : petals) {
@@ -45,23 +47,27 @@ public class BloomPauseScreen extends Screen {
         }
 
         // Panel
-        int pw = 170, ph = 150;
+        int pw = 200, ph = 165;
         int px = cx - pw / 2, py = h / 2 - ph / 2;
         ctx.fill(px, py, px + pw, py + ph, 0xEE0a0611);
         ctx.fill(px, py, px + pw, py + 1, 0x33FFB7C9);
         ctx.fill(px, py + ph - 1, px + pw, py + ph, 0x22FFB7C9);
 
-        // Title
+        // Title - scaled up BLOOM
+        ctx.getMatrices().pushMatrix();
+        ctx.getMatrices().scale(2.0f, 2.0f);
         String t = "BLOOM";
-        int tw = this.textRenderer.getWidth(t);
-        ctx.drawText(this.textRenderer, t, cx - tw / 2, py + 12, 0xFFFFD1DC, false);
-        String sub = "client";
+        int tw2 = this.textRenderer.getWidth(t);
+        ctx.drawText(this.textRenderer, t, (int)(cx / 2.0f - tw2 / 2.0f), (int)((py + 8) / 2.0f), 0xFFFFD1DC, false);
+        ctx.getMatrices().popMatrix();
+
+        String sub = "M I N E C R A F T  C L I E N T";
         int sw = this.textRenderer.getWidth(sub);
-        ctx.drawText(this.textRenderer, sub, cx - sw / 2, py + 24, 0xFF5A4550, false);
-        ctx.fill(px + 30, py + 36, px + pw - 30, py + 37, 0x22FFB7C9);
+        ctx.drawText(this.textRenderer, sub, cx - sw / 2, py + 26, 0xFF5A4550, false);
+        ctx.fill(px + 20, py + 38, px + pw - 20, py + 39, 0x22FFB7C9);
 
         // Buttons
-        int btnW = 140, btnH = 16, gap = 2, sy = py + 40;
+        int btnW = 160, btnH = 16, gap = 2, sy = py + 44;
         drawBtn(ctx, "Resume", cx, sy, btnW, btnH, mx, my, false);
         drawBtn(ctx, "Bloom Mods", cx, sy + btnH + gap, btnW, btnH, mx, my, false);
         drawBtn(ctx, "Cosmetics", cx, sy + (btnH+gap)*2, btnW, btnH, mx, my, false);
@@ -84,8 +90,8 @@ public class BloomPauseScreen extends Screen {
 
     @Override
     public boolean mouseClicked(Click click, boolean bl) {
-        int cx = this.width / 2, btnW = 140, btnH = 16, gap = 2;
-        int ph = 150, py = this.height / 2 - ph / 2, sy = py + 40;
+        int cx = this.width / 2, btnW = 160, btnH = 16, gap = 2;
+        int ph = 165, py = this.height / 2 - ph / 2, sy = py + 44;
         int x = cx - btnW / 2;
         double mouseX = click.x(), mouseY = click.y();
         for (int i = 0; i < 5; i++) {

@@ -31,6 +31,8 @@ export default function App() {
   const [account, setAccount] = useState<AccountInfo | null>(null);
   const [loginModal, setLoginModal] = useState<{ phase: "waiting" | "code" | "error"; code?: string; url?: string; error?: string } | null>(null);
   const [page, setPage] = useState<Page>("play");
+  const [showVersionPicker, setShowVersionPicker] = useState(false);
+  const [versionCategory, setVersionCategory] = useState<string | null>(null); // e.g. "1.21"
 
   useEffect(() => {
     invoke<any>("get_account").then(a => {
@@ -130,6 +132,7 @@ export default function App() {
               selectedVersion={selectedVersion}
               versions={versions}
               onVersionChange={setSelectedVersion}
+              onOpenPicker={() => setShowVersionPicker(true)}
             />
 
             {/* Launch Button */}
@@ -223,6 +226,105 @@ export default function App() {
         {page === "settings" && <LazyPage name="Settings" />}
       </div>
 
+      {showVersionPicker && (() => {
+        // Group versions by major.minor (e.g. "1.21", "1.20", "26.1")
+        const groups: Record<string, string[]> = {};
+        for (const v of versions) {
+          const parts = v.split(".");
+          const key = parts.length >= 2 ? parts.slice(0, 2).join(".") : v;
+          if (!groups[key]) groups[key] = [];
+          groups[key].push(v);
+        }
+        const categories = Object.keys(groups);
+        const filteredVersions = versionCategory ? (groups[versionCategory] || []) : [];
+
+        return (
+        <div style={{
+          position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", backdropFilter: "blur(6px)",
+          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 99,
+        }} onClick={() => { setShowVersionPicker(false); setVersionCategory(null); }}>
+          <div onClick={e => e.stopPropagation()} className="fade-in" style={{
+            background: "rgba(12,8,18,0.97)", border: "1px solid rgba(255,176,192,0.08)",
+            borderRadius: "16px", padding: "28px 32px", width: "min(560px, 90vw)", maxHeight: "75vh",
+            boxShadow: "0 24px 64px rgba(0,0,0,0.5)",
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                {versionCategory && (
+                  <div onClick={() => setVersionCategory(null)} style={{
+                    cursor: "pointer", color: "var(--text-muted)", fontSize: "13px",
+                    padding: "4px 10px", borderRadius: "6px", background: "rgba(255,255,255,0.04)",
+                    transition: "all 0.15s",
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = "rgba(255,176,192,0.08)"}
+                  onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.04)"}
+                  >Back</div>
+                )}
+                <div style={{ fontSize: "15px", fontWeight: "800", color: "var(--pink-200)", letterSpacing: "0.06em" }}>
+                  {versionCategory ? `MINECRAFT ${versionCategory}` : "SELECT A VERSION"}
+                </div>
+              </div>
+              <div onClick={() => { setShowVersionPicker(false); setVersionCategory(null); }} style={{
+                width: "28px", height: "28px", borderRadius: "6px", background: "rgba(255,80,80,0.1)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer", color: "var(--accent-red)", fontSize: "14px", fontWeight: "700",
+                transition: "background 0.15s",
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = "rgba(255,80,80,0.2)"}
+              onMouseLeave={e => e.currentTarget.style.background = "rgba(255,80,80,0.1)"}
+              >x</div>
+            </div>
+
+            <div style={{
+              display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))",
+              gap: "8px", maxHeight: "55vh", overflowY: "auto",
+            }}>
+              {!versionCategory ? (
+                /* Show major version categories */
+                categories.map(cat => {
+                  const hasSelected = groups[cat].includes(selectedVersion);
+                  const count = groups[cat].length;
+                  return (
+                    <div key={cat} onClick={() => {
+                      if (count === 1) { setSelectedVersion(groups[cat][0]); setShowVersionPicker(false); setVersionCategory(null); }
+                      else setVersionCategory(cat);
+                    }} style={{
+                      padding: "16px 12px", borderRadius: "10px", textAlign: "center",
+                      background: hasSelected ? "rgba(255,176,192,0.08)" : "rgba(255,255,255,0.02)",
+                      border: hasSelected ? "1px solid rgba(255,176,192,0.2)" : "1px solid rgba(255,255,255,0.04)",
+                      cursor: "pointer", transition: "all 0.15s",
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.borderColor = "rgba(255,176,192,0.15)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = hasSelected ? "rgba(255,176,192,0.08)" : "rgba(255,255,255,0.02)"; e.currentTarget.style.borderColor = hasSelected ? "rgba(255,176,192,0.2)" : "rgba(255,255,255,0.04)"; }}
+                    >
+                      <div style={{ fontSize: "16px", fontWeight: "800", color: hasSelected ? "var(--pink-200)" : "var(--text-primary)", marginBottom: "4px" }}>{cat}</div>
+                      <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>{count} version{count > 1 ? "s" : ""}</div>
+                    </div>
+                  );
+                })
+              ) : (
+                /* Show specific versions within category */
+                filteredVersions.map(v => (
+                  <div key={v} onClick={() => { setSelectedVersion(v); setShowVersionPicker(false); setVersionCategory(null); }} style={{
+                    padding: "18px 12px", borderRadius: "10px", textAlign: "center",
+                    background: v === selectedVersion ? "rgba(255,176,192,0.1)" : "rgba(255,255,255,0.02)",
+                    border: v === selectedVersion ? "1px solid rgba(255,176,192,0.25)" : "1px solid rgba(255,255,255,0.04)",
+                    cursor: "pointer", transition: "all 0.15s",
+                    fontSize: "14px", fontWeight: "700",
+                    color: v === selectedVersion ? "var(--pink-200)" : "var(--text-secondary)",
+                  }}
+                  onMouseEnter={e => { if (v !== selectedVersion) { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; e.currentTarget.style.borderColor = "rgba(255,176,192,0.12)"; }}}
+                  onMouseLeave={e => { if (v !== selectedVersion) { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.04)"; }}}
+                  >
+                    {v}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+        );
+      })()}
       {loginModal && <LoginModal {...loginModal} onClose={() => setLoginModal(null)} />}
     </div>
   );

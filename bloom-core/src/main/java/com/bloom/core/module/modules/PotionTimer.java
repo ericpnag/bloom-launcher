@@ -11,6 +11,7 @@ public class PotionTimer extends Module {
     }
 
     @Override public boolean hasHud() { return true; }
+    @Override public int getHudHeight() { return 0; } // renders on right side
 
     @Override
     public void renderHud(DrawContext context, MinecraftClient client, int y) {
