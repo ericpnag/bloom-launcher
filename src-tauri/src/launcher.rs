@@ -33,20 +33,152 @@ fn emit(app: &AppHandle, pct: u32, msg: &str) {
 }
 
 fn find_java() -> String {
-    // Check JAVA_HOME first
+    let java_bin = if cfg!(target_os = "windows") { "java.exe" } else { "java" };
+
+    // 1. Check bundled Java in Pulsar data dir
+    let bundled = bundled_java_path();
+    if bundled.exists() {
+        return bundled.to_string_lossy().to_string();
+    }
+
+    // 2. Check JAVA_HOME
     if let Ok(java_home) = std::env::var("JAVA_HOME") {
-        let bin = PathBuf::from(&java_home).join("bin").join(if cfg!(target_os = "windows") { "java.exe" } else { "java" });
+        let bin = PathBuf::from(&java_home).join("bin").join(java_bin);
         if bin.exists() {
             return bin.to_string_lossy().to_string();
         }
     }
-    // Platform defaults
+
+    // 3. Check common install locations
     #[cfg(target_os = "macos")]
-    { "/usr/bin/java".to_string() }
+    {
+        // Homebrew paths
+        for path in &[
+            "/opt/homebrew/opt/openjdk@21/bin/java",
+            "/opt/homebrew/opt/openjdk/bin/java",
+            "/usr/local/opt/openjdk@21/bin/java",
+            "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home/bin/java",
+        ] {
+            if PathBuf::from(path).exists() {
+                return path.to_string();
+            }
+        }
+    }
+
+    // 4. Fallback to system java
+    java_bin.to_string()
+}
+
+fn bundled_java_path() -> PathBuf {
+    let java_dir = game_dir().join("java");
+    #[cfg(target_os = "macos")]
+    { java_dir.join("jdk-21/Contents/Home/bin/java") }
     #[cfg(target_os = "windows")]
-    { "java".to_string() }
+    { java_dir.join("jdk-21/bin/java.exe") }
     #[cfg(target_os = "linux")]
-    { "java".to_string() }
+    { java_dir.join("jdk-21/bin/java") }
+}
+
+fn download_java(app: &AppHandle) -> Result<(), String> {
+    let bundled = bundled_java_path();
+    if bundled.exists() { return Ok(()); }
+
+    let _ = app.emit("launch_progress", serde_json::json!({"pct": 5, "msg": "Downloading Java 21..."}));
+
+    let java_dir = game_dir().join("java");
+    fs::create_dir_all(&java_dir).map_err(|e| e.to_string())?;
+
+    // Adoptium Temurin JDK 21 download URLs
+    #[cfg(target_os = "macos")]
+    let url = if cfg!(target_arch = "aarch64") {
+        "https://api.adoptium.net/v3/binary/latest/21/ga/mac/aarch64/jdk/hotspot/normal/eclipse?project=jdk"
+    } else {
+        "https://api.adoptium.net/v3/binary/latest/21/ga/mac/x64/jdk/hotspot/normal/eclipse?project=jdk"
+    };
+    #[cfg(target_os = "windows")]
+    let url = "https://api.adoptium.net/v3/binary/latest/21/ga/windows/x64/jdk/hotspot/normal/eclipse?project=jdk";
+    #[cfg(target_os = "linux")]
+    let url = "https://api.adoptium.net/v3/binary/latest/21/ga/linux/x64/jdk/hotspot/normal/eclipse?project=jdk";
+
+    let client = Client::builder()
+        .redirect(reqwest::redirect::Policy::limited(10))
+        .build()
+        .map_err(|e| e.to_string())?;
+
+    let response = client.get(url).send().map_err(|e| format!("Failed to download Java: {}", e))?;
+    if !response.status().is_success() {
+        return Err(format!("Java download failed: HTTP {}", response.status()));
+    }
+
+    let bytes = response.bytes().map_err(|e| e.to_string())?;
+    let _ = app.emit("launch_progress", serde_json::json!({"pct": 30, "msg": "Installing Java 21..."}));
+
+    #[cfg(target_os = "macos")]
+    {
+        // Adoptium sends a .tar.gz on macOS
+        let tar_path = java_dir.join("java.tar.gz");
+        fs::write(&tar_path, &bytes).map_err(|e| e.to_string())?;
+        let status = Command::new("tar")
+            .args(["xzf", &tar_path.to_string_lossy(), "-C", &java_dir.to_string_lossy()])
+            .status()
+            .map_err(|e| e.to_string())?;
+        if !status.success() { return Err("Failed to extract Java".to_string()); }
+        let _ = fs::remove_file(&tar_path);
+
+        // Rename extracted folder to jdk-21
+        if let Ok(entries) = fs::read_dir(&java_dir) {
+            for entry in entries.flatten() {
+                let name = entry.file_name().to_string_lossy().to_string();
+                if name.starts_with("jdk-21") && name != "jdk-21" && entry.path().is_dir() {
+                    let _ = fs::rename(entry.path(), java_dir.join("jdk-21"));
+                    break;
+                }
+            }
+        }
+    }
+
+    #[cfg(target_os = "windows")]
+    {
+        let zip_path = java_dir.join("java.zip");
+        fs::write(&zip_path, &bytes).map_err(|e| e.to_string())?;
+        let file = fs::File::open(&zip_path).map_err(|e| e.to_string())?;
+        let mut archive = zip::ZipArchive::new(file).map_err(|e| e.to_string())?;
+        archive.extract(&java_dir).map_err(|e| e.to_string())?;
+        let _ = fs::remove_file(&zip_path);
+        if let Ok(entries) = fs::read_dir(&java_dir) {
+            for entry in entries.flatten() {
+                let name = entry.file_name().to_string_lossy().to_string();
+                if name.starts_with("jdk-21") && name != "jdk-21" && entry.path().is_dir() {
+                    let _ = fs::rename(entry.path(), java_dir.join("jdk-21"));
+                    break;
+                }
+            }
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    {
+        let tar_path = java_dir.join("java.tar.gz");
+        fs::write(&tar_path, &bytes).map_err(|e| e.to_string())?;
+        let status = Command::new("tar")
+            .args(["xzf", &tar_path.to_string_lossy(), "-C", &java_dir.to_string_lossy()])
+            .status()
+            .map_err(|e| e.to_string())?;
+        if !status.success() { return Err("Failed to extract Java".to_string()); }
+        let _ = fs::remove_file(&tar_path);
+        if let Ok(entries) = fs::read_dir(&java_dir) {
+            for entry in entries.flatten() {
+                let name = entry.file_name().to_string_lossy().to_string();
+                if name.starts_with("jdk-21") && name != "jdk-21" && entry.path().is_dir() {
+                    let _ = fs::rename(entry.path(), java_dir.join("jdk-21"));
+                    break;
+                }
+            }
+        }
+    }
+
+    let _ = app.emit("launch_progress", serde_json::json!({"pct": 40, "msg": "Java 21 installed!"}));
+    Ok(())
 }
 
 // --- Vanilla structs ---
@@ -352,6 +484,9 @@ pub fn launch_minecraft(app: AppHandle, version: String, username: Option<String
 }
 
 fn do_launch(app: &AppHandle, version: &str, username: Option<String>, uuid: Option<String>, access_token: Option<String>) -> Result<(), String> {
+    // Auto-download Java if not found
+    download_java(app)?;
+
     let client = Client::new();
     let game_dir = game_dir();
     let versions_dir = game_dir.join(format!("versions/{}", version));
