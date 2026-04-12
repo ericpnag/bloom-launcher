@@ -700,7 +700,7 @@ fn do_launch(app: &AppHandle, version: &str, username: Option<String>, uuid: Opt
     if !xuid.is_empty() {
         jvm_args.push("--xuid".to_string()); jvm_args.push(xuid);
     }
-    jvm_args.push("--clientId".to_string()); jvm_args.push("c36a9fb6-4f2a-41ff-90bd-ae7cc92031eb".to_string());
+    jvm_args.push("--clientId".to_string()); jvm_args.push("ef9218b2-b1ed-47c5-ab68-2554ef79b244".to_string());
     jvm_args.push("--userProperties".to_string()); jvm_args.push("{}".to_string());
 
     // Open log file in the game directory so we can see what's happening
