@@ -9,88 +9,88 @@
 
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:'Inter',system-ui,sans-serif;background:#0A0A0F;color:#E0E0E8;overflow-x:hidden}
-::selection{background:rgba(198,120,221,0.3);color:#fff}
+body{font-family:'Inter',system-ui,sans-serif;background:#000000;color:#E0E0E8;overflow-x:hidden}
+::selection{background:rgba(255,255,255,0.3);color:#fff}
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(198,120,221,0.15);border-radius:3px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:3px}
 
 /* ── Swirl Particles ── */
-.star{position:fixed;width:2px;height:2px;background:#C678DD;border-radius:50%;opacity:0;pointer-events:none;z-index:0;animation:swirl linear forwards}
+.star{position:fixed;width:2px;height:2px;background:#FFFFFF;border-radius:50%;opacity:0;pointer-events:none;z-index:0;animation:swirl linear forwards}
 @keyframes swirl{0%{opacity:0;transform:scale(0.5) rotate(0deg)}20%{opacity:0.8;transform:scale(1) rotate(30deg)}80%{opacity:0.6;transform:scale(0.8) rotate(120deg)}100%{opacity:0;transform:scale(0) rotate(180deg)}}
 
 /* ── Nav ── */
-nav{position:fixed;top:0;width:100%;z-index:100;padding:16px 40px;display:flex;align-items:center;backdrop-filter:blur(20px);background:rgba(10,10,15,0.7);border-bottom:1px solid rgba(198,120,221,0.04);transition:all 0.3s}
+nav{position:fixed;top:0;width:100%;z-index:100;padding:16px 40px;display:flex;align-items:center;backdrop-filter:blur(20px);background:rgba(10,10,15,0.7);border-bottom:1px solid rgba(255,255,255,0.04);transition:all 0.3s}
 nav.scrolled{background:rgba(10,10,15,0.92);padding:12px 40px}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
 .nav-logo svg{width:28px;height:28px}
-.nav-logo span{font-weight:800;font-size:14px;letter-spacing:0.14em;color:#C678DD}
+.nav-logo span{font-weight:800;font-size:14px;letter-spacing:0.14em;color:#FFFFFF}
 .nav-links{display:flex;gap:32px;margin-left:auto;align-items:center}
 .nav-links a{color:#5C6370;text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s}
-.nav-links a:hover{color:#C678DD}
-.nav-cta{background:linear-gradient(135deg,#C678DD,#E06C75);color:#0A0A0F;padding:8px 24px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;transition:all 0.2s;border:none;cursor:pointer}
-.nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(198,120,221,0.25)}
+.nav-links a:hover{color:#FFFFFF}
+.nav-cta{background:linear-gradient(135deg,#FFFFFF,#E0E0E0);color:#000000;padding:8px 24px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;transition:all 0.2s;border:none;cursor:pointer}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(255,255,255,0.25)}
 
 /* ── Hero ── */
 .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;padding:120px 20px 80px}
-.hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 50% 30%,rgba(198,120,221,0.06) 0%,transparent 60%);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:20px;background:rgba(198,120,221,0.06);border:1px solid rgba(198,120,221,0.1);font-size:12px;color:#ABB2BF;margin-bottom:32px;animation:fadeUp 0.8s ease-out}
-.hero-badge span{color:#C678DD;font-weight:600}
+.hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 50% 30%,rgba(255,255,255,0.06) 0%,transparent 60%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);font-size:12px;color:#ABB2BF;margin-bottom:32px;animation:fadeUp 0.8s ease-out}
+.hero-badge span{color:#FFFFFF;font-weight:600}
 .hero h1{font-size:clamp(48px,8vw,96px);font-weight:900;letter-spacing:-0.02em;line-height:1;margin-bottom:16px;animation:fadeUp 0.8s ease-out 0.1s both}
-.hero h1 .gradient{background:linear-gradient(135deg,#C678DD,#E06C75,#D19A66);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero h1 .gradient{background:linear-gradient(135deg,#FFFFFF,#E0E0E0,#A0A0A0);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hero p{font-size:18px;color:#5C6370;max-width:500px;line-height:1.6;margin-bottom:40px;animation:fadeUp 0.8s ease-out 0.2s both}
 .hero-buttons{display:flex;gap:16px;animation:fadeUp 0.8s ease-out 0.3s both}
-.btn-primary{background:linear-gradient(135deg,#C678DD,#E06C75);color:#0A0A0F;padding:14px 36px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;transition:all 0.25s;display:inline-flex;align-items:center;gap:8px}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(198,120,221,0.3)}
-.btn-secondary{background:rgba(255,255,255,0.04);border:1px solid rgba(198,120,221,0.1);color:#ABB2BF;padding:14px 36px;border-radius:12px;font-weight:600;font-size:15px;text-decoration:none;transition:all 0.25s}
-.btn-secondary:hover{border-color:rgba(198,120,221,0.25);color:#C678DD;background:rgba(198,120,221,0.06)}
-.hero-image{margin-top:60px;width:min(900px,90vw);border-radius:16px;overflow:hidden;border:1px solid rgba(198,120,221,0.08);box-shadow:0 40px 80px rgba(0,0,0,0.4);animation:fadeUp 1s ease-out 0.4s both;position:relative}
-.hero-image .mockup{width:100%;height:400px;background:linear-gradient(135deg,#0A0A0F,#12101A,#1a1525);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
-.hero-image .mockup-text{font-size:28px;font-weight:800;color:rgba(198,120,221,0.2);letter-spacing:0.1em}
-.hero-glow{position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(198,120,221,0.08) 0%,transparent 60%);top:-200px;left:50%;transform:translateX(-50%);pointer-events:none;animation:pulse 4s ease-in-out infinite}
+.btn-primary{background:linear-gradient(135deg,#FFFFFF,#E0E0E0);color:#000000;padding:14px 36px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;transition:all 0.25s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,255,255,0.3)}
+.btn-secondary{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#ABB2BF;padding:14px 36px;border-radius:12px;font-weight:600;font-size:15px;text-decoration:none;transition:all 0.25s}
+.btn-secondary:hover{border-color:rgba(255,255,255,0.25);color:#FFFFFF;background:rgba(255,255,255,0.06)}
+.hero-image{margin-top:60px;width:min(900px,90vw);border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);box-shadow:0 40px 80px rgba(0,0,0,0.4);animation:fadeUp 1s ease-out 0.4s both;position:relative}
+.hero-image .mockup{width:100%;height:400px;background:linear-gradient(135deg,#000000,#080808,#111111);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.hero-image .mockup-text{font-size:28px;font-weight:800;color:rgba(255,255,255,0.2);letter-spacing:0.1em}
+.hero-glow{position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(255,255,255,0.08) 0%,transparent 60%);top:-200px;left:50%;transform:translateX(-50%);pointer-events:none;animation:pulse 4s ease-in-out infinite}
 
 /* ── Features ── */
 .features{padding:120px 40px;position:relative}
-.features::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(198,120,221,0.1),transparent)}
-.section-label{font-size:12px;font-weight:700;letter-spacing:0.15em;color:#C678DD;text-transform:uppercase;text-align:center;margin-bottom:12px}
+.features::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent)}
+.section-label{font-size:12px;font-weight:700;letter-spacing:0.15em;color:#FFFFFF;text-transform:uppercase;text-align:center;margin-bottom:12px}
 .section-title{font-size:clamp(32px,5vw,48px);font-weight:800;text-align:center;margin-bottom:16px;letter-spacing:-0.02em}
 .section-sub{font-size:16px;color:#5C6370;text-align:center;max-width:500px;margin:0 auto 60px;line-height:1.6}
 .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;max-width:1100px;margin:0 auto}
-.feature-card{background:rgba(255,255,255,0.02);border:1px solid rgba(198,120,221,0.06);border-radius:16px;padding:32px;transition:all 0.3s;position:relative;overflow:hidden}
-.feature-card:hover{border-color:rgba(198,120,221,0.15);background:rgba(198,120,221,0.03);transform:translateY(-4px)}
-.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(198,120,221,0.2),transparent);opacity:0;transition:opacity 0.3s}
+.feature-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:32px;transition:all 0.3s;position:relative;overflow:hidden}
+.feature-card:hover{border-color:rgba(255,255,255,0.15);background:rgba(255,255,255,0.03);transform:translateY(-4px)}
+.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);opacity:0;transition:opacity 0.3s}
 .feature-card:hover::before{opacity:1}
-.feature-icon{width:48px;height:48px;border-radius:12px;background:rgba(198,120,221,0.06);display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:20px}
+.feature-icon{width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:20px}
 .feature-card h3{font-size:18px;font-weight:700;margin-bottom:8px}
 .feature-card p{font-size:14px;color:#5C6370;line-height:1.6}
 
 /* ── Stats ── */
 .stats{padding:80px 40px;display:flex;justify-content:center;gap:80px;flex-wrap:wrap}
 .stat{text-align:center}
-.stat-num{font-size:48px;font-weight:900;background:linear-gradient(135deg,#C678DD,#D19A66);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-num{font-size:48px;font-weight:900;background:linear-gradient(135deg,#FFFFFF,#A0A0A0);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .stat-label{font-size:13px;color:#5C6370;margin-top:4px}
 
 /* ── Modules ── */
 .modules{padding:120px 40px;position:relative}
-.modules::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(198,120,221,0.1),transparent)}
+.modules::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent)}
 .modules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;max-width:900px;margin:0 auto}
-.module-chip{padding:14px 20px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(198,120,221,0.06);font-size:13px;font-weight:600;color:#ABB2BF;display:flex;align-items:center;gap:8px;transition:all 0.2s}
-.module-chip:hover{border-color:rgba(198,120,221,0.15);color:#C678DD;transform:translateY(-2px)}
+.module-chip{padding:14px 20px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);font-size:13px;font-weight:600;color:#ABB2BF;display:flex;align-items:center;gap:8px;transition:all 0.2s}
+.module-chip:hover{border-color:rgba(255,255,255,0.15);color:#FFFFFF;transform:translateY(-2px)}
 .module-dot{width:6px;height:6px;border-radius:50%;background:#98C379}
 
 /* ── CTA ── */
 .cta{padding:120px 40px;text-align:center}
-.cta-box{max-width:700px;margin:0 auto;padding:60px;border-radius:20px;background:linear-gradient(135deg,rgba(198,120,221,0.04),rgba(198,120,221,0.01));border:1px solid rgba(198,120,221,0.08);position:relative;overflow:hidden}
-.cta-box::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(198,120,221,0.06) 0%,transparent 60%);pointer-events:none}
+.cta-box{max-width:700px;margin:0 auto;padding:60px;border-radius:20px;background:linear-gradient(135deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.08);position:relative;overflow:hidden}
+.cta-box::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(255,255,255,0.06) 0%,transparent 60%);pointer-events:none}
 .cta h2{font-size:36px;font-weight:800;margin-bottom:12px;position:relative}
 .cta p{color:#5C6370;margin-bottom:32px;font-size:16px;position:relative}
 
 /* ── Footer ── */
-footer{padding:40px;border-top:1px solid rgba(198,120,221,0.04);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
+footer{padding:40px;border-top:1px solid rgba(255,255,255,0.04);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
 footer .left{display:flex;align-items:center;gap:8px;font-size:13px;color:#3E4451}
 footer .right{display:flex;gap:24px}
 footer .right a{color:#3E4451;text-decoration:none;font-size:13px;transition:color 0.2s}
-footer .right a:hover{color:#C678DD}
+footer .right a:hover{color:#FFFFFF}
 
 /* ── Animations ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
@@ -115,12 +115,12 @@ footer .right a:hover{color:#C678DD}
 <nav id="nav">
   <a class="nav-logo" href="#">
     <svg viewBox="0 0 24 24" fill="none">
-      <circle cx="12" cy="12" r="10" fill="#0A0A0F"/>
-      <circle cx="12" cy="12" r="8" fill="none" stroke="#C678DD" stroke-width="0.5" opacity="0.3"/>
-      <ellipse cx="12" cy="12" rx="11" ry="4" fill="none" stroke="#E06C75" stroke-width="1.5" opacity="0.6"/>
-      <ellipse cx="12" cy="12" rx="9" ry="3" fill="none" stroke="#D19A66" stroke-width="0.8" opacity="0.4"/>
-      <circle cx="12" cy="12" r="4" fill="#0A0A0F"/>
-      <circle cx="12" cy="12" r="3" fill="none" stroke="#C678DD" stroke-width="0.3" opacity="0.5"/>
+      <circle cx="12" cy="12" r="10" fill="#000000"/>
+      <circle cx="12" cy="12" r="8" fill="none" stroke="#FFFFFF" stroke-width="0.5" opacity="0.3"/>
+      <ellipse cx="12" cy="12" rx="11" ry="4" fill="none" stroke="#E0E0E0" stroke-width="1.5" opacity="0.6"/>
+      <ellipse cx="12" cy="12" rx="9" ry="3" fill="none" stroke="#A0A0A0" stroke-width="0.8" opacity="0.4"/>
+      <circle cx="12" cy="12" r="4" fill="#000000"/>
+      <circle cx="12" cy="12" r="3" fill="none" stroke="#FFFFFF" stroke-width="0.3" opacity="0.5"/>
     </svg>
     <span>PULSAR</span>
   </a>
@@ -136,7 +136,7 @@ footer .right a:hover{color:#C678DD}
 <section class="hero">
   <div class="hero-glow"></div>
   <div class="hero-badge">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#0A0A0F"/><ellipse cx="12" cy="12" rx="11" ry="4" fill="none" stroke="#E06C75" stroke-width="1.5" opacity="0.6"/><circle cx="12" cy="12" r="4" fill="#0A0A0F"/><circle cx="12" cy="12" r="3" fill="none" stroke="#C678DD" stroke-width="0.3" opacity="0.5"/></svg>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#000000"/><ellipse cx="12" cy="12" rx="11" ry="4" fill="none" stroke="#E0E0E0" stroke-width="1.5" opacity="0.6"/><circle cx="12" cy="12" r="4" fill="#000000"/><circle cx="12" cy="12" r="3" fill="none" stroke="#FFFFFF" stroke-width="0.3" opacity="0.5"/></svg>
     <span>v1.0.0</span> — Now available for macOS, Windows & Linux
   </div>
   <h1><span class="gradient">Pulsar</span> Client</h1>
@@ -158,7 +158,7 @@ footer .right a:hover{color:#C678DD}
 <!-- Stats -->
 <section class="stats">
   <div class="stat reveal"><div class="stat-num">16+</div><div class="stat-label">Built-in Modules</div></div>
-  <div class="stat reveal"><div class="stat-num">8</div><div class="stat-label">Custom Capes</div></div>
+  <div class="stat reveal"><div class="stat-num">22</div><div class="stat-label">Custom Capes</div></div>
   <div class="stat reveal"><div class="stat-num">2x</div><div class="stat-label">FPS Boost</div></div>
   <div class="stat reveal"><div class="stat-num">3</div><div class="stat-label">Platforms</div></div>
 </section>
@@ -182,7 +182,7 @@ footer .right a:hover{color:#C678DD}
     <div class="feature-card reveal">
       <div class="feature-icon">&#128088;</div>
       <h3>Cosmetics</h3>
-      <p>8 unique capes with in-game preview. Galaxy, Pulsar, Flame, Frost and more — all free.</p>
+      <p>22 animated capes with in-game preview. Galaxy, Black Hole, Flame, Frost and more — earn with Pulsar Points.</p>
     </div>
     <div class="feature-card reveal">
       <div class="feature-icon">&#127918;</div>
@@ -235,27 +235,27 @@ footer .right a:hover{color:#C678DD}
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:900px;margin:40px auto 0;padding:0 24px">
     <div class="feature-card reveal" style="text-align:center;cursor:pointer" onclick="window.location='store.html?tier=500'">
       <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#5C6370;text-transform:uppercase;margin-bottom:8px">Pulsar Points</div>
-      <div style="font-size:36px;font-weight:800;color:#C678DD;line-height:1">500</div>
-      <div style="margin-top:12px;padding:6px 16px;border-radius:8px;background:rgba(198,120,221,0.08);font-weight:700;font-size:14px;display:inline-block">$2.99</div>
+      <div style="font-size:36px;font-weight:800;color:#FFFFFF;line-height:1">500</div>
+      <div style="margin-top:12px;padding:6px 16px;border-radius:8px;background:rgba(255,255,255,0.08);font-weight:700;font-size:14px;display:inline-block">$2.99</div>
     </div>
-    <div class="feature-card reveal" style="text-align:center;cursor:pointer;border-color:rgba(198,120,221,0.2);position:relative" onclick="window.location='store.html?tier=1500'">
-      <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#C678DD,#E06C75);color:#0A0A0F;font-size:10px;font-weight:800;padding:3px 12px;border-radius:10px;letter-spacing:0.05em">POPULAR</div>
+    <div class="feature-card reveal" style="text-align:center;cursor:pointer;border-color:rgba(255,255,255,0.2);position:relative" onclick="window.location='store.html?tier=1500'">
+      <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#FFFFFF,#E0E0E0);color:#000000;font-size:10px;font-weight:800;padding:3px 12px;border-radius:10px;letter-spacing:0.05em">POPULAR</div>
       <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#5C6370;text-transform:uppercase;margin-bottom:8px">Pulsar Points</div>
-      <div style="font-size:36px;font-weight:800;color:#C678DD;line-height:1">1,500</div>
+      <div style="font-size:36px;font-weight:800;color:#FFFFFF;line-height:1">1,500</div>
       <div style="font-size:11px;color:#98C379;font-weight:600;margin-top:4px">+200 bonus</div>
-      <div style="margin-top:8px;padding:6px 16px;border-radius:8px;background:rgba(198,120,221,0.08);font-weight:700;font-size:14px;display:inline-block">$6.99</div>
+      <div style="margin-top:8px;padding:6px 16px;border-radius:8px;background:rgba(255,255,255,0.08);font-weight:700;font-size:14px;display:inline-block">$6.99</div>
     </div>
     <div class="feature-card reveal" style="text-align:center;cursor:pointer" onclick="window.location='store.html?tier=3500'">
       <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#5C6370;text-transform:uppercase;margin-bottom:8px">Pulsar Points</div>
-      <div style="font-size:36px;font-weight:800;color:#E06C75;line-height:1">3,500</div>
+      <div style="font-size:36px;font-weight:800;color:#E0E0E0;line-height:1">3,500</div>
       <div style="font-size:11px;color:#98C379;font-weight:600;margin-top:4px">+500 bonus</div>
-      <div style="margin-top:8px;padding:6px 16px;border-radius:8px;background:rgba(198,120,221,0.08);font-weight:700;font-size:14px;display:inline-block">$12.99</div>
+      <div style="margin-top:8px;padding:6px 16px;border-radius:8px;background:rgba(255,255,255,0.08);font-weight:700;font-size:14px;display:inline-block">$12.99</div>
     </div>
     <div class="feature-card reveal" style="text-align:center;cursor:pointer" onclick="window.location='store.html?tier=8000'">
       <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#5C6370;text-transform:uppercase;margin-bottom:8px">Pulsar Points</div>
-      <div style="font-size:36px;font-weight:800;color:#D19A66;line-height:1">8,000</div>
+      <div style="font-size:36px;font-weight:800;color:#A0A0A0;line-height:1">8,000</div>
       <div style="font-size:11px;color:#98C379;font-weight:600;margin-top:4px">+1,500 bonus</div>
-      <div style="margin-top:8px;padding:6px 16px;border-radius:8px;background:rgba(198,120,221,0.08);font-weight:700;font-size:14px;display:inline-block">$24.99</div>
+      <div style="margin-top:8px;padding:6px 16px;border-radius:8px;background:rgba(255,255,255,0.08);font-weight:700;font-size:14px;display:inline-block">$24.99</div>
     </div>
   </div>
 </section>
@@ -279,7 +279,7 @@ footer .right a:hover{color:#C678DD}
 <!-- Footer -->
 <footer>
   <div class="left">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#0A0A0F"/><ellipse cx="12" cy="12" rx="11" ry="4" fill="none" stroke="#E06C75" stroke-width="1.5" opacity="0.6"/><circle cx="12" cy="12" r="4" fill="#0A0A0F"/><circle cx="12" cy="12" r="3" fill="none" stroke="#C678DD" stroke-width="0.3" opacity="0.5"/></svg>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#000000"/><ellipse cx="12" cy="12" rx="11" ry="4" fill="none" stroke="#E0E0E0" stroke-width="1.5" opacity="0.6"/><circle cx="12" cy="12" r="4" fill="#000000"/><circle cx="12" cy="12" r="3" fill="none" stroke="#FFFFFF" stroke-width="0.3" opacity="0.5"/></svg>
     Pulsar Client — Universe Themed Minecraft Experience
   </div>
   <div class="right">
@@ -299,7 +299,7 @@ function spawnStar(){
   p.style.top=Math.random()*100+'vh';
   p.style.animationDuration=(2+Math.random()*4)+'s';
   p.style.animationDelay=Math.random()*2+'s';
-  const colors=['#C678DD','#E06C75','#D19A66','#E0E0E8','#ffffff'];
+  const colors=['#FFFFFF','#E0E0E0','#A0A0A0','#E0E0E8','#ffffff'];
   p.style.background=colors[Math.floor(Math.random()*colors.length)];
   p.style.borderRadius='50%';
   document.body.appendChild(p);

@@ -1,35 +1,35 @@
-/* ── Pulsar Client — Universe/Black Hole Theme ── */
+/* ── Pulsar Client — Deep Space Theme ── */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-  --bg: #0A0A0F;
-  --bg-surface: rgba(255, 255, 255, 0.02);
-  --bg-surface-hover: rgba(255, 255, 255, 0.04);
-  --bg-elevated: rgba(10, 10, 15, 0.95);
+  --bg: #000000;
+  --bg-surface: rgba(255, 255, 255, 0.03);
+  --bg-surface-hover: rgba(255, 255, 255, 0.05);
+  --bg-elevated: rgba(0, 0, 0, 0.95);
 
-  --border: rgba(198, 120, 221, 0.06);
-  --border-hover: rgba(198, 120, 221, 0.14);
-  --border-input: rgba(198, 120, 221, 0.1);
-  --border-active: rgba(198, 120, 221, 0.25);
+  --border: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.12);
+  --border-input: rgba(255, 255, 255, 0.08);
+  --border-active: rgba(255, 255, 255, 0.2);
 
-  --pink-50: #F0D0FF;
-  --pink-100: #E0B0F0;
-  --pink-200: #C678DD;
-  --pink-300: #C678DD;
-  --pink-400: #E06C75;
-  --pink-500: #D19A66;
-  --pink-600: #9050A0;
-  --pink-glow: rgba(198, 120, 221, 0.2);
+  --pink-50: #FFFFFF;
+  --pink-100: #E0E0E0;
+  --pink-200: #FFFFFF;
+  --pink-300: #FFFFFF;
+  --pink-400: #B0B0B0;
+  --pink-500: #E0E0E0;
+  --pink-600: #808080;
+  --pink-glow: rgba(255, 255, 255, 0.1);
 
-  --text-primary: #E0E0E8;
-  --text-secondary: #ABB2BF;
-  --text-muted: #5C6370;
-  --text-faint: #3E4451;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0A0A0;
+  --text-muted: #606060;
+  --text-faint: #383838;
 
-  --accent-green: #98C379;
-  --accent-red: #E06C75;
-  --accent-yellow: #D19A66;
+  --accent-green: #70FF70;
+  --accent-red: #FF5050;
+  --accent-yellow: #E0E0E0;
 
   --radius-xs: 4px;
   --radius-sm: 8px;
@@ -51,10 +51,10 @@ body { margin: 0; overflow: hidden; }
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(198, 120, 221, 0.1); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(198, 120, 221, 0.2); }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.15); }
 
-::selection { background: rgba(198, 120, 221, 0.25); color: #fff; }
+::selection { background: rgba(255, 255, 255, 0.2); color: #fff; }
 
 /* ── Cards ── */
 .bloom-card {
@@ -81,8 +81,8 @@ body { margin: 0; overflow: hidden; }
   font-family: inherit;
 }
 .bloom-input:focus {
-  border-color: var(--pink-400);
-  box-shadow: 0 0 0 3px rgba(198, 120, 221, 0.06);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.04);
 }
 .bloom-input::placeholder { color: var(--text-faint); }
 
@@ -101,8 +101,8 @@ body { margin: 0; overflow: hidden; }
 
 /* ── Buttons ── */
 .bloom-btn {
-  background: linear-gradient(135deg, var(--pink-300), var(--pink-400));
-  color: #0A0A0F;
+  background: linear-gradient(135deg, #FFFFFF, #B0B0B0);
+  color: #000000;
   border: none;
   border-radius: var(--radius-sm);
   padding: 10px 22px;
@@ -115,7 +115,7 @@ body { margin: 0; overflow: hidden; }
 }
 .bloom-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px var(--pink-glow);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.1);
 }
 .bloom-btn:active { transform: translateY(0); }
 .bloom-btn:disabled { opacity: 0.4; cursor: default; transform: none; box-shadow: none; }
@@ -132,9 +132,9 @@ body { margin: 0; overflow: hidden; }
   transition: all 0.15s ease;
 }
 .bloom-btn-ghost:hover {
-  border-color: var(--pink-300);
-  color: var(--pink-300);
-  background: rgba(198, 120, 221, 0.04);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .bloom-btn-install {
@@ -150,17 +150,17 @@ body { margin: 0; overflow: hidden; }
   flex-shrink: 0;
 }
 .bloom-btn-install:hover:not(:disabled) {
-  border-color: var(--pink-300);
-  color: var(--pink-200);
-  background: rgba(198, 120, 221, 0.04);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.04);
 }
 .bloom-btn-install.installed {
-  border-color: rgba(152, 195, 121, 0.2);
+  border-color: rgba(112, 255, 112, 0.2);
   color: var(--accent-green);
-  background: rgba(152, 195, 121, 0.04);
+  background: rgba(112, 255, 112, 0.04);
   cursor: default;
 }
-.bloom-btn-install.failed { border-color: rgba(224, 108, 117, 0.2); color: var(--accent-red); }
+.bloom-btn-install.failed { border-color: rgba(255, 80, 80, 0.2); color: var(--accent-red); }
 .bloom-btn-install.loading { opacity: 0.5; cursor: wait; }
 
 /* ── Typography ── */
@@ -168,7 +168,7 @@ body { margin: 0; overflow: hidden; }
   margin: 0 0 4px;
   font-size: 24px;
   font-weight: 800;
-  color: var(--pink-200);
+  color: #FFFFFF;
   letter-spacing: -0.02em;
 }
 .page-subtitle {
@@ -197,12 +197,12 @@ body { margin: 0; overflow: hidden; }
   width: 42px;
   height: 42px;
   border-radius: var(--radius-sm);
-  background: rgba(198, 120, 221, 0.04);
+  background: rgba(255, 255, 255, 0.04);
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--pink-400);
+  color: #B0B0B0;
   font-size: 16px;
 }
 
@@ -219,8 +219,8 @@ body { margin: 0; overflow: hidden; }
   to { opacity: 1; transform: translateY(0); }
 }
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 4px 20px rgba(198, 120, 221, 0.15); }
-  50% { box-shadow: 0 4px 32px rgba(198, 120, 221, 0.28); }
+  0%, 100% { box-shadow: 0 4px 20px rgba(255, 255, 255, 0.08); }
+  50% { box-shadow: 0 4px 32px rgba(255, 255, 255, 0.15); }
 }
 @keyframes shimmer {
   0% { background-position: -200% 0; }

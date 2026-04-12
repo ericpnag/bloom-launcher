@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import axios from "axios";
 
@@ -17,6 +17,18 @@ export function TexturePacksPage({ versions, selectedVersion }: Props) {
   const [loaded, setLoaded] = useState(false);
   const [searchVersion, setSearchVersion] = useState(selectedVersion);
   const [installing, setInstalling] = useState<Record<string, "loading" | "done" | "error">>({});
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   async function search(q?: string, ver?: string) {
     setLoading(true);
@@ -68,19 +80,87 @@ export function TexturePacksPage({ versions, selectedVersion }: Props) {
 
   return (
     <div className="fade-in" style={{ display: "flex", flexDirection: "column", height: "100%", padding: "28px", gap: "16px", overflowY: "auto" }}>
-      <div>
-        <h2 className="page-title">Texture Packs</h2>
-        <p className="page-subtitle">Browse resource packs from Modrinth</p>
+      {/* Header row */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div>
+          <h2 className="page-title" style={{ marginBottom: "2px" }}>Texture Packs</h2>
+          <p className="page-subtitle" style={{ margin: 0 }}>Browse resource packs from Modrinth</p>
+        </div>
+
+        {/* Custom version picker */}
+        <div ref={dropdownRef} style={{ position: "relative" }}>
+          <button
+            onClick={() => setDropdownOpen(o => !o)}
+            style={{
+              display: "flex", alignItems: "center", gap: "10px",
+              background: dropdownOpen ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.04)",
+              border: `1px solid ${dropdownOpen ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.08)"}`,
+              borderRadius: "10px", padding: "9px 14px",
+              color: "#fff", cursor: "pointer", fontFamily: "inherit",
+              transition: "all 0.15s",
+              fontSize: "13px", fontWeight: "600",
+              minWidth: "140px", justifyContent: "space-between",
+            }}
+            onMouseEnter={e => { if (!dropdownOpen) { e.currentTarget.style.background = "rgba(255,255,255,0.07)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.14)"; }}}
+            onMouseLeave={e => { if (!dropdownOpen) { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}}
+          >
+            <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{ opacity: 0.7 }}>
+                <rect x="1" y="5" width="14" height="10" rx="1" fill="#7b5c3c"/>
+                <rect x="1" y="1" width="14" height="5" rx="1" fill="#4a8c3f"/>
+                <rect x="1" y="4" width="14" height="3" fill="#5fa34a"/>
+              </svg>
+              {searchVersion}
+            </span>
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"
+              style={{ opacity: 0.5, transform: dropdownOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.15s" }}>
+              <path d="M2 3.5L5 6.5L8 3.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+
+          {dropdownOpen && (
+            <div style={{
+              position: "absolute", top: "calc(100% + 6px)", right: 0,
+              background: "rgba(10,10,10,0.97)", border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "10px", padding: "4px",
+              minWidth: "140px", zIndex: 50,
+              boxShadow: "0 8px 32px rgba(0,0,0,0.6)",
+              backdropFilter: "blur(12px)",
+            }}>
+              {versions.map(v => (
+                <button key={v} onClick={() => {
+                  setSearchVersion(v);
+                  setDropdownOpen(false);
+                  setLoaded(false);
+                  setInstalling({});
+                  search("", v);
+                }} style={{
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  width: "100%", padding: "8px 12px", borderRadius: "7px",
+                  background: v === searchVersion ? "rgba(255,255,255,0.08)" : "transparent",
+                  border: "none", color: v === searchVersion ? "#fff" : "var(--text-secondary)",
+                  fontSize: "13px", fontWeight: v === searchVersion ? "700" : "500",
+                  cursor: "pointer", fontFamily: "inherit", textAlign: "left",
+                  transition: "all 0.1s",
+                }}
+                onMouseEnter={e => { if (v !== searchVersion) e.currentTarget.style.background = "rgba(255,255,255,0.05)"; }}
+                onMouseLeave={e => { if (v !== searchVersion) e.currentTarget.style.background = "transparent"; }}
+                >
+                  {v}
+                  {v === searchVersion && (
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                      <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
+      {/* Search bar */}
       <div style={{ display: "flex", gap: "8px" }}>
-        <select
-          className="bloom-select"
-          value={searchVersion}
-          onChange={e => { setSearchVersion(e.target.value); setLoaded(false); setInstalling({}); }}
-        >
-          {versions.map(v => <option key={v} value={v}>{v}</option>)}
-        </select>
         <input
           className="bloom-input"
           value={query}
@@ -102,8 +182,8 @@ export function TexturePacksPage({ versions, selectedVersion }: Props) {
               : <div className="bloom-icon-placeholder" />
             }
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: "600", fontSize: "13px", color: "var(--text)", marginBottom: "2px" }}>{pack.title}</div>
-              <div style={{ fontSize: "11px", color: "var(--text-dim)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{pack.description}</div>
+              <div style={{ fontWeight: "600", fontSize: "13px", color: "var(--text-primary)", marginBottom: "2px" }}>{pack.title}</div>
+              <div style={{ fontSize: "11px", color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{pack.description}</div>
             </div>
             <div style={{ fontSize: "11px", color: "var(--text-faint)", flexShrink: 0 }}>{(pack.downloads / 1000).toFixed(0)}k</div>
             <button

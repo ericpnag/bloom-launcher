@@ -3,6 +3,7 @@ use std::io;
 use std::path::PathBuf;
 use std::process::Command;
 use std::collections::HashMap;
+use sha1::{Sha1, Digest};
 use std::sync::{Arc, Mutex};
 use std::thread;
 use reqwest::blocking::Client;
@@ -811,9 +812,26 @@ pub fn list_installed_mods(mc_version: String) -> Result<Vec<String>, String> {
 }
 
 #[tauri::command]
+pub fn get_mod_hashes(mc_version: String) -> Result<HashMap<String, String>, String> {
+    let mods_dir = version_game_dir(&mc_version).join("mods");
+    if !mods_dir.exists() { return Ok(HashMap::new()); }
+    let mut result = HashMap::new();
+    for entry in fs::read_dir(&mods_dir).map_err(|e| e.to_string())? {
+        let entry = entry.map_err(|e| e.to_string())?;
+        let name = entry.file_name().to_string_lossy().to_string();
+        if name.ends_with(".jar") {
+            let bytes = fs::read(entry.path()).map_err(|e| e.to_string())?;
+            let hash = Sha1::digest(&bytes);
+            result.insert(name, format!("{:x}", hash));
+        }
+    }
+    Ok(result)
+}
+
+#[tauri::command]
 pub fn install_resourcepack(project_id: String, mc_version: String) -> Result<String, String> {
     let client = Client::new();
-    let packs_dir = game_dir().join("resourcepacks");
+    let packs_dir = version_game_dir(&mc_version).join("resourcepacks");
     fs::create_dir_all(&packs_dir).map_err(|e| e.to_string())?;
 
     let url = format!(
@@ -855,7 +873,7 @@ pub fn get_cosmetics() -> Result<String, String> {
     if path.exists() {
         fs::read_to_string(&path).map_err(|e| e.to_string())
     } else {
-        Ok(r#"{"points":500,"owned":[],"equipped":{}}"#.to_string())
+        Ok(r#"{"v":2,"points":500,"purchased":[],"equipped":{}}"#.to_string())
     }
 }
 

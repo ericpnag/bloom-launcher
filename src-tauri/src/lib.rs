@@ -18,6 +18,7 @@ pub fn run() {
             launcher::install_mod,
             launcher::uninstall_mod,
             launcher::list_installed_mods,
+            launcher::get_mod_hashes,
             launcher::install_resourcepack,
             launcher::get_cosmetics,
             launcher::save_cosmetics,

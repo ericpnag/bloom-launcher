@@ -164,8 +164,8 @@ export default function App() {
                 width: "100%", padding: "16px", border: "none", borderRadius: "var(--radius)",
                 background: canPlay
                   ? "linear-gradient(135deg, var(--pink-300), var(--pink-400), var(--pink-500))"
-                  : "rgba(198,120,221,0.06)",
-                color: canPlay ? "#0A0A0F" : "var(--text-faint)",
+                  : "rgba(255,255,255,0.06)",
+                color: canPlay ? "#000000" : "var(--text-faint)",
                 fontSize: "13px", fontWeight: "800", letterSpacing: "0.14em",
                 cursor: canPlay ? "pointer" : "default",
                 boxShadow: canPlay ? "0 4px 20px var(--pink-glow)" : "none",
@@ -174,7 +174,7 @@ export default function App() {
                 animation: phase === "idle" ? "pulse-glow 4s ease-in-out infinite" : "none",
                 textTransform: "uppercase",
               }}
-              onMouseEnter={e => { if (canPlay) { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(198,120,221,0.3)"; }}}
+              onMouseEnter={e => { if (canPlay) { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(255,255,255,0.15)"; }}}
               onMouseLeave={e => { if (canPlay) { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 20px var(--pink-glow)"; }}}
             >
               {phase === "done" ? "Minecraft is Running" : phase === "loading" ? "Launching..." : phase === "error" ? "Retry" : "Launch Game"}
@@ -215,7 +215,7 @@ export default function App() {
                   Pulsar Client
                 </div>
                 <div style={{ fontSize: "12px", color: "var(--text-muted)", lineHeight: 1.7 }}>
-                  Press <span style={{ color: "var(--pink-300)", fontWeight: "600", background: "rgba(198,120,221,0.08)", padding: "1px 6px", borderRadius: "4px", fontSize: "11px" }}>Right Shift</span> in-game for modules
+                  Press <span style={{ color: "#FFFFFF", fontWeight: "600", background: "rgba(255,255,255,0.08)", padding: "1px 6px", borderRadius: "4px", fontSize: "11px" }}>Right Shift</span> in-game for modules
                 </div>
               </div>
               <div className="bloom-card" style={{ padding: "18px 20px" }}>
@@ -267,7 +267,7 @@ export default function App() {
           display: "flex", alignItems: "center", justifyContent: "center", zIndex: 99,
         }} onClick={() => { setShowVersionPicker(false); setVersionCategory(null); }}>
           <div onClick={e => e.stopPropagation()} className="fade-in" style={{
-            background: "rgba(10,10,15,0.97)", border: "1px solid rgba(198,120,221,0.08)",
+            background: "rgba(0,0,0,0.97)", border: "1px solid rgba(255,255,255,0.08)",
             borderRadius: "16px", padding: "28px 32px", width: "min(560px, 90vw)", maxHeight: "75vh",
             boxShadow: "0 24px 64px rgba(0,0,0,0.5)",
           }}>
@@ -279,11 +279,11 @@ export default function App() {
                     padding: "4px 10px", borderRadius: "6px", background: "rgba(255,255,255,0.04)",
                     transition: "all 0.15s",
                   }}
-                  onMouseEnter={e => e.currentTarget.style.background = "rgba(198,120,221,0.08)"}
+                  onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.08)"}
                   onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.04)"}
                   >Back</div>
                 )}
-                <div style={{ fontSize: "15px", fontWeight: "800", color: "var(--pink-200)", letterSpacing: "0.06em" }}>
+                <div style={{ fontSize: "15px", fontWeight: "800", color: "#FFFFFF", letterSpacing: "0.06em" }}>
                   {versionCategory ? `MINECRAFT ${versionCategory}` : "SELECT A VERSION"}
                 </div>
               </div>
@@ -313,14 +313,14 @@ export default function App() {
                       else setVersionCategory(cat);
                     }} style={{
                       padding: "16px 12px", borderRadius: "10px", textAlign: "center",
-                      background: hasSelected ? "rgba(198,120,221,0.08)" : "rgba(255,255,255,0.02)",
-                      border: hasSelected ? "1px solid rgba(198,120,221,0.2)" : "1px solid rgba(255,255,255,0.04)",
+                      background: hasSelected ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.02)",
+                      border: hasSelected ? "1px solid rgba(255,255,255,0.18)" : "1px solid rgba(255,255,255,0.04)",
                       cursor: "pointer", transition: "all 0.15s",
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.borderColor = "rgba(198,120,221,0.15)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = hasSelected ? "rgba(198,120,221,0.08)" : "rgba(255,255,255,0.02)"; e.currentTarget.style.borderColor = hasSelected ? "rgba(198,120,221,0.2)" : "rgba(255,255,255,0.04)"; }}
+                    onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = hasSelected ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.02)"; e.currentTarget.style.borderColor = hasSelected ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.04)"; }}
                     >
-                      <div style={{ fontSize: "16px", fontWeight: "800", color: hasSelected ? "var(--pink-200)" : "var(--text-primary)", marginBottom: "4px" }}>{cat}</div>
+                      <div style={{ fontSize: "16px", fontWeight: "800", color: "var(--text-primary)", marginBottom: "4px" }}>{cat}</div>
                       <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>{count} version{count > 1 ? "s" : ""}</div>
                     </div>
                   );
@@ -330,13 +330,13 @@ export default function App() {
                 filteredVersions.map(v => (
                   <div key={v} onClick={() => { setSelectedVersion(v); setShowVersionPicker(false); setVersionCategory(null); }} style={{
                     padding: "18px 12px", borderRadius: "10px", textAlign: "center",
-                    background: v === selectedVersion ? "rgba(198,120,221,0.1)" : "rgba(255,255,255,0.02)",
-                    border: v === selectedVersion ? "1px solid rgba(198,120,221,0.25)" : "1px solid rgba(255,255,255,0.04)",
+                    background: v === selectedVersion ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.02)",
+                    border: v === selectedVersion ? "1px solid rgba(255,255,255,0.22)" : "1px solid rgba(255,255,255,0.04)",
                     cursor: "pointer", transition: "all 0.15s",
                     fontSize: "14px", fontWeight: "700",
-                    color: v === selectedVersion ? "var(--pink-200)" : "var(--text-secondary)",
+                    color: "var(--text-primary)",
                   }}
-                  onMouseEnter={e => { if (v !== selectedVersion) { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; e.currentTarget.style.borderColor = "rgba(198,120,221,0.12)"; }}}
+                  onMouseEnter={e => { if (v !== selectedVersion) { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; }}}
                   onMouseLeave={e => { if (v !== selectedVersion) { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.04)"; }}}
                   >
                     {v}
@@ -393,7 +393,7 @@ function DailyReward() {
       invoke("save_cosmetics", { data: json }).catch(() => {});
       localStorage.setItem("pulsar-cosmetics", json);
     }).catch(() => {
-      const cosmetics = JSON.parse(localStorage.getItem("pulsar-cosmetics") || '{"points":500,"owned":[],"equipped":{}}');
+      const cosmetics = JSON.parse(localStorage.getItem("pulsar-cosmetics") || '{"v":2,"points":500,"purchased":[],"equipped":{}}');
       cosmetics.points = (cosmetics.points || 0) + reward;
       localStorage.setItem("pulsar-cosmetics", JSON.stringify(cosmetics));
     });
@@ -416,34 +416,34 @@ function DailyReward() {
   return (
     <div className="bloom-card" style={{
       padding: "18px 22px",
-      background: claimed ? "rgba(110,231,160,0.03)" : "rgba(198,120,221,0.04)",
-      border: claimed ? "1px solid rgba(110,231,160,0.1)" : "1px solid rgba(198,120,221,0.12)",
+      background: claimed ? "rgba(110,231,160,0.03)" : "rgba(255,255,255,0.02)",
+      border: claimed ? "1px solid rgba(110,231,160,0.1)" : "1px solid rgba(255,255,255,0.06)",
       position: "relative", overflow: "hidden",
     }}>
       {showAnim && (
         <div style={{
           position: "absolute", inset: 0, pointerEvents: "none",
-          background: "radial-gradient(circle at center, rgba(198,120,221,0.15) 0%, transparent 70%)",
+          background: "radial-gradient(circle at center, rgba(255,255,255,0.08) 0%, transparent 70%)",
           animation: "pulse-glow 1s ease-out",
         }} />
       )}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div>
           <div style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.1em", color: "var(--text-muted)", textTransform: "uppercase", marginBottom: "6px" }}>
-            Daily Reward {streak > 0 && <span style={{ color: "var(--pink-300)" }}>• {streak} day streak</span>}
+            Daily Reward {streak > 0 && <span style={{ color: "#FFFFFF" }}>• {streak} day streak</span>}
           </div>
           <div style={{ display: "flex", gap: "6px", marginBottom: "8px" }}>
             {DAY_NAMES.map((d, i) => (
               <div key={d} style={{
                 width: "36px", textAlign: "center", padding: "4px 0", borderRadius: "6px", fontSize: "10px",
                 background: i === todayIndex
-                  ? (claimed ? "rgba(110,231,160,0.12)" : "rgba(198,120,221,0.12)")
+                  ? (claimed ? "rgba(110,231,160,0.12)" : "rgba(255,255,255,0.08)")
                   : "rgba(255,255,255,0.02)",
                 border: i === todayIndex
-                  ? (claimed ? "1px solid rgba(110,231,160,0.2)" : "1px solid rgba(198,120,221,0.15)")
+                  ? (claimed ? "1px solid rgba(110,231,160,0.2)" : "1px solid rgba(255,255,255,0.15)")
                   : "1px solid transparent",
               }}>
-                <div style={{ color: i === todayIndex ? (claimed ? "var(--accent-green)" : "var(--pink-200)") : "var(--text-faint)", fontWeight: "600" }}>{d}</div>
+                <div style={{ color: i === todayIndex ? (claimed ? "var(--accent-green)" : "#FFFFFF") : "var(--text-faint)", fontWeight: "600" }}>{d}</div>
                 <div style={{ color: i === todayIndex ? "var(--text-primary)" : "var(--text-dim)", fontWeight: "700", fontSize: "11px" }}>{REWARDS[i]}</div>
               </div>
             ))}
@@ -456,11 +456,11 @@ function DailyReward() {
             padding: "10px 22px", borderRadius: "8px", border: "none", cursor: claimed ? "default" : "pointer",
             background: claimed
               ? "rgba(110,231,160,0.08)"
-              : "linear-gradient(135deg, var(--pink-300), var(--pink-400))",
-            color: claimed ? "var(--accent-green)" : "#0A0A0F",
+              : "linear-gradient(135deg, #FFFFFF, #C0C0C0)",
+            color: claimed ? "var(--accent-green)" : "#000000",
             fontSize: "12px", fontWeight: "800", letterSpacing: "0.05em",
             fontFamily: "inherit", transition: "all 0.2s",
-            boxShadow: claimed ? "none" : "0 2px 12px rgba(198,120,221,0.2)",
+            boxShadow: claimed ? "none" : "0 2px 12px rgba(255,255,255,0.15)",
           }}
         >
           {claimed ? `✓ Claimed +${todayReward}` : `Claim +${todayReward}`}

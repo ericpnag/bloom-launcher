@@ -9,7 +9,7 @@ interface Star {
   pullX: number; pullY: number; pullStrength: number;
 }
 
-const COLORS = ["#C678DD", "#E06C75", "#D19A66", "#E0E0E8", "#ABB2BF", "#61AFEF", "#ffffff", "#9B6EC7"];
+const COLORS = ["#FFFFFF", "#E0E0E0", "#B0B0B0", "#D0D0D0", "#C0C0C0", "#F0F0F0", "#ffffff", "#A0A0A0"];
 
 function newStar(w: number, h: number, randomY = false): Star {
   const r = Math.random;

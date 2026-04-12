@@ -32,7 +32,6 @@ public class ModuleManager {
         modules.add(new LowFire());
         modules.add(new LowShield());
         modules.add(new CosmeticsCape());
-        modules.add(new CosmeticsHalo());
         modules.add(new PerformanceBoost());
         modules.add(new Fullbright());
         modules.add(new FovChanger());

@@ -5,27 +5,27 @@ function BlackHole({ size, style }: { size: number; style?: React.CSSProperties 
   return (
     <svg width={size} height={size} viewBox="0 0 100 100" style={style}>
       {/* Outer accretion glow */}
-      <ellipse cx="50" cy="50" rx="45" ry="15" fill="none" stroke="#E06C75" strokeWidth="1.5" opacity={0.3} />
-      <ellipse cx="50" cy="50" rx="40" ry="12" fill="none" stroke="#D19A66" strokeWidth="1" opacity={0.25} />
+      <ellipse cx="50" cy="50" rx="45" ry="15" fill="none" stroke="#ffffff" strokeWidth="1.5" opacity={0.15} />
+      <ellipse cx="50" cy="50" rx="40" ry="12" fill="none" stroke="#A0A0A0" strokeWidth="1" opacity={0.12} />
       {/* Event horizon */}
-      <circle cx="50" cy="50" r="20" fill="#0A0A0F" />
+      <circle cx="50" cy="50" r="20" fill="#000000" />
       {/* Inner glow ring */}
-      <circle cx="50" cy="50" r="22" fill="none" stroke="#C678DD" strokeWidth="1.5" opacity={0.4} />
-      <circle cx="50" cy="50" r="25" fill="none" stroke="#C678DD" strokeWidth="0.5" opacity={0.2} />
+      <circle cx="50" cy="50" r="22" fill="none" stroke="#ffffff" strokeWidth="1.5" opacity={0.3} />
+      <circle cx="50" cy="50" r="25" fill="none" stroke="#ffffff" strokeWidth="0.5" opacity={0.1} />
       {/* Gravitational lensing arcs */}
-      <ellipse cx="50" cy="50" rx="35" ry="10" fill="none" stroke="#E06C75" strokeWidth="0.8" opacity={0.4} transform="rotate(-10 50 50)" />
+      <ellipse cx="50" cy="50" rx="35" ry="10" fill="none" stroke="#E0E0E0" strokeWidth="0.8" opacity={0.25} transform="rotate(-10 50 50)" />
       {/* Distant stars being pulled */}
       {[
         { cx: 15, cy: 20, r: 1.2 }, { cx: 82, cy: 25, r: 0.8 }, { cx: 88, cy: 70, r: 1 },
         { cx: 10, cy: 75, r: 0.7 }, { cx: 30, cy: 12, r: 0.9 }, { cx: 75, cy: 85, r: 0.6 },
       ].map((s, i) => (
-        <circle key={i} cx={s.cx} cy={s.cy} r={s.r} fill="#C678DD" opacity={0.6} />
+        <circle key={i} cx={s.cx} cy={s.cy} r={s.r} fill="#ffffff" opacity={0.5} />
       ))}
       <defs>
         <radialGradient id="bhGrad" cx="40%" cy="40%">
-          <stop offset="0%" stopColor="#C678DD" stopOpacity="0.1" />
-          <stop offset="50%" stopColor="#E06C75" stopOpacity="0.05" />
-          <stop offset="100%" stopColor="#0A0A0F" stopOpacity="0" />
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.06" />
+          <stop offset="50%" stopColor="#A0A0A0" stopOpacity="0.03" />
+          <stop offset="100%" stopColor="#000000" stopOpacity="0" />
         </radialGradient>
       </defs>
       <circle cx="50" cy="50" r="35" fill="url(#bhGrad)" />
@@ -43,7 +43,7 @@ function SwirlField({ width, height }: { width: number; height: number }) {
     if (!c || !width) return;
     const ctx = c.getContext("2d")!;
     c.width = width; c.height = height;
-    const COLS = ["#C678DD", "#E06C75", "#D19A66", "#E0E0E8", "#ffffff"];
+    const COLS = ["#ffffff", "#E0E0E0", "#C0C0C0", "#A0A0A0", "#808080"];
     const centerX = width / 2;
     const centerY = height / 2;
 
@@ -107,25 +107,25 @@ export function HeroBanner({ selectedVersion, onOpenPicker }: Props) {
   return (
     <div ref={containerRef} style={{
       height: "200px", borderRadius: "var(--radius-lg)", overflow: "hidden",
-      background: "linear-gradient(140deg, #0A0A0F 0%, #12101A 25%, #1a1525 55%, #151020 80%, #0A0A0F 100%)",
-      border: "1px solid rgba(198,120,221,0.06)",
+      background: "linear-gradient(140deg, #000000 0%, #0a0a0a 25%, #111111 55%, #080808 80%, #000000 100%)",
+      border: "1px solid rgba(255,255,255,0.06)",
       display: "flex", alignItems: "center", justifyContent: "center",
       position: "relative",
     }}>
       {/* Glow */}
-      <div style={{ position: "absolute", width: "350px", height: "350px", background: "radial-gradient(circle, rgba(198,120,221,0.08) 0%, transparent 65%)", top: "-140px", left: "50%", transform: "translateX(-50%)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", width: "350px", height: "350px", background: "radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 65%)", top: "-140px", left: "50%", transform: "translateX(-50%)", pointerEvents: "none" }} />
 
       {/* Swirling particles */}
       <SwirlField width={containerRef.current?.clientWidth ?? 800} height={200} />
 
       {/* Left black hole */}
       <div style={{ position: "absolute", left: "10%", top: "50%", transform: "translateY(-50%)", zIndex: 2, animation: "planet-float-left 7s ease-in-out infinite", opacity: 0.8 }}>
-        <BlackHole size={120} style={{ animation: "planet-spin 40s linear infinite", filter: "drop-shadow(0 2px 8px rgba(198,120,221,0.2))" }} />
+        <BlackHole size={120} style={{ animation: "planet-spin 40s linear infinite", filter: "drop-shadow(0 2px 8px rgba(255,255,255,0.08))" }} />
       </div>
 
       {/* Right black hole */}
       <div style={{ position: "absolute", right: "10%", top: "50%", transform: "translateY(-50%)", zIndex: 2, animation: "planet-float-right 8s ease-in-out infinite", opacity: 0.8 }}>
-        <BlackHole size={120} style={{ animation: "planet-spin 50s linear infinite reverse", filter: "drop-shadow(0 2px 8px rgba(198,120,221,0.2))" }} />
+        <BlackHole size={120} style={{ animation: "planet-spin 50s linear infinite reverse", filter: "drop-shadow(0 2px 8px rgba(255,255,255,0.08))" }} />
       </div>
 
       {/* Small accent elements */}
@@ -140,9 +140,9 @@ export function HeroBanner({ selectedVersion, onOpenPicker }: Props) {
       <div style={{ position: "relative", zIndex: 3, textAlign: "center" }}>
         <div style={{
           fontSize: "38px", fontWeight: "900", letterSpacing: "0.06em", lineHeight: 1,
-          background: "linear-gradient(180deg, #C678DD, #E06C75, #D19A66)",
+          background: "linear-gradient(180deg, #FFFFFF 0%, #C0C0C0 50%, #808080 100%)",
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-          filter: "drop-shadow(0 1px 6px rgba(198,120,221,0.25))",
+          filter: "drop-shadow(0 1px 8px rgba(255,255,255,0.15))",
           marginBottom: "6px",
         }}>
           PULSAR
@@ -153,14 +153,14 @@ export function HeroBanner({ selectedVersion, onOpenPicker }: Props) {
         <button
           onClick={onOpenPicker}
           style={{
-            background: "rgba(0,0,0,0.4)", border: "1px solid rgba(198,120,221,0.15)",
+            background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.12)",
             padding: "8px 24px", fontSize: "13px", fontWeight: "600", borderRadius: "8px",
             color: "#fff", cursor: "pointer", fontFamily: "inherit",
             display: "flex", alignItems: "center", gap: "8px",
             transition: "all 0.15s",
           }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(198,120,221,0.3)"; e.currentTarget.style.background = "rgba(0,0,0,0.5)"; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(198,120,221,0.15)"; e.currentTarget.style.background = "rgba(0,0,0,0.4)"; }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; e.currentTarget.style.background = "rgba(255,255,255,0.06)"; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.background = "rgba(0,0,0,0.5)"; }}
         >
           Minecraft {selectedVersion}
           <span style={{ fontSize: "10px", opacity: 0.5 }}>&#9660;</span>

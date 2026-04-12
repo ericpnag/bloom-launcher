@@ -85,12 +85,12 @@ export function SettingsPage() {
       <div className="bloom-card" style={{ padding: "20px", marginTop: "24px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="10" fill="#0A0A0F"/>
-            <circle cx="12" cy="12" r="8" fill="none" stroke="#C678DD" strokeWidth="0.5" opacity="0.3"/>
-            <ellipse cx="12" cy="12" rx="11" ry="4" fill="none" stroke="#E06C75" strokeWidth="1.5" opacity="0.6"/>
-            <ellipse cx="12" cy="12" rx="9" ry="3" fill="none" stroke="#D19A66" strokeWidth="0.8" opacity="0.4"/>
-            <circle cx="12" cy="12" r="4" fill="#0A0A0F"/>
-            <circle cx="12" cy="12" r="3" fill="none" stroke="#C678DD" strokeWidth="0.3" opacity="0.5"/>
+            <circle cx="12" cy="12" r="10" fill="#000000"/>
+            <circle cx="12" cy="12" r="8" fill="none" stroke="#ffffff" strokeWidth="0.5" opacity="0.3"/>
+            <ellipse cx="12" cy="12" rx="11" ry="4" fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.6"/>
+            <ellipse cx="12" cy="12" rx="9" ry="3" fill="none" stroke="#A0A0A0" strokeWidth="0.8" opacity="0.4"/>
+            <circle cx="12" cy="12" r="4" fill="#000000"/>
+            <circle cx="12" cy="12" r="3" fill="none" stroke="#ffffff" strokeWidth="0.3" opacity="0.5"/>
           </svg>
           <div>
             <div style={{ fontSize: "15px", fontWeight: "800", color: "var(--pink-light)" }}>Pulsar Client</div>

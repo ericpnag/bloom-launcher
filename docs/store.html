@@ -8,13 +8,13 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',system-ui,sans-serif;background:#0A0A0F;color:#E0E0E8;min-height:100vh;display:flex;align-items:center;justify-content:center}
-::selection{background:rgba(198,120,221,0.3)}
+body{font-family:'Inter',system-ui,sans-serif;background:#000000;color:#E0E0E8;min-height:100vh;display:flex;align-items:center;justify-content:center}
+::selection{background:rgba(255,255,255,0.3)}
 
-.checkout{max-width:420px;width:90%;padding:40px;border-radius:20px;background:rgba(255,255,255,0.02);border:1px solid rgba(198,120,221,0.08);box-shadow:0 24px 80px rgba(0,0,0,0.4)}
+.checkout{max-width:420px;width:90%;padding:40px;border-radius:20px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);box-shadow:0 24px 80px rgba(0,0,0,0.4)}
 .logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:24px}
 .logo svg{width:24px;height:24px}
-.logo span{font-weight:800;font-size:13px;letter-spacing:0.14em;color:#C678DD}
+.logo span{font-weight:800;font-size:13px;letter-spacing:0.14em;color:#FFFFFF}
 
 .tier-display{text-align:center;margin-bottom:28px}
 .tier-label{font-size:10px;font-weight:700;letter-spacing:0.12em;color:#5C6370;text-transform:uppercase;margin-bottom:8px}
@@ -28,39 +28,39 @@ body{font-family:'Inter',system-ui,sans-serif;background:#0A0A0F;color:#E0E0E8;m
 .summary-row .label{color:#5C6370}
 .summary-row .value{color:#E0E0E8;font-weight:600}
 .summary-row.bonus .value{color:#98C379}
-.summary-row.total .value{color:#C678DD}
+.summary-row.total .value{color:#FFFFFF}
 
-.pay-btn{width:100%;padding:16px;border:none;border-radius:12px;background:linear-gradient(135deg,#C678DD,#E06C75);color:#0A0A0F;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:0.06em;box-shadow:0 4px 24px rgba(198,120,221,0.25);transition:all 0.2s}
-.pay-btn:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(198,120,221,0.35)}
+.pay-btn{width:100%;padding:16px;border:none;border-radius:12px;background:linear-gradient(135deg,#FFFFFF,#E0E0E0);color:#000000;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:0.06em;box-shadow:0 4px 24px rgba(255,255,255,0.25);transition:all 0.2s}
+.pay-btn:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(255,255,255,0.35)}
 .pay-btn:disabled{opacity:0.5;cursor:default;transform:none;box-shadow:none}
 
 .pay-info{text-align:center;margin-top:16px;font-size:11px;color:#3E4451;line-height:1.6}
-.pay-info a{color:#C678DD;text-decoration:none}
+.pay-info a{color:#FFFFFF;text-decoration:none}
 
 .back-link{display:block;text-align:center;margin-top:20px;font-size:12px;color:#5C6370;text-decoration:none;transition:color 0.2s}
-.back-link:hover{color:#C678DD}
+.back-link:hover{color:#FFFFFF}
 
 .success-view{text-align:center;padding:20px 0}
 .success-view .check{width:56px;height:56px;margin:0 auto 16px;background:rgba(152,195,121,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:#98C379}
 .success-view h3{font-size:18px;color:#98C379;margin-bottom:8px}
-.success-view .code{background:rgba(198,120,221,0.06);border:1px solid rgba(198,120,221,0.15);border-radius:8px;padding:12px 20px;font-size:18px;font-weight:800;color:#C678DD;letter-spacing:0.15em;margin:16px 0;font-family:'Inter',monospace;user-select:all;cursor:text}
+.success-view .code{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:12px 20px;font-size:18px;font-weight:800;color:#FFFFFF;letter-spacing:0.15em;margin:16px 0;font-family:'Inter',monospace;user-select:all;cursor:text}
 .success-view .instructions{font-size:12px;color:#5C6370;line-height:1.7}
 
 .error-box{background:rgba(255,80,80,0.06);border:1px solid rgba(255,80,80,0.15);border-radius:10px;padding:16px;text-align:center;margin-bottom:20px}
 .error-box h4{color:#FF7070;font-size:13px;margin-bottom:6px}
 .error-box p{color:#5C6370;font-size:11px;line-height:1.6}
 
-.spinner{width:32px;height:32px;margin:20px auto;border:3px solid rgba(198,120,221,0.1);border-top-color:#C678DD;border-radius:50%;animation:spin 0.8s linear infinite}
+.spinner{width:32px;height:32px;margin:20px auto;border:3px solid rgba(255,255,255,0.1);border-top-color:#FFFFFF;border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-.star{position:fixed;width:2px;height:2px;background:#C678DD;border-radius:50%;opacity:0;pointer-events:none;z-index:0;animation:swirl linear forwards}
+.star{position:fixed;width:2px;height:2px;background:#FFFFFF;border-radius:50%;opacity:0;pointer-events:none;z-index:0;animation:swirl linear forwards}
 @keyframes swirl{0%{opacity:0;transform:scale(0.5) rotate(0deg)}20%{opacity:0.6;transform:scale(1) rotate(30deg)}80%{opacity:0.4;transform:scale(0.8) rotate(120deg)}100%{opacity:0;transform:scale(0) rotate(180deg)}}
 
 /* Stripe Elements container */
 .card-element-wrapper{margin-bottom:20px}
 .card-element-wrapper label{display:block;font-size:11px;font-weight:600;color:#5C6370;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px}
-#card-element{padding:14px 16px;border-radius:8px;border:1px solid rgba(198,120,221,0.12);background:rgba(255,255,255,0.03);transition:border-color 0.2s}
-#card-element.StripeElement--focus{border-color:rgba(198,120,221,0.3)}
+#card-element{padding:14px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.03);transition:border-color 0.2s}
+#card-element.StripeElement--focus{border-color:rgba(255,255,255,0.3)}
 #card-element.StripeElement--invalid{border-color:rgba(255,80,80,0.4)}
 #card-errors{color:#FF7070;font-size:11px;margin-top:8px;min-height:16px}
 </style>
@@ -69,7 +69,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#0A0A0F;color:#E0E0E8;m
 
 <div class="checkout">
   <div class="logo">
-    <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#0A0A0F"/><circle cx="12" cy="12" r="8" fill="none" stroke="#C678DD" stroke-width="0.5" opacity="0.3"/><ellipse cx="12" cy="12" rx="11" ry="4" fill="none" stroke="#E06C75" stroke-width="1.5" opacity="0.6"/><ellipse cx="12" cy="12" rx="9" ry="3" fill="none" stroke="#D19A66" stroke-width="0.8" opacity="0.4"/><circle cx="12" cy="12" r="4" fill="#0A0A0F"/><circle cx="12" cy="12" r="3" fill="none" stroke="#C678DD" stroke-width="0.3" opacity="0.5"/></svg>
+    <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#000000"/><circle cx="12" cy="12" r="8" fill="none" stroke="#FFFFFF" stroke-width="0.5" opacity="0.3"/><ellipse cx="12" cy="12" rx="11" ry="4" fill="none" stroke="#E0E0E0" stroke-width="1.5" opacity="0.6"/><ellipse cx="12" cy="12" rx="9" ry="3" fill="none" stroke="#A0A0A0" stroke-width="0.8" opacity="0.4"/><circle cx="12" cy="12" r="4" fill="#000000"/><circle cx="12" cy="12" r="3" fill="none" stroke="#FFFFFF" stroke-width="0.3" opacity="0.5"/></svg>
     <span>PULSAR CLIENT</span>
   </div>
 
@@ -77,7 +77,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#0A0A0F;color:#E0E0E8;m
   <div id="purchase-view">
     <div class="tier-display">
       <div class="tier-label">Pulsar Points</div>
-      <div class="tier-amount" id="tier-amount" style="color:#C678DD">—</div>
+      <div class="tier-amount" id="tier-amount" style="color:#FFFFFF">—</div>
       <div class="tier-bonus" id="tier-bonus"></div>
       <div class="tier-sub">Use points to unlock capes, halos, and more</div>
     </div>
@@ -113,7 +113,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#0A0A0F;color:#E0E0E8;m
   <!-- Processing view -->
   <div id="processing-view" style="display:none;text-align:center;padding:30px 0">
     <div class="spinner"></div>
-    <div style="font-size:14px;color:#C678DD;font-weight:600;margin-top:12px">Processing payment...</div>
+    <div style="font-size:14px;color:#FFFFFF;font-weight:600;margin-top:12px">Processing payment...</div>
     <div style="font-size:11px;color:#3E4451;margin-top:6px">Please do not close this page</div>
   </div>
 
@@ -125,7 +125,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#0A0A0F;color:#E0E0E8;m
     <p style="font-size:12px;color:#5C6370;margin-bottom:16px">have been added to your Pulsar account</p>
     <div class="instructions">
       Open Pulsar Client launcher and go to<br>
-      <strong style="color:#C678DD">Cosmetics Shop</strong> to spend your points
+      <strong style="color:#FFFFFF">Cosmetics Shop</strong> to spend your points
     </div>
   </div>
 
@@ -141,10 +141,10 @@ body{font-family:'Inter',system-ui,sans-serif;background:#0A0A0F;color:#E0E0E8;m
 const API_BASE = '';
 
 const TIERS = {
-  '500':  { amount: 500,  price: 2.99,  display: '$2.99',  color: '#C678DD', bonus: 0 },
-  '1500': { amount: 1500, price: 6.99,  display: '$6.99',  color: '#C678DD', bonus: 200 },
-  '3500': { amount: 3500, price: 12.99, display: '$12.99', color: '#E06C75', bonus: 500 },
-  '8000': { amount: 8000, price: 24.99, display: '$24.99', color: '#D19A66', bonus: 1500 },
+  '500':  { amount: 500,  price: 2.99,  display: '$2.99',  color: '#FFFFFF', bonus: 0 },
+  '1500': { amount: 1500, price: 6.99,  display: '$6.99',  color: '#FFFFFF', bonus: 200 },
+  '3500': { amount: 3500, price: 12.99, display: '$12.99', color: '#E0E0E0', bonus: 500 },
+  '8000': { amount: 8000, price: 24.99, display: '$24.99', color: '#A0A0A0', bonus: 1500 },
 };
 
 const params = new URLSearchParams(window.location.search);
@@ -173,6 +173,7 @@ if (tier.bonus > 0) {
 // ---------------------------------------------------------------------------
 
 let stripe = null;
+let stripeElements = null;
 let cardElement = null;
 let clientSecret = null;
 let currentTierData = null;
@@ -197,12 +198,12 @@ async function initStripe() {
 
     // Initialize Stripe.js with the publishable key from the backend
     stripe = Stripe(data.publishableKey);
-    const elements = stripe.elements({
+    stripeElements = stripe.elements({
       clientSecret: clientSecret,
       appearance: {
         theme: 'night',
         variables: {
-          colorPrimary: '#C678DD',
+          colorPrimary: '#FFFFFF',
           colorBackground: 'rgba(255,255,255,0.03)',
           colorText: '#E0E0E8',
           colorTextPlaceholder: '#3E4451',
@@ -214,12 +215,12 @@ async function initStripe() {
         },
         rules: {
           '.Input': {
-            border: '1px solid rgba(198,120,221,0.12)',
+            border: '1px solid rgba(255,255,255,0.12)',
             backgroundColor: 'transparent',
             boxShadow: 'none',
           },
           '.Input:focus': {
-            border: '1px solid rgba(198,120,221,0.3)',
+            border: '1px solid rgba(255,255,255,0.3)',
             boxShadow: 'none',
           },
           '.Label': {
@@ -233,7 +234,7 @@ async function initStripe() {
       },
     });
 
-    cardElement = elements.create('payment');
+    cardElement = stripeElements.create('payment');
     cardElement.mount('#card-element');
 
     cardElement.on('change', (event) => {
@@ -317,7 +318,7 @@ async function handlePayment() {
     returnUrl.searchParams.set('pk', stripe._apiKey || '');
 
     const { error, paymentIntent } = await stripe.confirmPayment({
-      elements: cardElement._elements,
+      elements: stripeElements,
       confirmParams: {
         return_url: returnUrl.toString(),
       },
@@ -383,7 +384,7 @@ function spawnStar() {
   p.style.left = Math.random() * 100 + 'vw';
   p.style.top = Math.random() * 100 + 'vh';
   p.style.animationDuration = (2 + Math.random() * 4) + 's';
-  const colors = ['#C678DD','#E06C75','#D19A66','#E0E0E8'];
+  const colors = ['#FFFFFF','#E0E0E0','#A0A0A0','#E0E0E8'];
   p.style.background = colors[Math.floor(Math.random() * colors.length)];
   document.body.appendChild(p);
   p.addEventListener('animationend', () => p.remove());

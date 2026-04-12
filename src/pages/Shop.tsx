@@ -26,7 +26,7 @@ interface Cosmetic {
 }
 
 const COSMETICS: Cosmetic[] = [
-  { id: "cape_blossom", name: "Pulsar", type: "cape", price: 0, color: "#C678DD", color2: "#E06C75", description: "Purple cape with swirling particles" },
+  { id: "cape_blossom", name: "Bloom", type: "cape", price: 0, color: "#FFBED0", color2: "#D77890", description: "Pink cape with cherry blossom petals" },
   { id: "cape_midnight", name: "Midnight", type: "cape", price: 500, color: "#1E0F32", color2: "#0F0820", description: "Dark purple with starlight" },
   { id: "cape_frost", name: "Frost", type: "cape", price: 750, color: "#8CC8FF", color2: "#508CDC", description: "Icy blue crystal cape" },
   { id: "cape_flame", name: "Flame", type: "cape", price: 750, color: "#FF7828", color2: "#C83C14", description: "Fiery orange-red cape" },
@@ -34,7 +34,20 @@ const COSMETICS: Cosmetic[] = [
   { id: "cape_emerald", name: "Emerald", type: "cape", price: 1250, color: "#1E9646", color2: "#0F6428", description: "Green with gem sparkles" },
   { id: "cape_sunset", name: "Sunset", type: "cape", price: 1500, color: "#FF9650", color2: "#783296", description: "Orange to purple gradient" },
   { id: "cape_galaxy", name: "Galaxy", type: "cape", price: 2500, color: "#0F081E", color2: "#05020F", description: "Dark with colorful stars" },
-  { id: "hat_halo", name: "Halo", type: "hat", price: 500, color: "#FFFFAA", color2: "#DDDD77", description: "Glowing halo above head" },
+  { id: "cape_void", name: "Void", type: "cape", price: 3000, color: "#1A0A2E", color2: "#0D0518", description: "Deep void with dark energy" },
+  { id: "cape_lightning", name: "Lightning", type: "cape", price: 1500, color: "#E8D44D", color2: "#B8960F", description: "Electric yellow lightning bolts" },
+  { id: "cape_blood", name: "Bloodmoon", type: "cape", price: 2000, color: "#8B0000", color2: "#4A0000", description: "Dark crimson moonlit cape" },
+  { id: "cape_arctic", name: "Arctic", type: "cape", price: 1750, color: "#E0F0FF", color2: "#A0C4E8", description: "Frozen white aurora cape" },
+  { id: "cape_phantom", name: "Phantom", type: "cape", price: 1500, color: "#C8C8D2", color2: "#646478", description: "Ghostly spectral wisps" },
+  { id: "cape_neon", name: "Neon", type: "cape", price: 2000, color: "#FF32C8", color2: "#00FFFF", description: "Cyberpunk neon glitch" },
+  { id: "cape_lava", name: "Lava", type: "cape", price: 1750, color: "#FFA014", color2: "#321905", description: "Molten lava with black crust" },
+  { id: "cape_storm", name: "Storm", type: "cape", price: 1500, color: "#3C414B", color2: "#191C23", description: "Thunderstorm with lightning" },
+  { id: "cape_solar", name: "Solar", type: "cape", price: 2500, color: "#FFC83C", color2: "#C8500A", description: "Solar flare corona rays" },
+  { id: "cape_amethyst", name: "Amethyst", type: "cape", price: 2000, color: "#5A1478", color2: "#28083C", description: "Deep purple crystal clusters" },
+  { id: "cape_inferno", name: "Inferno", type: "cape", price: 3000, color: "#C81400", color2: "#3C0505", description: "Hellfire with skull motifs" },
+  { id: "cape_drift", name: "Drift", type: "cape", price: 1250, color: "#C8B4DC", color2: "#B4D2DC", description: "Shifting pastel vaporwave" },
+  { id: "cape_obsidian", name: "Obsidian", type: "cape", price: 3500, color: "#1E0F1E", color2: "#0A050F", description: "Dark obsidian purple cracks" },
+  { id: "cape_blackhole", name: "Black Hole", type: "cape", price: 2500, color: "#FFA030", color2: "#080010", description: "Swirling accretion disk with event horizon" },
 ];
 
 const TYPE_LABELS: Record<string, string> = { cape: "Capes", wings: "Wings", hat: "Hats", aura: "Auras" };
@@ -42,64 +55,77 @@ const TYPE_LABELS: Record<string, string> = { cape: "Capes", wings: "Wings", hat
 // Store URL — local payment server
 const STORE_BASE_URL = "http://localhost:3001";
 const POINT_TIERS = [
-  { amount: 500, price: "$2.99", priceNum: 2.99, color: "#C678DD", popular: false, bonus: "",
+  { amount: 500, price: "$2.99", priceNum: 2.99, color: "#FFFFFF", popular: false, bonus: "",
     payUrl: `${STORE_BASE_URL}/store.html?tier=500` },
-  { amount: 1500, price: "$6.99", priceNum: 6.99, color: "#C678DD", popular: true, bonus: "+200 bonus",
+  { amount: 1500, price: "$6.99", priceNum: 6.99, color: "#FFFFFF", popular: true, bonus: "+200 bonus",
     payUrl: `${STORE_BASE_URL}/store.html?tier=1500` },
-  { amount: 3500, price: "$12.99", priceNum: 12.99, color: "#E06C75", popular: false, bonus: "+500 bonus",
+  { amount: 3500, price: "$12.99", priceNum: 12.99, color: "#E0E0E0", popular: false, bonus: "+500 bonus",
     payUrl: `${STORE_BASE_URL}/store.html?tier=3500` },
-  { amount: 8000, price: "$24.99", priceNum: 24.99, color: "#D19A66", popular: false, bonus: "+1500 bonus",
+  { amount: 8000, price: "$24.99", priceNum: 24.99, color: "#A0A0A0", popular: false, bonus: "+1500 bonus",
     payUrl: `${STORE_BASE_URL}/store.html?tier=8000` },
 ];
 
+// Bump this when the data format changes to force a clean slate
+const DATA_VERSION = 2;
+
 export function ShopPage() {
   const [points, setPoints] = useState(500);
-  const [owned, setOwned] = useState<string[]>([]);
+  const [purchased, setPurchased] = useState<string[]>([]);
   const [equipped, setEquipped] = useState<Record<string, string>>({});
   const [filter, setFilter] = useState<string>("all");
   const [purchaseModal, setPurchaseModal] = useState<typeof POINT_TIERS[0] | null>(null);
   const [purchasePhase, setPurchasePhase] = useState<"confirm" | "paying" | "processing" | "success">("confirm");
 
   useEffect(() => {
-    // Load from shared file on disk (synced with in-game)
     invoke<string>("get_cosmetics").then(raw => {
       const data = JSON.parse(raw);
+      // If data version doesn't match, reset owned items (keep points)
+      if ((data.v ?? 1) < DATA_VERSION) {
+        const reset = { v: DATA_VERSION, points: data.points ?? 500, purchased: [], equipped: {} };
+        invoke("save_cosmetics", { data: JSON.stringify(reset) }).catch(() => {});
+        localStorage.setItem("pulsar-cosmetics", JSON.stringify(reset));
+        setPoints(reset.points);
+        return;
+      }
       setPoints(data.points ?? 500);
-      setOwned(data.owned ?? []);
+      setPurchased(data.purchased ?? []);
       setEquipped(data.equipped ?? {});
     }).catch(() => {
-      // Fallback to localStorage for migration
       const saved = localStorage.getItem("pulsar-cosmetics");
       if (saved) {
         const data = JSON.parse(saved);
+        if ((data.v ?? 1) < DATA_VERSION) { localStorage.removeItem("pulsar-cosmetics"); return; }
         setPoints(data.points ?? 500);
-        setOwned(data.owned ?? []);
+        setPurchased(data.purchased ?? []);
         setEquipped(data.equipped ?? {});
       }
     });
   }, []);
 
-  function save(p: number, o: string[], e: Record<string, string>) {
-    setPoints(p); setOwned(o); setEquipped(e);
-    const json = JSON.stringify({ points: p, owned: o, equipped: e });
-    // Save to shared file AND localStorage (belt and suspenders)
+  function save(p: number, pur: string[], e: Record<string, string>) {
+    setPoints(p); setPurchased(pur); setEquipped(e);
+    const json = JSON.stringify({ v: DATA_VERSION, points: p, purchased: pur, equipped: e });
     invoke("save_cosmetics", { data: json }).catch(() => {});
     localStorage.setItem("pulsar-cosmetics", json);
   }
 
   function buy(c: Cosmetic) {
-    if (c.price > points) return;
-    save(points - c.price, [...owned, c.id], equipped);
+    if (c.price > points || isOwned(c.id)) return;
+    save(points - c.price, [...purchased, c.id], equipped);
   }
 
   function equip(c: Cosmetic) {
     const newEquipped = { ...equipped };
     if (newEquipped[c.type] === c.id) delete newEquipped[c.type];
     else newEquipped[c.type] = c.id;
-    save(points, owned, newEquipped);
+    save(points, purchased, newEquipped);
   }
 
-  const isOwned = (id: string) => owned.includes(id) || COSMETICS.find(c => c.id === id)?.price === 0;
+  // A cosmetic is owned if it's free (price 0) or was explicitly purchased
+  const isOwned = (id: string) => {
+    const cosmetic = COSMETICS.find(c => c.id === id);
+    return cosmetic?.price === 0 || purchased.includes(id);
+  };
   const isEquipped = (id: string) => Object.values(equipped).includes(id);
 
   const filtered = filter === "all" ? COSMETICS : COSMETICS.filter(c => c.type === filter);
@@ -116,13 +142,13 @@ export function ShopPage() {
           padding: "10px 18px", display: "flex", alignItems: "center", gap: "8px",
         }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="10" fill="#0A0A0F"/>
-            <circle cx="12" cy="12" r="8" fill="none" stroke="#C678DD" strokeWidth="0.5" opacity="0.3"/>
-            <ellipse cx="12" cy="12" rx="11" ry="4" fill="none" stroke="#E06C75" strokeWidth="1.5" opacity="0.6"/>
-            <circle cx="12" cy="12" r="4" fill="#0A0A0F"/>
-            <circle cx="12" cy="12" r="3" fill="none" stroke="#C678DD" strokeWidth="0.3" opacity="0.5"/>
+            <circle cx="12" cy="12" r="10" fill="#000000"/>
+            <circle cx="12" cy="12" r="8" fill="none" stroke="#ffffff" strokeWidth="0.5" opacity="0.3"/>
+            <ellipse cx="12" cy="12" rx="11" ry="4" fill="none" stroke="#ffffff" strokeWidth="1.5" opacity="0.6"/>
+            <circle cx="12" cy="12" r="4" fill="#000000"/>
+            <circle cx="12" cy="12" r="3" fill="none" stroke="#ffffff" strokeWidth="0.3" opacity="0.5"/>
           </svg>
-          <span style={{ fontSize: "18px", fontWeight: "800", color: "var(--pink-light)" }}>{points}</span>
+          <span style={{ fontSize: "18px", fontWeight: "800", color: "#FFFFFF" }}>{points}</span>
           <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>points</span>
         </div>
       </div>
@@ -137,16 +163,16 @@ export function ShopPage() {
           }} style={{
             padding: "14px", textAlign: "center", cursor: "pointer",
             position: "relative", transition: "all 0.15s",
-            border: tier.popular ? "1px solid rgba(198,120,221,0.25)" : undefined,
-            background: tier.popular ? "rgba(198,120,221,0.06)" : undefined,
+            border: tier.popular ? "1px solid rgba(255,255,255,0.2)" : undefined,
+            background: tier.popular ? "rgba(255,255,255,0.05)" : undefined,
           }}
-          onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(198,120,221,0.15)"; }}
+          onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(255,255,255,0.08)"; }}
           onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
           >
             {tier.popular && (
               <div style={{
                 position: "absolute", top: "-8px", left: "50%", transform: "translateX(-50%)",
-                background: "linear-gradient(135deg, #C678DD, #E06C75)", color: "#0A0A0F",
+                background: "linear-gradient(135deg, #FFFFFF, #C0C0C0)", color: "#000000",
                 fontSize: "9px", fontWeight: "800", padding: "2px 10px", borderRadius: "8px",
                 letterSpacing: "0.05em", textTransform: "uppercase",
               }}>Popular</div>
@@ -154,28 +180,28 @@ export function ShopPage() {
             <div style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-muted)", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "6px" }}>
               Pulsar Points
             </div>
-            <div style={{ fontSize: "22px", fontWeight: "800", color: tier.color, marginBottom: "2px" }}>
+            <div style={{ fontSize: "22px", fontWeight: "800", color: "#FFFFFF", marginBottom: "2px" }}>
               {tier.amount.toLocaleString()}
             </div>
             <div style={{
               fontSize: "13px", fontWeight: "700", color: "var(--text-primary)",
-              background: "rgba(198,120,221,0.08)", borderRadius: "6px", padding: "4px 12px",
+              background: "rgba(255,255,255,0.06)", borderRadius: "6px", padding: "4px 12px",
               display: "inline-block", marginTop: "6px",
             }}>{tier.price}</div>
           </div>
         ))}
       </div>
 
-      <div style={{ height: "1px", background: "rgba(198,120,221,0.06)" }} />
+      <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
 
       {/* Filter tabs */}
       <div style={{ display: "flex", gap: "4px" }}>
-        {["all", "cape", "hat"].map(t => (
+        {["all", "cape"].map(t => (
           <button key={t} onClick={() => setFilter(t)} style={{
             padding: "7px 16px", borderRadius: "8px",
-            background: filter === t ? "rgba(198,120,221,0.1)" : "transparent",
-            border: filter === t ? "1px solid rgba(198,120,221,0.15)" : "1px solid transparent",
-            color: filter === t ? "var(--pink-light)" : "var(--text-dim)",
+            background: filter === t ? "rgba(255,255,255,0.08)" : "transparent",
+            border: filter === t ? "1px solid rgba(255,255,255,0.15)" : "1px solid transparent",
+            color: filter === t ? "#FFFFFF" : "var(--text-muted)",
             fontSize: "12px", fontWeight: "600", cursor: "pointer",
             transition: "all 0.15s", fontFamily: "inherit",
           }}
@@ -196,8 +222,8 @@ export function ShopPage() {
           return (
             <div key={c.id} className="bloom-card" style={{
               padding: "16px", position: "relative",
-              borderColor: eq ? "rgba(198,120,221,0.25)" : undefined,
-              background: eq ? "rgba(198,120,221,0.06)" : undefined,
+              borderColor: eq ? "rgba(255,255,255,0.22)" : undefined,
+              background: eq ? "rgba(255,255,255,0.05)" : undefined,
             }}>
               {/* Type badge */}
               <div style={{
@@ -230,8 +256,8 @@ export function ShopPage() {
               {own ? (
                 <button onClick={() => equip(c)} className="bloom-btn" style={{
                   width: "100%", padding: "8px",
-                  background: eq ? "linear-gradient(135deg, var(--pink), var(--pink-soft))" : "rgba(255,255,255,0.04)",
-                  color: eq ? "#0A0A0F" : "var(--text-muted)",
+                  background: eq ? "linear-gradient(135deg, #FFFFFF, #C0C0C0)" : "rgba(255,255,255,0.04)",
+                  color: eq ? "#000000" : "var(--text-muted)",
                   fontSize: "12px",
                 }}>
                   {eq ? "Equipped" : "Equip"}
@@ -241,8 +267,8 @@ export function ShopPage() {
                   className="bloom-btn-ghost"
                   style={{
                     width: "100%", padding: "8px",
-                    borderColor: c.price > points ? "rgba(255,255,255,0.04)" : "rgba(198,120,221,0.15)",
-                    color: c.price > points ? "var(--text-faint)" : "var(--pink)",
+                    borderColor: c.price > points ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.15)",
+                    color: c.price > points ? "var(--text-faint)" : "#FFFFFF",
                     cursor: c.price > points ? "not-allowed" : "pointer",
                     display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
                     fontSize: "12px",
@@ -268,7 +294,7 @@ export function ShopPage() {
           display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999,
         }} onClick={() => { if (purchasePhase !== "processing") setPurchaseModal(null); }}>
           <div onClick={e => e.stopPropagation()} className="fade-in" style={{
-            background: "rgba(12,8,18,0.97)", border: "1px solid rgba(198,120,221,0.12)",
+            background: "rgba(0,0,0,0.97)", border: "1px solid rgba(255,255,255,0.1)",
             borderRadius: "16px", padding: "32px 36px", width: "min(400px, 90vw)",
             boxShadow: "0 24px 64px rgba(0,0,0,0.6)",
           }}>
@@ -277,7 +303,7 @@ export function ShopPage() {
                 <div style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.12em", color: "var(--text-muted)", textTransform: "uppercase", marginBottom: "8px" }}>
                   Purchase Pulsar Points
                 </div>
-                <div style={{ fontSize: "42px", fontWeight: "800", color: purchaseModal.color, lineHeight: 1 }}>
+                <div style={{ fontSize: "42px", fontWeight: "800", color: "#FFFFFF", lineHeight: 1 }}>
                   {purchaseModal.amount.toLocaleString()}
                 </div>
                 {purchaseModal.bonus && (
@@ -305,7 +331,7 @@ export function ShopPage() {
                 <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", margin: "8px 0" }} />
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                   <span style={{ fontSize: "13px", color: "var(--text-primary)", fontWeight: "700" }}>Total</span>
-                  <span style={{ fontSize: "13px", color: "var(--pink-200)", fontWeight: "800" }}>{purchaseModal.price}</span>
+                  <span style={{ fontSize: "13px", color: "#FFFFFF", fontWeight: "800" }}>{purchaseModal.price}</span>
                 </div>
               </div>
 
@@ -317,14 +343,14 @@ export function ShopPage() {
                 setPurchasePhase("paying");
               }} style={{
                 width: "100%", padding: "14px", border: "none", borderRadius: "10px",
-                background: "linear-gradient(135deg, var(--pink-300), var(--pink-400))",
-                color: "#0A0A0F", fontSize: "13px", fontWeight: "800", cursor: "pointer",
+                background: "linear-gradient(135deg, #FFFFFF, #C0C0C0)",
+                color: "#000000", fontSize: "13px", fontWeight: "800", cursor: "pointer",
                 fontFamily: "inherit", letterSpacing: "0.06em",
-                boxShadow: "0 4px 20px rgba(198,120,221,0.25)",
+                boxShadow: "0 4px 20px rgba(255,255,255,0.12)",
                 transition: "all 0.2s",
               }}
-              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(198,120,221,0.35)"; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(198,120,221,0.25)"; }}
+              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(255,255,255,0.18)"; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(255,255,255,0.12)"; }}
               >
                 PAY {purchaseModal.price}
               </button>
@@ -338,7 +364,7 @@ export function ShopPage() {
 
             {purchasePhase === "paying" && (
               <div style={{ textAlign: "center", padding: "10px 0" }}>
-                <div style={{ fontSize: "14px", color: "var(--pink-200)", fontWeight: "600", marginBottom: "8px" }}>
+                <div style={{ fontSize: "14px", color: "#FFFFFF", fontWeight: "600", marginBottom: "8px" }}>
                   Complete payment in your browser
                 </div>
                 <div style={{ fontSize: "12px", color: "var(--text-muted)", marginBottom: "20px", lineHeight: 1.6 }}>
@@ -349,16 +375,16 @@ export function ShopPage() {
                 <button onClick={() => {
                   setPurchasePhase("processing");
                   setTimeout(() => {
-                    save(points + purchaseModal!.amount, owned, equipped);
+                    save(points + purchaseModal!.amount, purchased, equipped);
                     setPurchasePhase("success");
                     setTimeout(() => setPurchaseModal(null), 1500);
                   }, 1200);
                 }} style={{
                   width: "100%", padding: "14px", border: "none", borderRadius: "10px",
-                  background: "linear-gradient(135deg, var(--pink-300), var(--pink-400))",
-                  color: "#0A0A0F", fontSize: "13px", fontWeight: "800", cursor: "pointer",
+                  background: "linear-gradient(135deg, #FFFFFF, #C0C0C0)",
+                  color: "#000000", fontSize: "13px", fontWeight: "800", cursor: "pointer",
                   fontFamily: "inherit", letterSpacing: "0.06em",
-                  boxShadow: "0 4px 20px rgba(198,120,221,0.25)",
+                  boxShadow: "0 4px 20px rgba(255,255,255,0.12)",
                 }}>
                   I'VE COMPLETED PAYMENT
                 </button>
@@ -383,12 +409,12 @@ export function ShopPage() {
 
             {purchasePhase === "processing" && (
               <div style={{ textAlign: "center", padding: "20px 0" }}>
-                <div style={{ fontSize: "14px", color: "var(--pink-200)", fontWeight: "600", marginBottom: "16px" }}>
+                <div style={{ fontSize: "14px", color: "#FFFFFF", fontWeight: "600", marginBottom: "16px" }}>
                   Processing payment...
                 </div>
                 <div style={{
                   width: "40px", height: "40px", margin: "0 auto",
-                  border: "3px solid rgba(198,120,221,0.1)", borderTopColor: "var(--pink-300)",
+                  border: "3px solid rgba(255,255,255,0.08)", borderTopColor: "#FFFFFF",
                   borderRadius: "50%", animation: "spin 0.8s linear infinite",
                 }} />
                 <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
@@ -584,6 +610,157 @@ function CosmeticPreview({ cosmetic: c }: { cosmetic: Cosmetic }) {
             </>}
           </g>
         ))}
+      </>}
+      {c.id === "cape_phantom" && <>
+        {/* Spectral wisps */}
+        {[[cx-10,25],[cx+8,40],[cx-5,60],[cx+12,75],[cx-8,85]].map(([x,y],i) => (
+          <ellipse key={i} cx={x} cy={y} rx="6" ry="12" fill="#E8E8FF" opacity={0.12+i*0.03}
+            style={{animation:`pv-float ${3+i*0.5}s ease-in-out ${i*0.4}s infinite`}} />
+        ))}
+        {/* Ghost faces */}
+        {[[cx-6,35],[cx+10,65]].map(([x,y],i) => (
+          <g key={i} opacity={0.15}>
+            <circle cx={x} cy={y} r="5" fill="none" stroke="#DDDDFF" strokeWidth="0.5" />
+            <circle cx={(x as number)-2} cy={(y as number)-1} r="0.8" fill="#CCCCFF" />
+            <circle cx={(x as number)+2} cy={(y as number)-1} r="0.8" fill="#CCCCFF" />
+          </g>
+        ))}
+      </>}
+      {c.id === "cape_neon" && <>
+        {/* Neon grid */}
+        {[25,40,55,70].map((y,i) => (
+          <line key={`h${i}`} x1={cx-26} y1={y} x2={cx+26} y2={y} stroke="#FF32C8" strokeWidth="0.5" opacity="0.3" />
+        ))}
+        {[cx-18,cx-6,cx+6,cx+18].map((x,i) => (
+          <line key={`v${i}`} x1={x} y1={12} x2={x} y2={85} stroke="#00FFFF" strokeWidth="0.5" opacity="0.25" />
+        ))}
+        {/* Glitch blocks */}
+        {[[cx-12,30,8,3,"#FF40D0"],[cx+5,55,10,2,"#00EEFF"],[cx-8,72,6,3,"#FF60E0"]].map(([x,y,w,h,col],i) => (
+          <rect key={i} x={x as number} y={y as number} width={w as number} height={h as number} fill={col as string} opacity={0.2+i*0.05}
+            style={{animation:`pv-shimmer ${1+i*0.3}s ease-in-out ${i*0.2}s infinite`}} />
+        ))}
+        {/* Neon glow spots */}
+        <circle cx={cx-8} cy={35} r="4" fill="#FF32C8" opacity="0.15" filter={`url(#blur-${c.id})`} />
+        <circle cx={cx+10} cy={60} r="5" fill="#00FFFF" opacity="0.12" filter={`url(#blur-${c.id})`} />
+      </>}
+      {c.id === "cape_lava" && <>
+        {/* Lava cracks */}
+        {[[cx-15,25,cx+5,35],[cx+3,45,cx+20,55],[cx-10,60,cx+8,75]].map(([x1,y1,x2,y2],i) => (
+          <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#FF8020" strokeWidth="1.5" opacity={0.4+i*0.05}
+            style={{animation:`pv-glow ${2+i*0.3}s ease-in-out ${i*0.3}s infinite`}} />
+        ))}
+        {/* Molten pools */}
+        {[[cx-8,30],[cx+10,50],[cx-3,70]].map(([x,y],i) => (
+          <ellipse key={i} cx={x} cy={y} rx="5" ry="3" fill="#FF6010" opacity={0.2+i*0.05}
+            style={{animation:`pv-pulse ${1.5+i*0.2}s ease-in-out ${i*0.2}s infinite`}} />
+        ))}
+        <ellipse cx={cx} cy={80} rx="25" ry="8" fill="#FF4400" opacity="0.1" filter={`url(#blur-${c.id})`} />
+      </>}
+      {c.id === "cape_sakura" && <>
+        {/* Branch */}
+        <line x1={cx-20} y1={45} x2={cx+20} y2={30} stroke="#644028" strokeWidth="1.5" opacity="0.4" />
+        {/* Flowers */}
+        {[[cx-12,32],[cx+8,25],[cx-6,50],[cx+10,58],[cx-10,72],[cx+5,78]].map(([x,y],i) => (
+          <g key={i} style={{animation:`pv-float ${2.5+i*0.3}s ease-in-out ${i*0.25}s infinite`,transformOrigin:`${x}px ${y}px`}}>
+            {[0,72,144,216,288].map((a,j) => (
+              <ellipse key={j} cx={x} cy={(y as number)-3} rx="1.5" ry="3.5" fill="#FFD8E6" opacity="0.5"
+                transform={`rotate(${a} ${x} ${y})`} />
+            ))}
+            <circle cx={x} cy={y} r="1.5" fill="#FFF0F4" opacity="0.7" />
+          </g>
+        ))}
+        {/* Falling petals */}
+        {Array.from({length:5}).map((_,i) => (
+          <ellipse key={i} cx={cx-15+i*8} cy={20+i*14} rx="2" ry="1" fill="#FFE0EC" opacity={0.3+i*0.05}
+            transform={`rotate(${30+i*25} ${cx-15+i*8} ${20+i*14})`}
+            style={{animation:`pv-drift ${3+i*0.4}s ease-in-out ${i*0.3}s infinite`}} />
+        ))}
+      </>}
+      {c.id === "cape_storm" && <>
+        {/* Dark clouds */}
+        {[[cx-12,18],[cx+8,15],[cx,22]].map(([x,y],i) => (
+          <ellipse key={i} cx={x} cy={y} rx="12" ry="5" fill="#1A1C22" opacity={0.3+i*0.05} />
+        ))}
+        {/* Lightning bolt */}
+        <path d={`M${cx+2} 28 L${cx-3} 45 L${cx+1} 45 L${cx-4} 65`} fill="none" stroke="#FFFFD8" strokeWidth="1.5" opacity="0.7"
+          style={{animation:"pv-shimmer 2s ease-in-out infinite"}} />
+        {/* Rain streaks */}
+        {Array.from({length:8}).map((_,i) => (
+          <line key={i} x1={cx-20+i*6} y1={35+i*3} x2={cx-21+i*6} y2={42+i*3} stroke="#A0B8D0" strokeWidth="0.5" opacity={0.2+i*0.03} />
+        ))}
+      </>}
+      {c.id === "cape_solar" && <>
+        {/* Corona */}
+        <circle cx={cx} cy={30} r="16" fill="#FFE060" opacity="0.1" filter={`url(#blur-${c.id})`} style={{animation:"pv-pulse 3s ease-in-out infinite"}} />
+        <circle cx={cx} cy={30} r="10" fill="#FFCC40" opacity="0.2" />
+        <circle cx={cx} cy={30} r="6" fill="#FFE080" opacity="0.4" />
+        {/* Sun rays */}
+        {[0,30,60,90,120,150,180,210,240,270,300,330].map(a => (
+          <line key={a} x1={cx+Math.cos(a*Math.PI/180)*11} y1={30+Math.sin(a*Math.PI/180)*11}
+            x2={cx+Math.cos(a*Math.PI/180)*22} y2={30+Math.sin(a*Math.PI/180)*22}
+            stroke="#FFD060" strokeWidth="0.5" opacity="0.25" style={{animation:`pv-glow ${2+a/180}s ease-in-out infinite`}} />
+        ))}
+        {/* Flare arc */}
+        <path d={`M${cx-15} 65 Q${cx} 45 ${cx+15} 65`} fill="none" stroke="#FFA030" strokeWidth="1" opacity="0.25" />
+      </>}
+      {c.id === "cape_amethyst" && <>
+        {/* Crystal shards */}
+        {[[cx-10,25,12],[cx+8,35,14],[cx-5,55,10],[cx+12,65,11],[cx-8,80,9]].map(([x,y,h],i) => (
+          <polygon key={i} points={`${x},${(y as number)-(h as number)} ${(x as number)+4},${y} ${(x as number)-4},${y}`}
+            fill="#8840C0" opacity={0.3+i*0.05} style={{animation:`pv-shimmer ${2+i*0.4}s ease-in-out ${i*0.25}s infinite`}} />
+        ))}
+        {/* Crystal highlights */}
+        {[[cx-10,20],[cx+8,30],[cx-5,50],[cx+12,60]].map(([x,y],i) => (
+          <circle key={i} cx={x} cy={y} r="0.8" fill="#DDB0FF" opacity="0.6" />
+        ))}
+        {/* Purple glow */}
+        <ellipse cx={cx} cy={50} rx="20" ry="30" fill="#6020A0" opacity="0.08" filter={`url(#blur-${c.id})`} />
+      </>}
+      {c.id === "cape_inferno" && <>
+        {/* Hellfire glow */}
+        <ellipse cx={cx} cy={85} rx="28" ry="10" fill="#FF2200" opacity="0.15" filter={`url(#blur-${c.id})`} />
+        {/* Flames */}
+        {[0,1,2,3,4,5,6].map(i => {
+          const fx = cx - 18 + i * 6;
+          const fh = 15 + Math.sin(i*1.8)*8;
+          return <path key={i} d={`M${fx} 88 Q${fx+2} ${88-fh*0.6} ${fx+3} ${88-fh} Q${fx+4} ${88-fh*0.6} ${fx+5} 88`}
+            fill={i%2===0?"#FF3010":"#CC1000"}
+            style={{animation:`pv-flicker ${0.5+i*0.12}s ease-in-out ${i*0.08}s infinite`,transformOrigin:`${fx+3}px 88px`}} />;
+        })}
+        {/* Skull */}
+        <circle cx={cx} cy={40} r="6" fill="#401005" opacity="0.4" />
+        <circle cx={cx-2} cy={38} r="1" fill="#FF5500" opacity="0.6" />
+        <circle cx={cx+2} cy={38} r="1" fill="#FF5500" opacity="0.6" />
+      </>}
+      {c.id === "cape_drift" && <>
+        {/* Pastel gradient bands */}
+        {[[20,"#FFB8D0"],[35,"#B8D0FF"],[50,"#D0B8FF"],[65,"#FFD0B8"],[80,"#B8FFD0"]].map(([y,col],i) => (
+          <rect key={i} x={cx-25} y={y as number} width="50" height="8" fill={col as string} opacity={0.12+i*0.02} rx="2"
+            style={{animation:`pv-drift ${3+i*0.3}s ease-in-out ${i*0.3}s infinite`}} />
+        ))}
+        {/* Sparkle dots */}
+        {Array.from({length:6}).map((_,i) => (
+          <circle key={i} cx={cx-12+i*5} cy={25+i*10} r="0.6" fill="#fff" opacity={0.3+i*0.08}
+            style={{animation:`pv-twinkle ${2+i*0.3}s ease-in-out ${i*0.2}s infinite`}} />
+        ))}
+        {/* Vaporwave sun stripes */}
+        {[0,1,2].map(i => (
+          <line key={i} x1={cx-15} y1={78+i*3} x2={cx+15} y2={78+i*3} stroke="#FF78C8" strokeWidth="0.5" opacity="0.15" />
+        ))}
+      </>}
+      {c.id === "cape_obsidian" && <>
+        {/* Purple crack lines */}
+        {[[cx-15,20,cx+5,35],[cx+3,40,cx-10,60],[cx-8,55,cx+15,75],[cx+5,70,cx-5,88]].map(([x1,y1,x2,y2],i) => (
+          <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#7828B4" strokeWidth="0.8" opacity={0.3+i*0.05}
+            style={{animation:`pv-glow ${3+i*0.4}s ease-in-out ${i*0.3}s infinite`}} />
+        ))}
+        {/* Purple glow points */}
+        {[[cx-10,28],[cx+8,50],[cx-5,68],[cx+10,82]].map(([x,y],i) => (
+          <circle key={i} cx={x} cy={y} r="2" fill="#A050E0" opacity={0.15+i*0.05}
+            style={{animation:`pv-shimmer ${2+i*0.3}s ease-in-out ${i*0.2}s infinite`}} />
+        ))}
+        {/* Dark sheen */}
+        <rect x={cx-22} y={30} width="44" height="2" fill="rgba(80,60,100,0.08)" transform={`rotate(-10 ${cx} 31)`} />
       </>}
     </svg>
   );

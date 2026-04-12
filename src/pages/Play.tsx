@@ -19,8 +19,8 @@ export function PlayPage({ launch, versions, selectedVersion, onVersionChange, o
       <div style={{
         borderRadius: "12px", overflow: "hidden",
         height: "200px", flexShrink: 0,
-        background: "linear-gradient(135deg, #0A0A0F 0%, #12101A 50%, #1a1525 100%)",
-        border: "1px solid rgba(198,120,221,0.1)",
+        background: "linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #111111 100%)",
+        border: "1px solid rgba(255,255,255,0.08)",
         display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
         position: "relative",
       }}>
@@ -31,13 +31,13 @@ export function PlayPage({ launch, versions, selectedVersion, onVersionChange, o
           value={selectedVersion}
           onChange={e => onVersionChange(e.target.value)}
           style={{
-            background: "rgba(0,0,0,0.5)", border: "1px solid rgba(198,120,221,0.2)",
+            background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.15)",
             color: "#fff", borderRadius: "8px", padding: "10px 24px",
             fontSize: "14px", fontWeight: "600", cursor: "pointer", outline: "none",
             zIndex: 1,
           }}
         >
-          {versions.map(v => <option key={v} value={v} style={{ background: "#0A0A0F" }}>{v}</option>)}
+          {versions.map(v => <option key={v} value={v} style={{ background: "#000000" }}>{v}</option>)}
         </select>
       </div>
 
@@ -49,13 +49,13 @@ export function PlayPage({ launch, versions, selectedVersion, onVersionChange, o
         style={{
           width: "100%", padding: "18px", flexShrink: 0,
           background: canPlay
-            ? "linear-gradient(135deg, #C678DD, #E06C75, #D19A66)"
-            : "rgba(198,120,221,0.15)",
-          color: canPlay ? "#0A0A0F" : "#998899",
+            ? "linear-gradient(135deg, #FFFFFF, #E0E0E0, #C0C0C0)"
+            : "rgba(255,255,255,0.08)",
+          color: canPlay ? "#000000" : "#606060",
           borderRadius: "10px",
           fontSize: "16px", fontWeight: "800", letterSpacing: "0.1em",
           cursor: canPlay ? "pointer" : "default",
-          boxShadow: canPlay ? "0 4px 20px rgba(198,120,221,0.25)" : "none",
+          boxShadow: canPlay ? "0 4px 20px rgba(255,255,255,0.12)" : "none",
           display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
           userSelect: "none",
           boxSizing: "border-box",
@@ -70,11 +70,11 @@ export function PlayPage({ launch, versions, selectedVersion, onVersionChange, o
           <div style={{ height: "4px", background: "rgba(255,255,255,0.05)", borderRadius: "2px", overflow: "hidden" }}>
             <div style={{
               height: "100%", width: `${launch.progress}%`,
-              background: "linear-gradient(90deg, #E06C75, #C678DD)",
+              background: "linear-gradient(90deg, #A0A0A0, #FFFFFF)",
               transition: "width 0.4s ease",
             }} />
           </div>
-          <div style={{ fontSize: "12px", color: "#776070", marginTop: "4px" }}>{launch.status}</div>
+          <div style={{ fontSize: "12px", color: "#606060", marginTop: "4px" }}>{launch.status}</div>
         </div>
       )}
       {launch.phase === "error" && (
@@ -87,22 +87,22 @@ export function PlayPage({ launch, versions, selectedVersion, onVersionChange, o
       <div style={{ display: "flex", gap: "12px", flexShrink: 0 }}>
         <div style={{
           flex: 1, borderRadius: "10px",
-          background: "rgba(255,255,255,0.03)", border: "1px solid rgba(198,120,221,0.08)",
+          background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
           padding: "16px",
         }}>
-          <div style={{ fontSize: "11px", fontWeight: "800", letterSpacing: "0.1em", color: "#998899", marginBottom: "8px" }}>
+          <div style={{ fontSize: "11px", fontWeight: "800", letterSpacing: "0.1em", color: "#606060", marginBottom: "8px" }}>
             PULSAR CLIENT
           </div>
-          <div style={{ fontSize: "12px", color: "#776070", lineHeight: 1.5 }}>
+          <div style={{ fontSize: "12px", color: "#606060", lineHeight: 1.5 }}>
             Press Right Shift in-game for modules. 11 modules available.
           </div>
         </div>
         <div style={{
           flex: 1, borderRadius: "10px",
-          background: "rgba(255,255,255,0.03)", border: "1px solid rgba(198,120,221,0.08)",
+          background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
           padding: "16px",
         }}>
-          <div style={{ fontSize: "11px", fontWeight: "800", letterSpacing: "0.1em", color: "#998899", marginBottom: "8px" }}>
+          <div style={{ fontSize: "11px", fontWeight: "800", letterSpacing: "0.1em", color: "#606060", marginBottom: "8px" }}>
             POPULAR SERVERS
           </div>
           {[
@@ -112,9 +112,9 @@ export function PlayPage({ launch, versions, selectedVersion, onVersionChange, o
           ].map((s, i) => (
             <div key={i} style={{
               display: "flex", justifyContent: "space-between",
-              padding: "5px 0", borderBottom: i < 2 ? "1px solid rgba(198,120,221,0.05)" : "none",
+              padding: "5px 0", borderBottom: i < 2 ? "1px solid rgba(255,255,255,0.04)" : "none",
             }}>
-              <span style={{ fontSize: "12px", color: "#caa" }}>{s.name}</span>
+              <span style={{ fontSize: "12px", color: "#A0A0A0" }}>{s.name}</span>
               <span style={{ fontSize: "11px", color: "#55DD88" }}>● {s.players}</span>
             </div>
           ))}

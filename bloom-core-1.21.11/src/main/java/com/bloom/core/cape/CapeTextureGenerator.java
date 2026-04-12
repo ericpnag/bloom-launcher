@@ -35,6 +35,21 @@ public class CapeTextureGenerator {
             case "emerald_cape.png" -> generateEmerald(img);
             case "sunset_cape.png" -> generateSunset(img);
             case "galaxy_cape.png" -> generateGalaxy(img);
+            case "void_cape.png" -> generateVoid(img);
+            case "lightning_cape.png" -> generateLightning(img);
+            case "blood_cape.png" -> generateBlood(img);
+            case "arctic_cape.png" -> generateArctic(img);
+            case "phantom_cape.png" -> generatePhantom(img);
+            case "neon_cape.png" -> generateNeon(img);
+            case "lava_cape.png" -> generateLava(img);
+            case "sakura_cape.png" -> generateSakura(img);
+            case "storm_cape.png" -> generateStorm(img);
+            case "solar_cape.png" -> generateSolar(img);
+            case "amethyst_cape.png" -> generateAmethyst(img);
+            case "inferno_cape.png" -> generateInferno(img);
+            case "drift_cape.png" -> generateDrift(img);
+            case "obsidian_cape.png" -> generateObsidian(img);
+            case "blackhole_cape.png" -> generateBlackHole(img);
         }
     }
 
@@ -1091,6 +1106,883 @@ public class CapeTextureGenerator {
                 }
             }
         }
+    }
+
+    // ========== VOID ==========
+    private static void generateVoid(NativeImage img) {
+        int cx = FW / 2, cy = FH / 2;
+        for (int y = 0; y < FH; y++) {
+            for (int x = 0; x < FW; x++) {
+                float dx = x - cx, dy = y - cy;
+                float dist = (float) Math.sqrt(dx * dx + dy * dy);
+                float dark = Math.max(0, 1.0f - dist / 40.0f);
+                int r = (int)(26 * (1 - dark * 0.5f));
+                int g = (int)(10 * (1 - dark * 0.5f));
+                int b = (int)(46 * (1 - dark * 0.3f));
+                fillFace(img, x, y, argb(255, r, g, b));
+            }
+            fillEdges(img, y, argb(255, 13, 5, 24));
+        }
+        for (int x = 0; x < FW; x++) fillTop(img, x, argb(255, 26, 10, 46));
+        // Dark energy swirls
+        for (int i = 0; i < 8; i++) {
+            double angle = i * Math.PI / 4;
+            for (int j = 8; j < 30; j++) {
+                int px = cx + (int)(Math.cos(angle + j * 0.05) * j);
+                int py = cy + (int)(Math.sin(angle + j * 0.05) * j);
+                blendFace(img, px, py, argb(255, 80, 30, 120), 0.3f);
+            }
+        }
+    }
+
+    // ========== LIGHTNING ==========
+    private static void generateLightning(NativeImage img) {
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            int c = argb(255, lerp(232, 150, t), lerp(212, 120, t), lerp(77, 15, t));
+            for (int x = 0; x < FW; x++) fillFace(img, x, y, c);
+            fillEdges(img, y, c);
+        }
+        for (int x = 0; x < FW; x++) fillTop(img, x, argb(255, 232, 212, 77));
+        // Lightning bolts
+        int[][] bolts = {{15, 0}, {45, 5}, {30, 10}};
+        for (int[] bolt : bolts) {
+            int bx = bolt[0], by = bolt[1];
+            for (int seg = 0; seg < 10; seg++) {
+                int nx = bx + (int)((Math.random() - 0.5) * 8);
+                int ny = by + 5 + (int)(Math.random() * 3);
+                // Draw line segment
+                int steps = Math.max(Math.abs(nx - bx), Math.abs(ny - by)) + 1;
+                for (int s = 0; s <= steps; s++) {
+                    float f = (float) s / steps;
+                    int px = (int)(bx + (nx - bx) * f);
+                    int py = (int)(by + (ny - by) * f);
+                    fillFace(img, px, py, argb(255, 255, 255, 200));
+                    blendFace(img, px - 1, py, argb(255, 255, 255, 100), 0.4f);
+                    blendFace(img, px + 1, py, argb(255, 255, 255, 100), 0.4f);
+                }
+                bx = nx; by = ny;
+            }
+        }
+    }
+
+    // ========== BLOODMOON ==========
+    private static void generateBlood(NativeImage img) {
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            int c = argb(255, lerp(139, 74, t), 0, 0);
+            for (int x = 0; x < FW; x++) fillFace(img, x, y, c);
+            fillEdges(img, y, c);
+        }
+        for (int x = 0; x < FW; x++) fillTop(img, x, argb(255, 139, 0, 0));
+        // Blood moon
+        int moonCx = 40, moonCy = 20, moonR = 12;
+        for (int dy = -moonR; dy <= moonR; dy++) {
+            for (int dx = -moonR; dx <= moonR; dx++) {
+                float d = (float) Math.sqrt(dx * dx + dy * dy);
+                if (d <= moonR) {
+                    float bright = 1.0f - d / moonR * 0.4f;
+                    fillFace(img, moonCx + dx, moonCy + dy, argb(255, (int)(200 * bright), (int)(30 * bright), (int)(30 * bright)));
+                }
+            }
+        }
+        // Drip effects
+        int[][] drips = {{10, 40}, {25, 50}, {55, 35}, {65, 55}};
+        for (int[] drip : drips) {
+            for (int dy = 0; dy < 15; dy++) {
+                float fade = 1.0f - (float) dy / 15;
+                blendFace(img, drip[0], drip[1] + dy, argb(255, 180, 0, 0), fade * 0.5f);
+            }
+        }
+    }
+
+    // ========== ARCTIC ==========
+    private static void generateArctic(NativeImage img) {
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            for (int x = 0; x < FW; x++) {
+                float n = (float)(Math.sin(x * 0.1 + y * 0.08) * 0.03);
+                int c = argb(255, lerp(224, 160, t + n), lerp(240, 196, t + n), lerp(255, 232, t + n));
+                fillFace(img, x, y, c);
+            }
+            fillEdges(img, y, argb(255, lerp(224, 160, t), lerp(240, 196, t), lerp(255, 232, t)));
+        }
+        for (int x = 0; x < FW; x++) fillTop(img, x, argb(255, 224, 240, 255));
+        // Aurora bands
+        for (int band = 0; band < 3; band++) {
+            int baseY = 15 + band * 20;
+            for (int x = 0; x < FW; x++) {
+                int by = baseY + (int)(Math.sin(x * 0.15 + band) * 4);
+                blendFace(img, x, by, argb(255, 100, 255, 180), 0.2f);
+                blendFace(img, x, by + 1, argb(255, 80, 200, 255), 0.15f);
+            }
+        }
+        // Ice sparkles
+        int[][] sparkles = {{10, 10}, {30, 25}, {50, 15}, {20, 50}, {60, 45}, {35, 60}, {15, 35}, {55, 55}};
+        for (int[] sp : sparkles) fillFace(img, sp[0], sp[1], argb(255, 240, 250, 255));
+    }
+
+    // ========== PHANTOM ==========
+    private static void generatePhantom(NativeImage img) {
+        // Ghostly white-grey gradient with ethereal noise
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            for (int x = 0; x < FW; x++) {
+                float n = fbm(x * 0.04f, y * 0.04f, 3) * 0.1f;
+                float tt = Math.max(0, Math.min(1, t + n));
+                int r = lerp(210, 100, tt), g = lerp(210, 100, tt), b = lerp(220, 120, tt);
+                fillFace(img, x, y, argb(255, r, g, b));
+            }
+            fillEdges(img, y, argb(255, lerp(200, 100, t), lerp(200, 100, t), lerp(215, 115, t)));
+        }
+        for (int x = 0; x < FW; x++) fillTop(img, x, argb(255, 210, 210, 220));
+
+        // Spectral wisps (elongated semi-transparent shapes)
+        int[][] wisps = {{15, 20, 25}, {55, 15, 30}, {30, 50, 20}, {65, 60, 28}, {10, 85, 22}, {50, 95, 25}, {35, 110, 18}, {70, 35, 20}};
+        for (int[] w : wisps) {
+            int wx = w[0], wy = w[1], wLen = w[2];
+            for (int dy = -wLen; dy <= wLen; dy++) {
+                float yf = (float) Math.abs(dy) / wLen;
+                float width = (1 - yf * yf) * 8;
+                float sway = (float)(Math.sin(dy * 0.15 + wx * 0.1) * 3);
+                for (int dx = (int)(-width - 1); dx <= (int)(width + 1); dx++) {
+                    float xf = (float) Math.abs(dx - sway) / Math.max(1, width);
+                    if (xf < 1) {
+                        float alpha = (1 - xf) * (1 - yf) * 0.35f;
+                        blendFace(img, wx + dx, wy + dy, argb(255, 240, 240, 255), alpha);
+                    }
+                }
+            }
+        }
+
+        // Ghost face silhouettes (faint)
+        drawGhostFace(img, 25, 40, 8);
+        drawGhostFace(img, 60, 75, 6);
+        drawGhostFace(img, 15, 100, 7);
+
+        // Ethereal particles
+        for (int i = 0; i < 18; i++) {
+            int px = (int)(pseudoRand(i * 11, 33) * FW);
+            int py = (int)(pseudoRand(i * 7, 51) * FH);
+            float bright = pseudoRand(i, 77);
+            if (bright > 0.3f) {
+                for (int dy = -2; dy <= 2; dy++)
+                    for (int dx = -2; dx <= 2; dx++) {
+                        float d = (float) Math.sqrt(dx * dx + dy * dy);
+                        if (d <= 2) blendFace(img, px + dx, py + dy, argb(255, 235, 235, 255), (1 - d / 2) * bright * 0.3f);
+                    }
+            }
+        }
+        applyVignette(img, argb(255, 80, 80, 100), 0.2f);
+    }
+
+    private static void drawGhostFace(NativeImage img, int cx, int cy, int size) {
+        // Faint circular face outline
+        for (int dy = -size; dy <= size; dy++) {
+            for (int dx = -size; dx <= size; dx++) {
+                float d = (float) Math.sqrt(dx * dx + dy * dy);
+                if (d > size - 1.5f && d <= size) {
+                    blendFace(img, cx + dx, cy + dy, argb(255, 220, 220, 245), 0.2f);
+                }
+            }
+        }
+        // Eyes
+        blendFace(img, cx - size / 3, cy - size / 4, argb(255, 180, 200, 255), 0.35f);
+        blendFace(img, cx + size / 3, cy - size / 4, argb(255, 180, 200, 255), 0.35f);
+        // Mouth
+        for (int dx = -size / 4; dx <= size / 4; dx++) {
+            blendFace(img, cx + dx, cy + size / 3, argb(255, 200, 200, 240), 0.2f);
+        }
+    }
+
+    // ========== NEON ==========
+    private static void generateNeon(NativeImage img) {
+        // Dark cyberpunk background
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            for (int x = 0; x < FW; x++) {
+                float n = fbm(x * 0.05f, y * 0.05f, 2) * 0.04f;
+                int r = lerp(18, 5, t + n), g = lerp(5, 2, t + n), b = lerp(30, 15, t + n);
+                fillFace(img, x, y, argb(255, Math.max(0, r), Math.max(0, g), Math.max(0, b)));
+            }
+            fillEdges(img, y, argb(255, lerp(18, 5, t), lerp(5, 2, t), lerp(30, 15, t)));
+        }
+        for (int x = 0; x < FW; x++) fillTop(img, x, argb(255, 18, 5, 30));
+
+        // Neon grid lines (horizontal)
+        for (int gridY = 10; gridY < FH; gridY += 14) {
+            for (int x = 0; x < FW; x++) {
+                blendFace(img, x, gridY, argb(255, 255, 50, 200), 0.25f);
+                blendFace(img, x, gridY + 1, argb(255, 200, 30, 160), 0.1f);
+            }
+        }
+        // Neon grid lines (vertical)
+        for (int gridX = 8; gridX < FW; gridX += 14) {
+            for (int y = 0; y < FH; y++) {
+                blendFace(img, gridX, y, argb(255, 0, 220, 255), 0.2f);
+                blendFace(img, gridX + 1, y, argb(255, 0, 180, 220), 0.08f);
+            }
+        }
+
+        // Glitch blocks (random neon rectangles)
+        int[][] glitches = {{5, 25, 15, 4}, {40, 50, 20, 3}, {10, 80, 12, 5}, {55, 100, 18, 3}, {25, 15, 10, 4}, {60, 70, 14, 3}};
+        for (int[] gl : glitches) {
+            int gx = gl[0], gy = gl[1], gw = gl[2], gh = gl[3];
+            int color = (gx + gy) % 2 == 0 ? argb(255, 255, 50, 220) : argb(255, 0, 255, 255);
+            for (int dy = 0; dy < gh; dy++)
+                for (int dx = 0; dx < gw; dx++)
+                    blendFace(img, gx + dx, gy + dy, color, 0.3f);
+        }
+
+        // Neon glow spots
+        drawNeonGlow(img, 20, 30, 10, argb(255, 255, 50, 200));
+        drawNeonGlow(img, 60, 55, 12, argb(255, 0, 255, 255));
+        drawNeonGlow(img, 35, 85, 8, argb(255, 255, 100, 255));
+        drawNeonGlow(img, 55, 110, 10, argb(255, 0, 200, 255));
+
+        // Scanline effect
+        for (int y = 0; y < FH; y += 2) {
+            for (int x = 0; x < FW; x++) {
+                blendFace(img, x, y, argb(255, 0, 0, 0), 0.08f);
+            }
+        }
+    }
+
+    private static void drawNeonGlow(NativeImage img, int cx, int cy, int radius, int color) {
+        for (int dy = -radius - 3; dy <= radius + 3; dy++) {
+            for (int dx = -radius - 3; dx <= radius + 3; dx++) {
+                float d = (float) Math.sqrt(dx * dx + dy * dy);
+                if (d <= radius + 3) {
+                    float alpha = d <= radius ? 0.5f : (1 - (d - radius) / 3) * 0.25f;
+                    blendFace(img, cx + dx, cy + dy, color, alpha);
+                }
+            }
+        }
+    }
+
+    // ========== LAVA ==========
+    private static void generateLava(NativeImage img) {
+        // Multi-layered lava with black crust and orange glow underneath
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            for (int x = 0; x < FW; x++) {
+                float turb = fbm(x * 0.06f, y * 0.05f, 4) * 0.22f;
+                float f = Math.max(0, Math.min(1, t + turb));
+                int r, g, b;
+                if (f < 0.25f) {
+                    float ff = f / 0.25f;
+                    r = lerp(255, 220, ff); g = lerp(180, 100, ff); b = lerp(30, 8, ff);
+                } else if (f < 0.5f) {
+                    float ff = (f - 0.25f) / 0.25f;
+                    r = lerp(220, 60, ff); g = lerp(100, 30, ff); b = lerp(8, 5, ff);
+                } else {
+                    float ff = (f - 0.5f) / 0.5f;
+                    r = lerp(60, 25, ff); g = lerp(30, 12, ff); b = lerp(5, 5, ff);
+                }
+                // Lava cracks with orange glow
+                float crack = voronoi(x * 0.1f, y * 0.08f);
+                if (crack < 0.12f) {
+                    float crackGlow = (0.12f - crack) / 0.12f;
+                    r = Math.min(255, r + (int)(200 * crackGlow));
+                    g = Math.min(255, g + (int)(130 * crackGlow));
+                    b = Math.min(255, b + (int)(15 * crackGlow));
+                }
+                fillFace(img, x, y, argb(255, r, g, b));
+            }
+            fillEdges(img, y, argb(255, lerp(200, 30, t), lerp(100, 12, t), lerp(15, 5, t)));
+        }
+        for (int x = 0; x < FW; x++) fillTop(img, x, argb(255, 240, 140, 20));
+
+        // Molten pools
+        int[][] pools = {{18, 25, 8}, {55, 40, 10}, {30, 70, 7}, {65, 90, 9}, {15, 105, 6}};
+        for (int[] pool : pools) {
+            int px = pool[0], py = pool[1], pr = pool[2];
+            for (int dy = -pr; dy <= pr; dy++) {
+                for (int dx = -pr; dx <= pr; dx++) {
+                    float d = (float) Math.sqrt(dx * dx + dy * dy);
+                    if (d <= pr) {
+                        float glow = 1 - d / pr;
+                        int mr = (int)(255 * glow), mg = (int)(160 * glow * glow), mb = (int)(20 * glow * glow * glow);
+                        blendFace(img, px + dx, py + dy, argb(255, mr, mg, mb), glow * 0.7f);
+                    }
+                }
+            }
+        }
+
+        // Hot ember particles
+        for (int i = 0; i < 15; i++) {
+            int ex = (int)(pseudoRand(i * 9, 11) * FW);
+            int ey = (int)(pseudoRand(i * 5, 29) * FH);
+            float bright = pseudoRand(i, 88);
+            if (bright > 0.4f) fillFace(img, ex, ey, argb(255, 255, (int)(200 * bright), (int)(50 * bright)));
+        }
+    }
+
+    // ========== SAKURA ==========
+    private static void generateSakura(NativeImage img) {
+        // Soft pink background
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            for (int x = 0; x < FW; x++) {
+                float n = fbm(x * 0.04f, y * 0.04f, 3) * 0.06f;
+                float tt = Math.max(0, Math.min(1, t + n));
+                int r = lerp(255, 240, tt), g = lerp(225, 180, tt), b = lerp(235, 200, tt);
+                fillFace(img, x, y, argb(255, r, g, b));
+            }
+            fillEdges(img, y, argb(255, lerp(255, 240, t), lerp(220, 180, t), lerp(230, 200, t)));
+        }
+        for (int x = 0; x < FW; x++) fillTop(img, x, argb(255, 255, 225, 235));
+
+        // Cherry blossom branch (diagonal curved)
+        drawBranch(img, 5, 50, 75, 30, 2.5f);
+        drawBranch(img, 15, 100, 70, 75, 2.0f);
+        drawBranch(img, 35, 30, 55, 15, 1.5f);
+
+        // Cherry blossom flowers
+        drawFlower(img, 20, 25, 14, 0.0f);
+        drawFlower(img, 55, 18, 16, 0.5f);
+        drawFlower(img, 38, 50, 13, 0.8f);
+        drawFlower(img, 68, 38, 11, 0.2f);
+        drawFlower(img, 15, 80, 15, 0.6f);
+        drawFlower(img, 50, 72, 12, 0.3f);
+        drawFlower(img, 30, 95, 13, 0.9f);
+        drawFlower(img, 65, 100, 10, 0.1f);
+
+        // Falling petals
+        for (int i = 0; i < 16; i++) {
+            int px = (int)(pseudoRand(i * 7, 42) * FW);
+            int py = (int)(pseudoRand(i * 13, 17) * FH);
+            float rot = pseudoRand(i * 3, 99) * 6.28f;
+            drawPetal(img, px, py, 3 + (int)(pseudoRand(i, 5) * 3), rot, 0.5f);
+        }
+
+        applyVignette(img, argb(255, 180, 100, 120), 0.1f);
+    }
+
+    // ========== STORM ==========
+    private static void generateStorm(NativeImage img) {
+        // Dark stormy grey gradient
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            for (int x = 0; x < FW; x++) {
+                float n = fbm(x * 0.05f, y * 0.04f, 4) * 0.12f;
+                float tt = Math.max(0, Math.min(1, t + n));
+                int r = lerp(70, 22, tt), g = lerp(75, 25, tt), b = lerp(85, 32, tt);
+                fillFace(img, x, y, argb(255, r, g, b));
+            }
+            fillEdges(img, y, argb(255, lerp(65, 22, t), lerp(70, 25, t), lerp(80, 32, t)));
+        }
+        for (int x = 0; x < FW; x++) fillTop(img, x, argb(255, 70, 75, 85));
+
+        // Thundercloud formations (darker clusters)
+        int[][] clouds = {{15, 15, 18}, {50, 10, 22}, {30, 35, 15}, {65, 28, 17}};
+        for (int[] cl : clouds) {
+            int cx = cl[0], cy = cl[1], cr = cl[2];
+            for (int dy = -cr; dy <= cr; dy++) {
+                for (int dx = -cr; dx <= cr; dx++) {
+                    float d = (float) Math.sqrt(dx * dx + (dy * 1.5f) * (dy * 1.5f));
+                    if (d <= cr) {
+                        float n = fbm((cx + dx) * 0.08f, (cy + dy) * 0.08f, 2);
+                        float alpha = (1 - d / cr) * 0.35f * n;
+                        blendFace(img, cx + dx, cy + dy, argb(255, 30, 32, 40), alpha);
+                    }
+                }
+            }
+        }
+
+        // Lightning bolt
+        drawLightningBolt(img, 35, 8, 110, 4);
+        // Secondary smaller bolt
+        drawLightningBolt(img, 58, 12, 80, 3);
+
+        // Rain streaks
+        for (int i = 0; i < 50; i++) {
+            int rx = (int)(pseudoRand(i * 11, 7) * FW);
+            int ry = (int)(pseudoRand(i * 3, 23) * FH);
+            int len = 5 + (int)(pseudoRand(i, 55) * 12);
+            for (int j = 0; j < len && ry + j < FH; j++) {
+                float fade = 1 - (float) j / len;
+                blendFace(img, rx, ry + j, argb(255, 160, 180, 210), fade * 0.35f);
+            }
+        }
+    }
+
+    private static void drawLightningBolt(NativeImage img, int startX, int startY, int length, int branches) {
+        int lx = startX, ly = startY;
+        int boltColor = argb(255, 255, 255, 220);
+        int glowColor = argb(255, 200, 200, 255);
+        for (int seg = 0; seg < length / 8; seg++) {
+            int nlx = lx + (int)(pseudoRand(seg * 3 + startX, seg * 7) * 10 - 5);
+            int nly = ly + 6 + (int)(pseudoRand(seg * 5, seg * 11) * 5);
+            drawLine(img, lx, ly, nlx, nly, boltColor, 0.95f);
+            // Glow around bolt
+            int mx = (lx + nlx) / 2, my = (ly + nly) / 2;
+            for (int dy = -3; dy <= 3; dy++)
+                for (int dx = -3; dx <= 3; dx++) {
+                    float d = (float) Math.sqrt(dx * dx + dy * dy);
+                    if (d > 0 && d <= 3) blendFace(img, mx + dx, my + dy, glowColor, (1 - d / 3) * 0.3f);
+                }
+            // Branch lightning
+            if (seg % 3 == 1 && branches > 0) {
+                int bx = nlx, by = nly;
+                int dir = seg % 2 == 0 ? 1 : -1;
+                for (int bs = 0; bs < 4; bs++) {
+                    int nbx = bx + dir * (3 + (int)(pseudoRand(bs + seg, 99) * 3));
+                    int nby = by + 3 + (int)(pseudoRand(bs + seg * 2, 77) * 3);
+                    drawLine(img, bx, by, nbx, nby, boltColor, 0.6f);
+                    bx = nbx; by = nby;
+                }
+            }
+            lx = nlx; ly = nly;
+        }
+    }
+
+    // ========== SOLAR ==========
+    private static void generateSolar(NativeImage img) {
+        // Hot orange-yellow gradient
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            for (int x = 0; x < FW; x++) {
+                float n = fbm(x * 0.05f, y * 0.04f, 3) * 0.08f;
+                float tt = Math.max(0, Math.min(1, t + n));
+                int r = lerp(255, 180, tt), g = lerp(210, 60, tt), b = lerp(80, 5, tt);
+                fillFace(img, x, y, argb(255, r, g, b));
+            }
+            fillEdges(img, y, argb(255, lerp(255, 180, t), lerp(200, 60, t), lerp(70, 5, t)));
+        }
+        for (int x = 0; x < FW; x++) fillTop(img, x, argb(255, 255, 215, 90));
+
+        // Solar disc with corona
+        int scx = FW / 2, scy = 28;
+        // Corona rays
+        for (int ray = 0; ray < 24; ray++) {
+            double angle = ray * Math.PI * 2 / 24;
+            int rayLen = 25 + (int)(pseudoRand(ray * 5, 10) * 18);
+            for (int r = 0; r <= rayLen; r++) {
+                float rt = (float) r / rayLen;
+                int px = scx + (int)(Math.cos(angle) * r);
+                int py = scy + (int)(Math.sin(angle) * r);
+                float alpha = (1 - rt) * 0.4f;
+                float width = 2 * (1 - rt);
+                for (int w = (int)-width; w <= (int) width; w++) {
+                    int wx = px + (int)(Math.cos(angle + Math.PI / 2) * w);
+                    int wy = py + (int)(Math.sin(angle + Math.PI / 2) * w);
+                    blendFace(img, wx, wy, argb(255, 255, 230, 100), alpha * (1 - (float) Math.abs(w) / Math.max(1, width)));
+                }
+            }
+        }
+        // Bright solar core
+        for (int dy = -14; dy <= 14; dy++) {
+            for (int dx = -14; dx <= 14; dx++) {
+                float d = (float) Math.sqrt(dx * dx + dy * dy);
+                if (d <= 14) {
+                    float core = 1 - d / 14;
+                    int r = 255, g = (int)(220 + 35 * core), b = (int)(100 + 155 * core * core);
+                    fillFace(img, scx + dx, scy + dy, argb(255, r, g, b));
+                }
+            }
+        }
+
+        // Solar flare arcs
+        drawSolarFlare(img, 12, 60, 30, 15, true);
+        drawSolarFlare(img, 50, 75, 25, 12, false);
+
+        // Sunspots
+        for (int dy = -3; dy <= 3; dy++)
+            for (int dx = -3; dx <= 3; dx++)
+                if (dx * dx + dy * dy <= 9)
+                    blendFace(img, scx - 5 + dx, scy + 2 + dy, argb(255, 180, 100, 20), 0.3f);
+    }
+
+    private static void drawSolarFlare(NativeImage img, int startX, int startY, int width, int height, boolean curveRight) {
+        for (int x = 0; x < width; x++) {
+            float t = (float) x / width;
+            float curve = (float) Math.sin(t * Math.PI) * height;
+            int py = startY - (int) curve;
+            int px = startX + x;
+            if (curveRight) px = startX + x; else px = startX - x + width;
+            for (int w = -2; w <= 2; w++) {
+                float alpha = (1 - (float) Math.abs(w) / 2) * 0.5f * (float) Math.sin(t * Math.PI);
+                blendFace(img, px, py + w, argb(255, 255, 200, 60), alpha);
+            }
+        }
+    }
+
+    // ========== AMETHYST ==========
+    private static void generateAmethyst(NativeImage img) {
+        // Deep purple gradient
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            for (int x = 0; x < FW; x++) {
+                float n = fbm(x * 0.05f, y * 0.05f, 3) * 0.08f;
+                float tt = Math.max(0, Math.min(1, t + n));
+                int r = lerp(90, 35, tt), g = lerp(25, 8, tt), b = lerp(130, 55, tt);
+                fillFace(img, x, y, argb(255, r, g, b));
+            }
+            fillEdges(img, y, argb(255, lerp(85, 35, t), lerp(22, 8, t), lerp(125, 55, t)));
+        }
+        for (int x = 0; x < FW; x++) fillTop(img, x, argb(255, 90, 25, 130));
+
+        // Crystal cluster formations
+        drawCrystalCluster(img, 15, 22, 18);
+        drawCrystalCluster(img, 55, 18, 22);
+        drawCrystalCluster(img, 35, 55, 16);
+        drawCrystalCluster(img, 68, 48, 20);
+        drawCrystalCluster(img, 20, 88, 14);
+        drawCrystalCluster(img, 55, 82, 17);
+        drawCrystalCluster(img, 40, 112, 12);
+
+        // Faceted light reflections
+        for (int i = 0; i < 12; i++) {
+            int fx = (int)(pseudoRand(i * 9, 44) * FW);
+            int fy = (int)(pseudoRand(i * 5, 66) * FH);
+            drawCrossFlare(img, fx, fy, 3 + (int)(pseudoRand(i, 22) * 3), argb(255, 200, 160, 255));
+        }
+
+        // Edge glow
+        for (int y = 0; y < FH; y++) {
+            float edgeDist = Math.min(y, FH - 1 - y) / (float) FH;
+            if (edgeDist < 0.05f) {
+                float glow = (1 - edgeDist / 0.05f) * 0.2f;
+                for (int x = 0; x < FW; x++)
+                    blendFace(img, x, y, argb(255, 180, 120, 255), glow);
+            }
+        }
+    }
+
+    private static void drawCrystalCluster(NativeImage img, int cx, int cy, int size) {
+        // Multiple crystal shards pointing upward at different angles
+        int shards = 5 + (int)(pseudoRand(cx, cy) * 3);
+        for (int i = 0; i < shards; i++) {
+            float angle = (pseudoRand(cx + i, cy + i * 3) - 0.5f) * 1.2f;
+            float len = size * (0.5f + pseudoRand(i + cx, i + cy) * 0.5f);
+            int w = 2 + (int)(pseudoRand(i * 2, cx) * 2);
+            for (int j = 0; j < (int) len; j++) {
+                float t = (float) j / len;
+                int px = cx + (int)(Math.sin(angle) * j);
+                int py = cy - j;
+                float taper = 1 - t;
+                for (int dx = (int)(-w * taper); dx <= (int)(w * taper); dx++) {
+                    float edge = (float) Math.abs(dx) / Math.max(1, w * taper);
+                    int r = (int)(140 + 80 * (1 - edge) * (1 - t * 0.3f));
+                    int g = (int)(50 + 40 * (1 - edge));
+                    int b = (int)(180 + 75 * (1 - edge) * (1 - t * 0.2f));
+                    blendFace(img, px + dx, py, argb(255, r, g, b), 0.8f * (1 - edge * 0.3f));
+                }
+            }
+            // Crystal tip highlight
+            int tipX = cx + (int)(Math.sin(angle) * len);
+            int tipY = cy - (int) len;
+            fillFace(img, tipX, tipY, argb(255, 220, 180, 255));
+        }
+    }
+
+    // ========== INFERNO ==========
+    private static void generateInferno(NativeImage img) {
+        // Dark hellfire gradient (black to deep red)
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            for (int x = 0; x < FW; x++) {
+                float turb = fbm(x * 0.08f, y * 0.06f, 4) * 0.2f;
+                float f = Math.max(0, Math.min(1, t + turb));
+                int r, g, b;
+                if (f < 0.3f) {
+                    float ff = f / 0.3f;
+                    r = lerp(25, 60, ff); g = lerp(5, 5, ff); b = lerp(5, 2, ff);
+                } else if (f < 0.6f) {
+                    float ff = (f - 0.3f) / 0.3f;
+                    r = lerp(60, 200, ff); g = lerp(5, 25, ff); b = lerp(2, 5, ff);
+                } else {
+                    float ff = (f - 0.6f) / 0.4f;
+                    r = lerp(200, 255, ff); g = lerp(25, 80, ff); b = lerp(5, 10, ff);
+                }
+                fillFace(img, x, y, argb(255, r, g, b));
+            }
+            fillEdges(img, y, argb(255, lerp(25, 220, t), lerp(5, 40, t), lerp(5, 5, t)));
+        }
+        for (int x = 0; x < FW; x++) fillTop(img, x, argb(255, 30, 5, 5));
+
+        // Skull motifs
+        drawSkull(img, 22, 30, 10);
+        drawSkull(img, 58, 55, 8);
+        drawSkull(img, 35, 85, 12);
+        drawSkull(img, 68, 105, 7);
+
+        // Hellfire wisps
+        int[][] hellFires = {{10, 20, 25}, {40, 15, 30}, {65, 35, 22}, {20, 60, 20}, {55, 80, 28}, {30, 100, 18}};
+        for (int[] hf : hellFires) {
+            int hx = hf[0], hy = hf[1], hLen = hf[2];
+            for (int dy = 0; dy < hLen; dy++) {
+                int y = hy + hLen - dy;
+                float f = (float) dy / hLen;
+                int w = Math.max(1, (int)(5 * (1 - f * f)));
+                float sway = (float)(Math.sin(dy * 0.2 + hx * 0.3) * 2);
+                for (int dx = -w; dx <= w; dx++) {
+                    float edge = 1 - (float) Math.abs(dx) / w;
+                    blendFace(img, hx + dx + (int) sway, y, argb(255, 255, (int)(60 * (1 - f)), (int)(10 * (1 - f))), 0.25f * (1 - f * 0.4f) * edge);
+                }
+            }
+        }
+
+        // Ember particles
+        for (int i = 0; i < 20; i++) {
+            int ex = (int)(pseudoRand(i * 13, 9) * FW);
+            int ey = (int)(pseudoRand(i * 7, 31) * FH);
+            fillFace(img, ex, ey, argb(255, 255, (int)(150 * pseudoRand(i, 99)), 0));
+        }
+    }
+
+    private static void drawSkull(NativeImage img, int cx, int cy, int size) {
+        // Skull cranium (oval)
+        for (int dy = -size; dy <= size / 2; dy++) {
+            for (int dx = -size; dx <= size; dx++) {
+                float d = (float) Math.sqrt(dx * dx + (dy * 1.3f) * (dy * 1.3f));
+                if (d <= size) {
+                    float edge = d / size;
+                    int r = (int)(80 * (1 - edge * 0.5f));
+                    int g = (int)(12 * (1 - edge * 0.5f));
+                    int b = (int)(12 * (1 - edge * 0.5f));
+                    blendFace(img, cx + dx, cy + dy, argb(255, r, g, b), 0.6f);
+                }
+            }
+        }
+        // Jaw
+        for (int dx = -size / 2; dx <= size / 2; dx++) {
+            for (int dy = size / 2; dy <= size / 2 + 3; dy++) {
+                blendFace(img, cx + dx, cy + dy, argb(255, 60, 8, 8), 0.5f);
+            }
+        }
+        // Eye sockets (glowing)
+        int eyeOff = size / 3;
+        for (int dy = -2; dy <= 1; dy++) {
+            for (int dx = -1; dx <= 1; dx++) {
+                fillFace(img, cx - eyeOff + dx, cy - size / 4 + dy, argb(255, 255, 80, 0));
+                fillFace(img, cx + eyeOff + dx, cy - size / 4 + dy, argb(255, 255, 80, 0));
+            }
+        }
+        // Nose
+        blendFace(img, cx, cy + 1, argb(255, 40, 5, 5), 0.7f);
+        blendFace(img, cx - 1, cy + 2, argb(255, 40, 5, 5), 0.5f);
+    }
+
+    // ========== DRIFT ==========
+    private static void generateDrift(NativeImage img) {
+        // Pastel vaporwave gradient that shifts across the face
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            for (int x = 0; x < FW; x++) {
+                float xt = (float) x / FW;
+                float n = fbm(x * 0.03f, y * 0.03f, 2) * 0.08f;
+                float phase = (xt * 0.5f + t * 0.5f + n) * 3;
+                int r = clamp((int)(200 + 55 * Math.sin(phase)));
+                int g = clamp((int)(180 + 60 * Math.sin(phase + 2.1)));
+                int b = clamp((int)(220 + 35 * Math.sin(phase + 4.2)));
+                fillFace(img, x, y, argb(255, r, g, b));
+            }
+            float p = t * 3;
+            int er = clamp((int)(200 + 55 * Math.sin(p)));
+            int eg = clamp((int)(180 + 60 * Math.sin(p + 2.1)));
+            int eb = clamp((int)(220 + 35 * Math.sin(p + 4.2)));
+            fillEdges(img, y, argb(255, er, eg, eb));
+        }
+        for (int x = 0; x < FW; x++) {
+            float p = ((float) x / FW) * 1.5f;
+            fillTop(img, x, argb(255, clamp((int)(200 + 55 * Math.sin(p))), clamp((int)(180 + 60 * Math.sin(p + 2.1))), clamp((int)(220 + 35 * Math.sin(p + 4.2)))));
+        }
+
+        // Vaporwave sun lines at bottom
+        int sunCy = FH - 20;
+        for (int stripe = 0; stripe < 5; stripe++) {
+            int sy = sunCy + stripe * 4;
+            for (int x = 0; x < FW; x++) {
+                float d = Math.abs(x - FW / 2f) / (FW / 2f);
+                if (d < 0.8f) blendFace(img, x, sy, argb(255, 255, 120, 200), 0.15f * (1 - d));
+            }
+        }
+
+        // Soft geometric shapes
+        drawLine(img, 10, 20, 70, 25, argb(255, 255, 180, 220), 0.2f);
+        drawLine(img, 5, 50, 75, 55, argb(255, 180, 220, 255), 0.15f);
+        drawLine(img, 15, 80, 65, 82, argb(255, 220, 180, 255), 0.15f);
+
+        // Sparkle dots
+        for (int i = 0; i < 15; i++) {
+            int px = (int)(pseudoRand(i * 11, 33) * FW);
+            int py = (int)(pseudoRand(i * 7, 51) * FH);
+            fillFace(img, px, py, argb(255, 255, 255, 255));
+        }
+    }
+
+    // ========== OBSIDIAN ==========
+    private static void generateObsidian(NativeImage img) {
+        // Very dark gradient with subtle texture
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            for (int x = 0; x < FW; x++) {
+                float n = fbm(x * 0.06f, y * 0.06f, 3) * 0.05f;
+                float tt = Math.max(0, Math.min(1, t + n));
+                int r = lerp(30, 10, tt), g = lerp(18, 5, tt), b = lerp(38, 16, tt);
+                fillFace(img, x, y, argb(255, r, g, b));
+            }
+            fillEdges(img, y, argb(255, lerp(28, 10, t), lerp(16, 5, t), lerp(35, 16, t)));
+        }
+        for (int x = 0; x < FW; x++) fillTop(img, x, argb(255, 30, 18, 38));
+
+        // Purple glowing cracks (Voronoi-based)
+        for (int y = 0; y < FH; y++) {
+            for (int x = 0; x < FW; x++) {
+                float v = voronoi(x * 0.1f, y * 0.08f);
+                if (v < 0.1f) {
+                    float crack = (0.1f - v) / 0.1f;
+                    int cr = (int)(120 * crack), cg = (int)(40 * crack), cb = (int)(180 * crack);
+                    blendFace(img, x, y, argb(255, cr, cg, cb), crack * 0.8f);
+                }
+                // Purple glow around cracks
+                if (v < 0.18f && v >= 0.1f) {
+                    float glow = (0.18f - v) / 0.08f;
+                    blendFace(img, x, y, argb(255, 80, 20, 120), glow * 0.25f);
+                }
+            }
+        }
+
+        // Obsidian sheen (glossy reflection bands)
+        for (int band = 0; band < 4; band++) {
+            float bandY = 15 + band * 30;
+            float angle = 0.15f + band * 0.1f;
+            for (int x = 0; x < FW; x++) {
+                int y = (int)(bandY + x * angle);
+                for (int w = -1; w <= 1; w++) {
+                    if (y + w >= 0 && y + w < FH) {
+                        float alpha = w == 0 ? 0.15f : 0.06f;
+                        blendFace(img, x, y + w, argb(255, 50, 40, 60), alpha);
+                    }
+                }
+            }
+        }
+
+        // Highlight sparkles (rare bright purple dots)
+        for (int i = 0; i < 10; i++) {
+            int px = (int)(pseudoRand(i * 13, 55) * FW);
+            int py = (int)(pseudoRand(i * 9, 77) * FH);
+            fillFace(img, px, py, argb(255, 160, 80, 220));
+            blendFace(img, px + 1, py, argb(255, 120, 60, 180), 0.5f);
+            blendFace(img, px, py + 1, argb(255, 120, 60, 180), 0.5f);
+        }
+
+        applyVignette(img, argb(255, 5, 2, 10), 0.15f);
+    }
+
+    // ========== BLACK HOLE ==========
+    private static void generateBlackHole(NativeImage img) {
+        float cx = FW / 2.0f, cy = FH * 0.42f; // center of the black hole
+
+        // Deep space background with subtle blue-purple nebula
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            for (int x = 0; x < FW; x++) {
+                float n = fbm(x * 0.03f, y * 0.03f, 3);
+                int r = (int)(2 + n * 8);
+                int g = (int)(2 + n * 5);
+                int b = (int)(5 + n * 15);
+                fillFace(img, x, y, argb(255, r, g, b));
+                fillEdges(img, y, argb(255, r, g, b));
+                fillTop(img, x, argb(255, 2, 2, 6));
+            }
+        }
+
+        // Distant stars
+        for (int i = 0; i < 60; i++) {
+            int sx = (int)(pseudoRand(i * 7, 33) * FW);
+            int sy = (int)(pseudoRand(i * 13, 41) * FH);
+            float bright = 0.3f + pseudoRand(i * 3, 19) * 0.7f;
+            int c = (int)(180 + bright * 75);
+            fillFace(img, sx, sy, argb(255, c, c, (int)(c * 0.95f)));
+        }
+
+        // Accretion disk — elliptical ring around the black hole
+        for (int y = 0; y < FH; y++) {
+            for (int x = 0; x < FW; x++) {
+                float dx = x - cx, dy = (y - cy) * 2.8f; // stretch vertically to make ellipse
+                float dist = (float) Math.sqrt(dx * dx + dy * dy);
+                float angle = (float) Math.atan2(dy, dx);
+
+                // Disk ring band (inner radius 14, outer radius 35)
+                if (dist > 12 && dist < 38) {
+                    float ringT = (dist - 12) / 26.0f; // 0 at inner, 1 at outer
+                    float intensity = (float)(Math.sin(ringT * Math.PI) * 0.9f);
+
+                    // Angular variation for spiral arms
+                    float spiral = (float)(Math.sin(angle * 2 + dist * 0.15f) * 0.3f + 0.7f);
+                    intensity *= spiral;
+
+                    // Hot inner edge (white-yellow), cooler outer (orange-red)
+                    int r, g, b;
+                    if (ringT < 0.3f) {
+                        // Inner: white-hot
+                        float it = ringT / 0.3f;
+                        r = lerp(255, 255, it);
+                        g = lerp(250, 200, it);
+                        b = lerp(230, 120, it);
+                    } else if (ringT < 0.6f) {
+                        // Middle: orange
+                        float it = (ringT - 0.3f) / 0.3f;
+                        r = lerp(255, 255, it);
+                        g = lerp(200, 120, it);
+                        b = lerp(120, 30, it);
+                    } else {
+                        // Outer: deep red fading to nothing
+                        float it = (ringT - 0.6f) / 0.4f;
+                        r = lerp(255, 120, it);
+                        g = lerp(120, 20, it);
+                        b = lerp(30, 5, it);
+                        intensity *= (1.0f - it * 0.8f);
+                    }
+
+                    // Noise for turbulence in the disk
+                    float n = fbm(x * 0.08f + angle * 2, y * 0.08f, 3);
+                    intensity *= (0.7f + n * 0.6f);
+
+                    blendFace(img, x, y, argb(255, r, g, b), Math.min(1.0f, intensity));
+                }
+
+                // Event horizon — pure black circle
+                if (dist < 13) {
+                    float fade = dist < 10 ? 1.0f : 1.0f - (dist - 10) / 3.0f;
+                    blendFace(img, x, y, argb(255, 0, 0, 0), fade);
+                }
+            }
+        }
+
+        // Gravitational lensing — bright arc above and below the hole
+        for (int x = 0; x < FW; x++) {
+            float dx = x - cx;
+            if (Math.abs(dx) < 20) {
+                float lensY = cy - 6; // top arc
+                float arcDist = Math.abs(dx);
+                float bright = (1.0f - arcDist / 20.0f) * 0.4f;
+                int ly = (int)(lensY - (float)Math.sqrt(Math.max(0, 20*20 - dx*dx)) * 0.15f);
+                blendFace(img, x, ly, argb(255, 255, 220, 180), bright);
+                blendFace(img, x, ly + 1, argb(255, 255, 200, 150), bright * 0.6f);
+
+                // Bottom arc
+                int ly2 = (int)(cy + 6 + (float)Math.sqrt(Math.max(0, 20*20 - dx*dx)) * 0.15f);
+                blendFace(img, x, ly2, argb(255, 255, 200, 150), bright * 0.5f);
+            }
+        }
+
+        // Jets — faint vertical beams from poles
+        for (int y = 0; y < FH; y++) {
+            float distFromCenter = Math.abs(y - cy);
+            if (distFromCenter > 14) {
+                float jetIntensity = 0.12f * (1.0f - Math.min(1.0f, distFromCenter / (FH * 0.5f)));
+                for (int dx = -2; dx <= 2; dx++) {
+                    float falloff = 1.0f - Math.abs(dx) / 3.0f;
+                    blendFace(img, (int)cx + dx, y, argb(255, 180, 160, 255), jetIntensity * falloff);
+                }
+            }
+        }
+
+        applyVignette(img, argb(255, 0, 0, 0), 0.25f);
     }
 
     // ========== HELPERS ==========
