@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { ModResult } from '../types';
 
-const PROXY = (import.meta.env?.VITE_BLOOM_API_URL ?? 'http://localhost:3000') + '/curseforge';
+const PROXY = (import.meta.env?.VITE_BLOOM_API_URL ?? 'https://pulsarclient.com/api') + '/curseforge';
 
 export async function searchMods(query: string, _mcVersion: string): Promise<ModResult[]> {
   const res = await axios.get(`${PROXY}/mods/search`, {

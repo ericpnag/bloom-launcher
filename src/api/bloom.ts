@@ -1,5 +1,5 @@
 import axios from 'axios';
-const BASE = import.meta.env?.VITE_BLOOM_API_URL ?? 'http://localhost:3000';
+const BASE = import.meta.env?.VITE_BLOOM_API_URL ?? 'https://pulsarclient.com/api';
 
 export async function login(accessToken: string, username: string): Promise<string> {
   const res = await axios.post(`${BASE}/auth/login`, { accessToken, username });
