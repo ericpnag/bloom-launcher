@@ -137,36 +137,44 @@ export function ShopPage() {
   const [redeemCode, setRedeemCode] = useState("");
   const [redeemMsg, setRedeemMsg] = useState<{ text: string; ok: boolean } | null>(null);
   const [showRedeem, setShowRedeem] = useState(false);
-  const [usedCodes, setUsedCodes] = useState<string[]>(() => {
-    try { return JSON.parse(localStorage.getItem("pulsar-used-codes") || "[]"); } catch { return []; }
-  });
+  const [redeemLoading, setRedeemLoading] = useState(false);
 
-  function redeemPoints() {
+  async function redeemPoints() {
     const code = redeemCode.trim().toUpperCase();
-    if (!code) return;
-    if (usedCodes.includes(code)) { setRedeemMsg({ text: "Code already used", ok: false }); return; }
+    if (!code || redeemLoading) return;
 
-    // Valid codes: PULSAR-{amount}-{secret}
-    const VALID_CODES: Record<string, number> = {
-      "ANGRYBANGRY500": 500,
-      "PULSAR-500-GIFT": 500,
-      "PULSAR-1500-GIFT": 1500,
-      "PULSAR-3500-GIFT": 3500,
-      "PULSAR-8000-GIFT": 8000,
-      "WELCOME100": 100,
-    };
-
-    const reward = VALID_CODES[code];
-    if (reward) {
-      const newUsed = [...usedCodes, code];
-      setUsedCodes(newUsed);
-      localStorage.setItem("pulsar-used-codes", JSON.stringify(newUsed));
-      save(points + reward, purchased, equipped);
-      setRedeemMsg({ text: `+${reward} points added!`, ok: true });
+    // Hardcoded gift codes
+    const GIFT_CODES: Record<string, number> = { "ANGRYBANGRY500": 500, "WELCOME100": 100 };
+    const localUsed: string[] = JSON.parse(localStorage.getItem("pulsar-used-codes") || "[]");
+    if (GIFT_CODES[code]) {
+      if (localUsed.includes(code)) { setRedeemMsg({ text: "Code already used", ok: false }); return; }
+      localStorage.setItem("pulsar-used-codes", JSON.stringify([...localUsed, code]));
+      save(points + GIFT_CODES[code], purchased, equipped);
+      setRedeemMsg({ text: `+${GIFT_CODES[code]} points added!`, ok: true });
       setRedeemCode("");
-    } else {
-      setRedeemMsg({ text: "Invalid code", ok: false });
+      return;
     }
+
+    // Server-validated codes (from Stripe payments)
+    setRedeemLoading(true);
+    try {
+      const res = await fetch("https://bloom-launcher.vercel.app/api/validate-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+      const data = await res.json();
+      if (data.valid) {
+        save(points + data.points, purchased, equipped);
+        setRedeemMsg({ text: `+${data.points} points added!`, ok: true });
+        setRedeemCode("");
+      } else {
+        setRedeemMsg({ text: data.error || "Invalid code", ok: false });
+      }
+    } catch {
+      setRedeemMsg({ text: "Could not verify code. Check your connection.", ok: false });
+    }
+    setRedeemLoading(false);
   }
 
   return (

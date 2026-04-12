@@ -11,26 +11,115 @@ body{font-family:'Inter',system-ui,sans-serif;background:#000;color:#E0E0E8;min-
 .card{max-width:420px;width:90%;padding:48px 40px;border-radius:20px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);text-align:center}
 .check{width:64px;height:64px;margin:0 auto 20px;background:rgba(152,195,121,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;color:#98C379}
 h1{font-size:24px;font-weight:800;margin-bottom:8px;color:#fff}
-p{color:#5C6370;font-size:14px;line-height:1.6;margin-bottom:24px}
+p{color:#5C6370;font-size:14px;line-height:1.6;margin-bottom:20px}
+.code-box{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:20px;margin:20px 0;cursor:pointer;transition:all 0.2s}
+.code-box:hover{border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.08)}
+.code-label{font-size:10px;font-weight:700;letter-spacing:0.12em;color:#5C6370;text-transform:uppercase;margin-bottom:8px}
+.code-value{font-size:28px;font-weight:800;color:#fff;letter-spacing:0.15em;font-family:'Inter',monospace;user-select:all}
+.code-hint{font-size:11px;color:#3E4451;margin-top:8px}
+.copied{color:#98C379 !important}
 .steps{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:20px;text-align:left;margin-bottom:24px}
 .steps li{color:#ABB2BF;font-size:13px;margin-bottom:8px;line-height:1.5}
 .steps li:last-child{margin-bottom:0}
 .steps strong{color:#fff}
-a{display:inline-block;padding:12px 32px;border-radius:10px;background:linear-gradient(135deg,#fff,#e0e0e0);color:#000;font-weight:700;font-size:14px;text-decoration:none;transition:all 0.2s}
-a:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,255,255,0.2)}
+.spinner{width:32px;height:32px;margin:20px auto;border:3px solid rgba(255,255,255,0.1);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error{color:#FF7070;font-size:13px;margin:16px 0}
+a.btn{display:inline-block;padding:12px 32px;border-radius:10px;background:linear-gradient(135deg,#fff,#e0e0e0);color:#000;font-weight:700;font-size:14px;text-decoration:none;transition:all 0.2s}
+a.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,255,255,0.2)}
 </style>
 </head>
 <body>
 <div class="card">
   <div class="check">&#10003;</div>
   <h1>Payment Successful!</h1>
-  <p>Your Pulsar Points will be added to your account.</p>
-  <ol class="steps">
-    <li>Open <strong>Pulsar Client</strong></li>
-    <li>Go to the <strong>Shop</strong> tab</li>
-    <li>Click <strong>"I've Completed Payment"</strong> to receive your points</li>
-  </ol>
-  <a href="https://pulsarclient.com">Back to Pulsar Client</a>
+
+  <div id="loading">
+    <p>Generating your redeem code...</p>
+    <div class="spinner"></div>
+  </div>
+
+  <div id="code-section" style="display:none">
+    <p id="points-text"></p>
+    <div class="code-box" onclick="copyCode()">
+      <div class="code-label">Your Redeem Code</div>
+      <div class="code-value" id="redeem-code"></div>
+      <div class="code-hint" id="copy-hint">Click to copy</div>
+    </div>
+    <ol class="steps">
+      <li>Open <strong>Pulsar Client</strong></li>
+      <li>Go to the <strong>Shop</strong> tab</li>
+      <li>Click <strong>Redeem Code</strong></li>
+      <li>Paste your code and click <strong>Redeem</strong></li>
+    </ol>
+    <a class="btn" href="https://pulsarclient.com">Back to Pulsar Client</a>
+  </div>
+
+  <div id="error-section" style="display:none">
+    <p class="error" id="error-text"></p>
+    <a class="btn" href="https://pulsarclient.com">Back to Pulsar Client</a>
+  </div>
 </div>
+
+<script>
+const API_BASE = '/api';
+const params = new URLSearchParams(window.location.search);
+const piId = params.get('payment_intent');
+const piSecret = params.get('payment_intent_client_secret');
+const tier = params.get('tier');
+
+async function generateCode() {
+  try {
+    // Get payment intent ID from URL params (Stripe redirect includes these)
+    let paymentIntentId = piId;
+
+    if (!paymentIntentId && piSecret) {
+      // Extract ID from client secret: pi_xxx_secret_yyy -> pi_xxx
+      paymentIntentId = piSecret.split('_secret_')[0];
+    }
+
+    if (!paymentIntentId) {
+      // No payment info — just show generic success
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('code-section').style.display = 'block';
+      document.getElementById('points-text').textContent = 'Your points are ready!';
+      document.getElementById('redeem-code').textContent = 'Check email';
+      return;
+    }
+
+    const res = await fetch(`${API_BASE}/generate-code`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ paymentIntentId }),
+    });
+
+    const data = await res.json();
+    if (data.code) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('code-section').style.display = 'block';
+      document.getElementById('points-text').textContent = `${data.points.toLocaleString()} Pulsar Points`;
+      document.getElementById('redeem-code').textContent = data.code;
+    } else {
+      throw new Error(data.error || 'Failed to generate code');
+    }
+  } catch (err) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('error-section').style.display = 'block';
+    document.getElementById('error-text').textContent = err.message;
+  }
+}
+
+function copyCode() {
+  const code = document.getElementById('redeem-code').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    const hint = document.getElementById('copy-hint');
+    hint.textContent = 'Copied!';
+    hint.classList.add('copied');
+    setTimeout(() => { hint.textContent = 'Click to copy'; hint.classList.remove('copied'); }, 2000);
+  });
+}
+
+generateCode();
+</script>
 </body>
 </html>

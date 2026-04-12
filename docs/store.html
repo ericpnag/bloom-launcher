@@ -358,11 +358,8 @@ async function handlePayment() {
       const verifyData = await verifyRes.json();
 
       if (verifyData.success) {
-        // Show success
-        document.getElementById('processing-view').style.display = 'none';
-        document.getElementById('success-view').style.display = 'block';
-        document.getElementById('success-amount').textContent =
-          verifyData.totalPoints.toLocaleString() + ' Pulsar Points';
+        // Redirect to success page which generates a redeem code
+        window.location.href = `success.html?payment_intent=${paymentIntent.id}&tier=${tierKey}`;
       } else {
         throw new Error(verifyData.error || 'Payment verification failed');
       }
