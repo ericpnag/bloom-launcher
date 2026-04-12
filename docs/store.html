@@ -137,8 +137,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:#000000;color:#E0E0E8;m
 // Configuration
 // ---------------------------------------------------------------------------
 
-// Use same origin (works for both HTTP and HTTPS since server serves this page)
-const API_BASE = '';
+// API base — empty for same-origin (Vercel), or full URL for separate backend
+const API_BASE = '/api';
 
 const TIERS = {
   '500':  { amount: 500,  price: 2.99,  display: '$2.99',  color: '#FFFFFF', bonus: 0 },

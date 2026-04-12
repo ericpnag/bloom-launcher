@@ -52,8 +52,8 @@ const COSMETICS: Cosmetic[] = [
 
 const TYPE_LABELS: Record<string, string> = { cape: "Capes", wings: "Wings", hat: "Hats", aura: "Auras" };
 
-// Store URL — local payment server
-const STORE_BASE_URL = "http://localhost:3001";
+// Store URL — pulsarclient.com (hosted on Vercel)
+const STORE_BASE_URL = "https://pulsarclient.com";
 const POINT_TIERS = [
   { amount: 500, price: "$2.99", priceNum: 2.99, color: "#FFFFFF", popular: false, bonus: "",
     payUrl: `${STORE_BASE_URL}/store.html?tier=500` },
