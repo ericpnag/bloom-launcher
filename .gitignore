@@ -38,3 +38,5 @@ bloom-core-1.21.11/.gradle/
 server/.env
 .env
 server/.env
+
+server/*.pem

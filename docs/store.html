@@ -137,8 +137,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:#0a0611;color:#F0E4E8;m
 // Configuration
 // ---------------------------------------------------------------------------
 
-// Change this to your deployed backend URL in production
-const API_BASE = 'http://localhost:3001';
+// Use same origin (works for both HTTP and HTTPS since server serves this page)
+const API_BASE = '';
 
 const TIERS = {
   '500':  { amount: 500,  price: 2.99,  display: '$2.99',  color: '#FFD1DC', bonus: 0 },
