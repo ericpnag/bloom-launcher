@@ -100,11 +100,7 @@ fn download_java(app: &AppHandle) -> Result<(), String> {
     #[cfg(target_os = "linux")]
     let url = "https://api.adoptium.net/v3/binary/latest/21/ga/linux/x64/jdk/hotspot/normal/eclipse?project=jdk";
 
-    let client = Client::builder()
-        .redirect(reqwest::redirect::Policy::limited(10))
-        .build()
-        .map_err(|e| e.to_string())?;
-
+    let client = Client::new();
     let response = client.get(url).send().map_err(|e| format!("Failed to download Java: {}", e))?;
     if !response.status().is_success() {
         return Err(format!("Java download failed: HTTP {}", response.status()));
@@ -125,16 +121,7 @@ fn download_java(app: &AppHandle) -> Result<(), String> {
         if !status.success() { return Err("Failed to extract Java".to_string()); }
         let _ = fs::remove_file(&tar_path);
 
-        // Rename extracted folder to jdk-21
-        if let Ok(entries) = fs::read_dir(&java_dir) {
-            for entry in entries.flatten() {
-                let name = entry.file_name().to_string_lossy().to_string();
-                if name.starts_with("jdk-21") && name != "jdk-21" && entry.path().is_dir() {
-                    let _ = fs::rename(entry.path(), java_dir.join("jdk-21"));
-                    break;
-                }
-            }
-        }
+        rename_jdk_folder(&java_dir);
     }
 
     #[cfg(target_os = "windows")]
@@ -145,15 +132,7 @@ fn download_java(app: &AppHandle) -> Result<(), String> {
         let mut archive = zip::ZipArchive::new(file).map_err(|e| e.to_string())?;
         archive.extract(&java_dir).map_err(|e| e.to_string())?;
         let _ = fs::remove_file(&zip_path);
-        if let Ok(entries) = fs::read_dir(&java_dir) {
-            for entry in entries.flatten() {
-                let name = entry.file_name().to_string_lossy().to_string();
-                if name.starts_with("jdk-21") && name != "jdk-21" && entry.path().is_dir() {
-                    let _ = fs::rename(entry.path(), java_dir.join("jdk-21"));
-                    break;
-                }
-            }
-        }
+        rename_jdk_folder(&java_dir);
     }
 
     #[cfg(target_os = "linux")]
@@ -166,19 +145,28 @@ fn download_java(app: &AppHandle) -> Result<(), String> {
             .map_err(|e| e.to_string())?;
         if !status.success() { return Err("Failed to extract Java".to_string()); }
         let _ = fs::remove_file(&tar_path);
-        if let Ok(entries) = fs::read_dir(&java_dir) {
-            for entry in entries.flatten() {
-                let name = entry.file_name().to_string_lossy().to_string();
-                if name.starts_with("jdk-21") && name != "jdk-21" && entry.path().is_dir() {
-                    let _ = fs::rename(entry.path(), java_dir.join("jdk-21"));
-                    break;
-                }
-            }
-        }
+        rename_jdk_folder(&java_dir);
     }
 
     let _ = app.emit("launch_progress", serde_json::json!({"pct": 40, "msg": "Java 21 installed!"}));
     Ok(())
+}
+
+fn rename_jdk_folder(java_dir: &PathBuf) {
+    let target = java_dir.join("jdk-21");
+    // Remove old jdk-21 if it exists but is broken
+    if target.exists() {
+        let _ = fs::remove_dir_all(&target);
+    }
+    if let Ok(entries) = fs::read_dir(java_dir) {
+        for entry in entries.flatten() {
+            let name = entry.file_name().to_string_lossy().to_string();
+            if name.starts_with("jdk-21") && name != "jdk-21" && entry.path().is_dir() {
+                let _ = fs::rename(entry.path(), &target);
+                break;
+            }
+        }
+    }
 }
 
 // --- Vanilla structs ---
