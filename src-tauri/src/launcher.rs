@@ -32,11 +32,22 @@ fn emit(app: &AppHandle, pct: u32, msg: &str) {
     let _ = app.emit("launch_progress", serde_json::json!({ "pct": pct, "msg": msg }));
 }
 
-fn find_java() -> String {
+/// Returns the major Java version needed for a given MC version
+fn java_version_for_mc(mc_version: &str) -> u32 {
+    let parts: Vec<&str> = mc_version.split('.').collect();
+    let minor: u32 = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0);
+    let patch: u32 = parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(0);
+    if minor >= 21 || (minor == 20 && patch >= 5) { 21 }
+    else if minor >= 16 { 17 }
+    else { 8 }
+}
+
+fn find_java(mc_version: &str) -> String {
+    let java_ver = java_version_for_mc(mc_version);
     let java_bin = if cfg!(target_os = "windows") { "java.exe" } else { "java" };
 
-    // 1. Check bundled Java in Pulsar data dir
-    let bundled = bundled_java_path();
+    // 1. Check bundled Java for this version
+    let bundled = bundled_java_path(java_ver);
     if bundled.exists() {
         return bundled.to_string_lossy().to_string();
     }
@@ -52,66 +63,76 @@ fn find_java() -> String {
     // 3. Check common install locations
     #[cfg(target_os = "macos")]
     {
-        // Homebrew paths
-        for path in &[
-            "/opt/homebrew/opt/openjdk@21/bin/java",
-            "/opt/homebrew/opt/openjdk/bin/java",
-            "/usr/local/opt/openjdk@21/bin/java",
-            "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home/bin/java",
-        ] {
-            if PathBuf::from(path).exists() {
-                return path.to_string();
-            }
+        let paths: &[&str] = match java_ver {
+            8 => &[
+                "/Library/Java/JavaVirtualMachines/temurin-8.jdk/Contents/Home/bin/java",
+                "/opt/homebrew/opt/openjdk@8/bin/java",
+            ],
+            17 => &[
+                "/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home/bin/java",
+                "/opt/homebrew/opt/openjdk@17/bin/java",
+            ],
+            _ => &[
+                "/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home/bin/java",
+                "/opt/homebrew/opt/openjdk@21/bin/java",
+                "/opt/homebrew/opt/openjdk/bin/java",
+            ],
+        };
+        for path in paths {
+            if PathBuf::from(path).exists() { return path.to_string(); }
         }
     }
 
-    // 4. Fallback to system java
     java_bin.to_string()
 }
 
-fn bundled_java_path() -> PathBuf {
+fn bundled_java_path(java_ver: u32) -> PathBuf {
     let java_dir = game_dir().join("java");
+    let folder = format!("jdk-{}", java_ver);
     #[cfg(target_os = "macos")]
-    { java_dir.join("jdk-21/Contents/Home/bin/java") }
+    { java_dir.join(&folder).join("Contents/Home/bin/java") }
     #[cfg(target_os = "windows")]
-    { java_dir.join("jdk-21/bin/java.exe") }
+    { java_dir.join(&folder).join("bin/java.exe") }
     #[cfg(target_os = "linux")]
-    { java_dir.join("jdk-21/bin/java") }
+    { java_dir.join(&folder).join("bin/java") }
 }
 
-fn download_java(app: &AppHandle) -> Result<(), String> {
-    let bundled = bundled_java_path();
+fn download_java(app: &AppHandle, mc_version: &str) -> Result<(), String> {
+    let java_ver = java_version_for_mc(mc_version);
+    let bundled = bundled_java_path(java_ver);
     if bundled.exists() { return Ok(()); }
 
-    let _ = app.emit("launch_progress", serde_json::json!({"pct": 5, "msg": "Downloading Java 21..."}));
+    let _ = app.emit("launch_progress", serde_json::json!({"pct": 5, "msg": format!("Downloading Java {}...", java_ver)}));
 
     let java_dir = game_dir().join("java");
     fs::create_dir_all(&java_dir).map_err(|e| e.to_string())?;
 
-    // Adoptium Temurin JDK 21 download URLs
+    // Adoptium Temurin download URLs — version-aware
     #[cfg(target_os = "macos")]
     let url = if cfg!(target_arch = "aarch64") {
-        "https://api.adoptium.net/v3/binary/latest/21/ga/mac/aarch64/jdk/hotspot/normal/eclipse?project=jdk"
+        // Java 8 and 17 use x64 with Rosetta on Apple Silicon (old LWJGL lacks arm64 natives)
+        // Only Java 21 (MC 1.20.5+) has proper arm64 LWJGL support
+        let arch = if java_ver >= 21 { "aarch64" } else { "x64" };
+        format!("https://api.adoptium.net/v3/binary/latest/{}/ga/mac/{}/jdk/hotspot/normal/eclipse?project=jdk", java_ver, arch)
     } else {
-        "https://api.adoptium.net/v3/binary/latest/21/ga/mac/x64/jdk/hotspot/normal/eclipse?project=jdk"
+        format!("https://api.adoptium.net/v3/binary/latest/{}/ga/mac/x64/jdk/hotspot/normal/eclipse?project=jdk", java_ver)
     };
     #[cfg(target_os = "windows")]
-    let url = "https://api.adoptium.net/v3/binary/latest/21/ga/windows/x64/jdk/hotspot/normal/eclipse?project=jdk";
+    let url = format!("https://api.adoptium.net/v3/binary/latest/{}/ga/windows/x64/jdk/hotspot/normal/eclipse?project=jdk", java_ver);
     #[cfg(target_os = "linux")]
-    let url = "https://api.adoptium.net/v3/binary/latest/21/ga/linux/x64/jdk/hotspot/normal/eclipse?project=jdk";
+    let url = format!("https://api.adoptium.net/v3/binary/latest/{}/ga/linux/x64/jdk/hotspot/normal/eclipse?project=jdk", java_ver);
 
     let client = Client::new();
-    let response = client.get(url).send().map_err(|e| format!("Failed to download Java: {}", e))?;
+    let response = client.get(&url).send().map_err(|e| format!("Failed to download Java {}: {}", java_ver, e))?;
     if !response.status().is_success() {
-        return Err(format!("Java download failed: HTTP {}", response.status()));
+        return Err(format!("Java {} download failed: HTTP {}", java_ver, response.status()));
     }
 
     let bytes = response.bytes().map_err(|e| e.to_string())?;
-    let _ = app.emit("launch_progress", serde_json::json!({"pct": 30, "msg": "Installing Java 21..."}));
+    let _ = app.emit("launch_progress", serde_json::json!({"pct": 30, "msg": format!("Installing Java {}...", java_ver)}));
 
     #[cfg(target_os = "macos")]
     {
-        // Adoptium sends a .tar.gz on macOS
         let tar_path = java_dir.join("java.tar.gz");
         fs::write(&tar_path, &bytes).map_err(|e| e.to_string())?;
         let status = Command::new("tar")
@@ -120,8 +141,7 @@ fn download_java(app: &AppHandle) -> Result<(), String> {
             .map_err(|e| e.to_string())?;
         if !status.success() { return Err("Failed to extract Java".to_string()); }
         let _ = fs::remove_file(&tar_path);
-
-        rename_jdk_folder(&java_dir);
+        rename_jdk_folder(&java_dir, java_ver);
     }
 
     #[cfg(target_os = "windows")]
@@ -132,7 +152,7 @@ fn download_java(app: &AppHandle) -> Result<(), String> {
         let mut archive = zip::ZipArchive::new(file).map_err(|e| e.to_string())?;
         archive.extract(&java_dir).map_err(|e| e.to_string())?;
         let _ = fs::remove_file(&zip_path);
-        rename_jdk_folder(&java_dir);
+        rename_jdk_folder(&java_dir, java_ver);
     }
 
     #[cfg(target_os = "linux")]
@@ -145,23 +165,29 @@ fn download_java(app: &AppHandle) -> Result<(), String> {
             .map_err(|e| e.to_string())?;
         if !status.success() { return Err("Failed to extract Java".to_string()); }
         let _ = fs::remove_file(&tar_path);
-        rename_jdk_folder(&java_dir);
+        rename_jdk_folder(&java_dir, java_ver);
     }
 
-    let _ = app.emit("launch_progress", serde_json::json!({"pct": 40, "msg": "Java 21 installed!"}));
+    let _ = app.emit("launch_progress", serde_json::json!({"pct": 40, "msg": format!("Java {} installed!", java_ver)}));
     Ok(())
 }
 
-fn rename_jdk_folder(java_dir: &PathBuf) {
-    let target = java_dir.join("jdk-21");
-    // Remove old jdk-21 if it exists but is broken
+fn rename_jdk_folder(java_dir: &PathBuf, java_ver: u32) {
+    let target_name = format!("jdk-{}", java_ver);
+    let target = java_dir.join(&target_name);
     if target.exists() {
         let _ = fs::remove_dir_all(&target);
     }
     if let Ok(entries) = fs::read_dir(java_dir) {
         for entry in entries.flatten() {
             let name = entry.file_name().to_string_lossy().to_string();
-            if name.starts_with("jdk-21") && name != "jdk-21" && entry.path().is_dir() {
+            // Match jdk-8uXXX, jdk-17.0.X, jdk-21.0.X, etc.
+            if name.starts_with(&format!("jdk-{}", java_ver)) && name != target_name && entry.path().is_dir() {
+                let _ = fs::rename(entry.path(), &target);
+                break;
+            }
+            // Java 8 from Adoptium extracts as jdk8uXXX
+            if java_ver == 8 && name.starts_with("jdk8u") && entry.path().is_dir() {
                 let _ = fs::rename(entry.path(), &target);
                 break;
             }
@@ -406,12 +432,21 @@ fn install_mods(client: &Client, _game_dir: &PathBuf, mc_version: &str) -> Resul
     }
 
     // Auto-install popular performance & utility mods from Modrinth
-    // These are version-agnostic — Modrinth returns the right version automatically
-    let bundled_mods = [
+    let mut bundled_mods: Vec<(&str, &str)> = vec![
         ("AANobbMI", "sodium.jar"),         // Sodium (FPS boost)
         ("gvQqBUqZ", "lithium.jar"),        // Lithium (server tick optimization)
         ("NNAgCjsB", "entityculling.jar"),   // Entity Culling
     ];
+
+    // Speedrun mods for 1.16.x — full legal speedrun setup
+    if mc_version.starts_with("1.16") {
+        bundled_mods.push(("jnkd7LkJ", "speedrunigt.jar"));   // SpeedRunIGT (in-game timer)
+        bundled_mods.push(("PNEi3GLK", "atum.jar"));           // Atum (auto world reset)
+        bundled_mods.push(("tKUU4TXD", "worldpreview.jar"));   // WorldPreview (preview while generating)
+        bundled_mods.push(("hvFnDODi", "lazydfu.jar"));        // LazyDFU (faster game startup)
+        bundled_mods.push(("H8CaAYZC", "starlight.jar"));      // Starlight (fast lighting engine)
+        bundled_mods.push(("fQEb0iXm", "krypton.jar"));        // Krypton (network optimization)
+    }
     for (project_id, filename) in &bundled_mods {
         let dest = mods_dir.join(filename);
         if !dest.exists() {
@@ -476,8 +511,8 @@ pub fn launch_minecraft(app: AppHandle, version: String, username: Option<String
 }
 
 fn do_launch(app: &AppHandle, version: &str, username: Option<String>, uuid: Option<String>, access_token: Option<String>) -> Result<(), String> {
-    // Auto-download Java if not found
-    download_java(app)?;
+    // Auto-download the right Java version for this MC version
+    download_java(app, version)?;
 
     let client = Client::new();
     let game_dir = game_dir();
@@ -746,12 +781,19 @@ fn do_launch(app: &AppHandle, version: &str, username: Option<String>, uuid: Opt
     let natives_dir_str = natives_dir.to_string_lossy().to_string();
 
     // Find Java
-    let java_cmd = find_java();
+    let java_cmd = find_java(version);
 
     // Build JVM args
     let mut jvm_args: Vec<String> = Vec::new();
+    // -XstartOnFirstThread is needed for LWJGL 3 (1.13+) on macOS but breaks LWJGL 2 (1.12.2 and below)
     #[cfg(target_os = "macos")]
-    jvm_args.push("-XstartOnFirstThread".to_string());
+    {
+        let parts: Vec<&str> = version.split('.').collect();
+        let minor: u32 = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(0);
+        if minor >= 13 {
+            jvm_args.push("-XstartOnFirstThread".to_string());
+        }
+    }
     // Apply Fabric JVM arguments if available
     if let Some(ref fj) = fabric_json {
         for arg in &fj.arguments.jvm {

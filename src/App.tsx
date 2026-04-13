@@ -22,13 +22,12 @@ export interface AccountInfo {
   accessToken: string;
 }
 
-type GameMode = "default" | "bedwars" | "skywars" | "practice";
+type GameMode = "default" | "bedwars" | "speedrun";
 
-const GAME_MODES: { id: GameMode; name: string; icon: string; desc: string; server?: string }[] = [
-  { id: "default", name: "Default", icon: "▶", desc: "Standard Minecraft" },
-  { id: "bedwars", name: "Bedwars", icon: "🛏", desc: "Hypixel Bedwars", server: "mc.hypixel.net" },
-  { id: "skywars", name: "SkyWars", icon: "☁", desc: "Hypixel SkyWars", server: "mc.hypixel.net" },
-  { id: "practice", name: "Practice", icon: "⚔", desc: "PvP Practice", server: "pvp.land" },
+const GAME_MODES: { id: GameMode; name: string; icon: string; desc: string; version: string; server?: string }[] = [
+  { id: "default", name: "Minecraft", icon: "▶", desc: "Latest version", version: "1.21.11" },
+  { id: "bedwars", name: "Bedwars", icon: "🛏", desc: "Hypixel 1.8.9", version: "1.8.9", server: "mc.hypixel.net" },
+  { id: "speedrun", name: "Speedrun", icon: "⏱", desc: "1.16.1 + Timer", version: "1.16.1" },
 ];
 
 export default function App() {
@@ -217,11 +216,11 @@ export default function App() {
             )}
 
             {/* Game Mode Selector */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px" }}>
               {GAME_MODES.map(mode => {
                 const active = gameMode === mode.id;
                 return (
-                  <div key={mode.id} onClick={() => setGameMode(mode.id)} style={{
+                  <div key={mode.id} onClick={() => { setGameMode(mode.id); setSelectedVersion(mode.version); }} style={{
                     padding: "12px 10px", borderRadius: "var(--radius-sm)",
                     background: active ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.02)",
                     border: `1px solid ${active ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.04)"}`,
@@ -248,7 +247,7 @@ export default function App() {
                 fontSize: "12px",
               }}>
                 <span style={{ color: "var(--text-secondary)" }}>
-                  {GAME_MODES.find(m => m.id === gameMode)?.icon} {GAME_MODES.find(m => m.id === gameMode)?.name} Mode — auto-join <span style={{ color: "#fff", fontWeight: "600" }}>{GAME_MODES.find(m => m.id === gameMode)?.server}</span>
+                  {GAME_MODES.find(m => m.id === gameMode)?.icon} {GAME_MODES.find(m => m.id === gameMode)?.name} Mode — v{GAME_MODES.find(m => m.id === gameMode)?.version} — auto-join <span style={{ color: "#fff", fontWeight: "600" }}>{GAME_MODES.find(m => m.id === gameMode)?.server}</span>
                 </span>
                 <span style={{ color: "var(--accent-green)", fontWeight: "600", fontSize: "10px" }}>ACTIVE</span>
               </div>
