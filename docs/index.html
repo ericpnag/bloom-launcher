@@ -3,201 +3,251 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pulsar Client — Universe Themed Minecraft Client</title>
+<title>Pulsar Client — Minecraft Client</title>
+<meta name="description" content="A free Minecraft client with 51+ mods, animated capes, game modes, and a black hole themed UI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:'Inter',system-ui,sans-serif;background:#000000;color:#E0E0E8;overflow-x:hidden}
-::selection{background:rgba(255,255,255,0.3);color:#fff}
+body{font-family:'Inter',system-ui,sans-serif;background:#080808;color:#c9c9c9;overflow-x:hidden}
+::selection{background:rgba(255,255,255,0.2);color:#fff}
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:3px}
-
-/* ── Swirl Particles ── */
-.star{position:fixed;width:2px;height:2px;background:#FFFFFF;border-radius:50%;opacity:0;pointer-events:none;z-index:0;animation:swirl linear forwards}
-@keyframes swirl{0%{opacity:0;transform:scale(0.5) rotate(0deg)}20%{opacity:0.8;transform:scale(1) rotate(30deg)}80%{opacity:0.6;transform:scale(0.8) rotate(120deg)}100%{opacity:0;transform:scale(0) rotate(180deg)}}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:3px}
 
 /* ── Nav ── */
-nav{position:fixed;top:0;width:100%;z-index:100;padding:16px 40px;display:flex;align-items:center;backdrop-filter:blur(20px);background:rgba(10,10,15,0.7);border-bottom:1px solid rgba(255,255,255,0.04);transition:all 0.3s}
-nav.scrolled{background:rgba(10,10,15,0.92);padding:12px 40px}
-.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.nav-logo svg{width:28px;height:28px}
-.nav-logo span{font-weight:800;font-size:14px;letter-spacing:0.14em;color:#FFFFFF}
-.nav-links{display:flex;gap:32px;margin-left:auto;align-items:center}
-.nav-links a{color:#5C6370;text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s}
-.nav-links a:hover{color:#FFFFFF}
-.nav-cta{background:linear-gradient(135deg,#FFFFFF,#E0E0E0);color:#000000;padding:8px 24px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;transition:all 0.2s;border:none;cursor:pointer}
-.nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(255,255,255,0.25)}
+nav{position:fixed;top:0;width:100%;z-index:100;padding:18px 48px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(20px);background:rgba(8,8,8,0.6);border-bottom:1px solid rgba(255,255,255,0.04);transition:all 0.4s}
+nav.scrolled{background:rgba(8,8,8,0.95);padding:14px 48px}
+.nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.nav-brand svg{width:28px;height:28px}
+.nav-brand span{font-weight:900;font-size:15px;letter-spacing:0.14em;color:#fff;text-transform:uppercase}
+.nav-right{display:flex;align-items:center;gap:24px}
+.nav-link{color:#666;text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s}
+.nav-link:hover{color:#fff}
+.nav-dl{background:#fff;color:#000;padding:9px 24px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;transition:all 0.2s;border:none;cursor:pointer}
+.nav-dl:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(255,255,255,0.2)}
 
 /* ── Hero ── */
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;padding:120px 20px 80px}
-.hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 50% 30%,rgba(255,255,255,0.06) 0%,transparent 60%);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);font-size:12px;color:#ABB2BF;margin-bottom:32px;animation:fadeUp 0.8s ease-out}
-.hero-badge span{color:#FFFFFF;font-weight:600}
-.hero h1{font-size:clamp(48px,8vw,96px);font-weight:900;letter-spacing:-0.02em;line-height:1;margin-bottom:16px;animation:fadeUp 0.8s ease-out 0.1s both}
-.hero h1 .gradient{background:linear-gradient(135deg,#FFFFFF,#E0E0E0,#A0A0A0);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{font-size:18px;color:#5C6370;max-width:500px;line-height:1.6;margin-bottom:40px;animation:fadeUp 0.8s ease-out 0.2s both}
-.hero-buttons{display:flex;gap:16px;animation:fadeUp 0.8s ease-out 0.3s both}
-.btn-primary{background:linear-gradient(135deg,#FFFFFF,#E0E0E0);color:#000000;padding:14px 36px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;transition:all 0.25s;display:inline-flex;align-items:center;gap:8px}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,255,255,0.3)}
-.btn-secondary{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#ABB2BF;padding:14px 36px;border-radius:12px;font-weight:600;font-size:15px;text-decoration:none;transition:all 0.25s}
-.btn-secondary:hover{border-color:rgba(255,255,255,0.25);color:#FFFFFF;background:rgba(255,255,255,0.06)}
-.hero-image{margin-top:60px;width:min(900px,90vw);border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);box-shadow:0 40px 80px rgba(0,0,0,0.4);animation:fadeUp 1s ease-out 0.4s both;position:relative}
-.hero-image .mockup{width:100%;height:400px;background:linear-gradient(135deg,#000000,#080808,#111111);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
-.hero-image .mockup-text{font-size:28px;font-weight:800;color:rgba(255,255,255,0.2);letter-spacing:0.1em}
-.hero-glow{position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(255,255,255,0.08) 0%,transparent 60%);top:-200px;left:50%;transform:translateX(-50%);pointer-events:none;animation:pulse 4s ease-in-out infinite}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;padding:140px 24px 100px;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%, rgba(255,255,255,0.03) 0%, transparent 60%);pointer-events:none}
+.hero-glow{position:absolute;width:700px;height:700px;background:radial-gradient(circle,rgba(255,255,255,0.06) 0%,transparent 55%);top:-200px;left:50%;transform:translateX(-50%);pointer-events:none;animation:heroGlow 6s ease-in-out infinite}
+@keyframes heroGlow{0%,100%{opacity:0.6;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.08)}}
 
-/* ── Features ── */
-.features{padding:120px 40px;position:relative}
-.features::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent)}
-.section-label{font-size:12px;font-weight:700;letter-spacing:0.15em;color:#FFFFFF;text-transform:uppercase;text-align:center;margin-bottom:12px}
-.section-title{font-size:clamp(32px,5vw,48px);font-weight:800;text-align:center;margin-bottom:16px;letter-spacing:-0.02em}
-.section-sub{font-size:16px;color:#5C6370;text-align:center;max-width:500px;margin:0 auto 60px;line-height:1.6}
-.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;max-width:1100px;margin:0 auto}
-.feature-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:32px;transition:all 0.3s;position:relative;overflow:hidden}
-.feature-card:hover{border-color:rgba(255,255,255,0.15);background:rgba(255,255,255,0.03);transform:translateY(-4px)}
-.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);opacity:0;transition:opacity 0.3s}
-.feature-card:hover::before{opacity:1}
-.feature-icon{width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:20px}
-.feature-card h3{font-size:18px;font-weight:700;margin-bottom:8px}
-.feature-card p{font-size:14px;color:#5C6370;line-height:1.6}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 18px;border-radius:20px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);font-size:12px;color:#888;margin-bottom:36px;animation:fadeUp 0.8s ease-out}
+.hero-badge b{color:#fff}
+.hero h1{font-size:clamp(56px,10vw,110px);font-weight:900;letter-spacing:-0.03em;line-height:0.95;color:#fff;margin-bottom:20px;animation:fadeUp 0.8s ease-out 0.1s both}
+.hero p{font-size:19px;color:#555;max-width:480px;line-height:1.65;margin-bottom:44px;animation:fadeUp 0.8s ease-out 0.2s both}
+.hero-btns{display:flex;gap:14px;animation:fadeUp 0.8s ease-out 0.3s both}
+.btn-dl{background:#fff;color:#000;padding:16px 40px;border-radius:12px;font-weight:800;font-size:15px;text-decoration:none;transition:all 0.25s;display:inline-flex;align-items:center;gap:10px;letter-spacing:0.02em}
+.btn-dl:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 12px 40px rgba(255,255,255,0.25)}
+.btn-gh{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#999;padding:16px 40px;border-radius:12px;font-weight:600;font-size:15px;text-decoration:none;transition:all 0.25s}
+.btn-gh:hover{border-color:rgba(255,255,255,0.25);color:#fff;background:rgba(255,255,255,0.06)}
+
+/* ── Feature Cards ── */
+.features{padding:0 48px 100px;position:relative}
+.features-wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;max-width:1200px;margin:0 auto;border-radius:28px;overflow:hidden}
+.feat{position:relative;min-height:400px;display:flex;flex-direction:column;justify-content:flex-end;padding:36px;overflow:hidden;cursor:pointer;transition:all 0.4s}
+.feat-bg{position:absolute;inset:0;transition:transform 0.5s ease-in-out}
+.feat:hover .feat-bg{transform:scale(1.1)}
+.feat-overlay{position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.1) 100%)}
+.feat-content{position:relative;z-index:1}
+.feat-stat{font-size:42px;font-weight:900;color:#fff;line-height:1;margin-bottom:4px}
+.feat-label{font-size:14px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px}
+.feat-desc{font-size:12px;color:#888;line-height:1.5}
+
+.feat:nth-child(1) .feat-bg{background:linear-gradient(135deg,#0a0a1a,#111128);}
+.feat:nth-child(2) .feat-bg{background:linear-gradient(135deg,#0a1a0a,#112811);}
+.feat:nth-child(3) .feat-bg{background:linear-gradient(135deg,#1a0a0a,#281111);}
+.feat:nth-child(4) .feat-bg{background:linear-gradient(135deg,#0a0a0a,#1a1a1a);}
 
 /* ── Stats ── */
-.stats{padding:80px 40px;display:flex;justify-content:center;gap:80px;flex-wrap:wrap}
+.stats{padding:80px 48px;display:flex;justify-content:center;gap:100px;flex-wrap:wrap}
 .stat{text-align:center}
-.stat-num{font-size:48px;font-weight:900;background:linear-gradient(135deg,#FFFFFF,#A0A0A0);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.stat-label{font-size:13px;color:#5C6370;margin-top:4px}
+.stat-num{font-size:56px;font-weight:900;color:#fff;line-height:1}
+.stat-label{font-size:13px;color:#555;margin-top:6px;font-weight:500}
+
+/* ── Modes ── */
+.modes{padding:100px 48px;position:relative}
+.modes::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent)}
+.section-label{font-size:12px;font-weight:700;letter-spacing:0.15em;color:#fff;text-transform:uppercase;text-align:center;margin-bottom:12px}
+.section-title{font-size:clamp(36px,5vw,52px);font-weight:900;text-align:center;color:#fff;margin-bottom:16px;letter-spacing:-0.02em}
+.section-sub{font-size:16px;color:#555;text-align:center;max-width:480px;margin:0 auto 60px;line-height:1.6}
+.modes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:900px;margin:0 auto}
+.mode-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:36px 28px;text-align:center;transition:all 0.3s;position:relative;overflow:hidden}
+.mode-card:hover{border-color:rgba(255,255,255,0.15);transform:translateY(-6px);background:rgba(255,255,255,0.04)}
+.mode-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);opacity:0;transition:opacity 0.3s}
+.mode-card:hover::before{opacity:1}
+.mode-icon{font-size:36px;margin-bottom:16px;display:block}
+.mode-card h3{font-size:18px;font-weight:800;color:#fff;margin-bottom:6px}
+.mode-card p{font-size:13px;color:#555;line-height:1.5}
+.mode-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:6px;margin-top:12px}
 
 /* ── Modules ── */
-.modules{padding:120px 40px;position:relative}
-.modules::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent)}
-.modules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;max-width:900px;margin:0 auto}
-.module-chip{padding:14px 20px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);font-size:13px;font-weight:600;color:#ABB2BF;display:flex;align-items:center;gap:8px;transition:all 0.2s}
-.module-chip:hover{border-color:rgba(255,255,255,0.15);color:#FFFFFF;transform:translateY(-2px)}
-.module-dot{width:6px;height:6px;border-radius:50%;background:#98C379}
+.modules{padding:100px 48px}
+.modules::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent)}
+.mod-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;max-width:1000px;margin:0 auto}
+.mod-chip{padding:14px 20px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);font-size:13px;font-weight:600;color:#888;display:flex;align-items:center;gap:8px;transition:all 0.2s}
+.mod-chip:hover{border-color:rgba(255,255,255,0.12);color:#fff;transform:translateY(-2px)}
+.mod-dot{width:6px;height:6px;border-radius:50%;background:#4CAF50;flex-shrink:0}
 
 /* ── CTA ── */
-.cta{padding:120px 40px;text-align:center}
-.cta-box{max-width:700px;margin:0 auto;padding:60px;border-radius:20px;background:linear-gradient(135deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.08);position:relative;overflow:hidden}
-.cta-box::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(255,255,255,0.06) 0%,transparent 60%);pointer-events:none}
-.cta h2{font-size:36px;font-weight:800;margin-bottom:12px;position:relative}
-.cta p{color:#5C6370;margin-bottom:32px;font-size:16px;position:relative}
+.cta{padding:120px 48px;text-align:center}
+.cta-box{max-width:800px;margin:0 auto;padding:72px 48px;border-radius:24px;background:linear-gradient(135deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);position:relative;overflow:hidden}
+.cta-box::before{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(255,255,255,0.04) 0%,transparent 60%);pointer-events:none}
+.cta h2{font-size:clamp(28px,4vw,42px);font-weight:900;margin-bottom:14px;position:relative;color:#fff}
+.cta p{color:#555;margin-bottom:36px;font-size:16px;position:relative;line-height:1.6;max-width:500px;margin-left:auto;margin-right:auto}
+
+.dl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:480px;margin:0 auto}
+.dl-btn{padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;text-decoration:none;border-radius:14px;font-weight:700;font-size:14px;transition:all 0.25s}
+.dl-btn.primary{background:#fff;color:#000}
+.dl-btn.primary:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(255,255,255,0.25)}
+.dl-btn.secondary{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#999}
+.dl-btn.secondary:hover{border-color:rgba(255,255,255,0.25);color:#fff;transform:translateY(-3px)}
+.dl-sub{font-size:10px;opacity:0.5;font-weight:400}
 
 /* ── Footer ── */
-footer{padding:40px;border-top:1px solid rgba(255,255,255,0.04);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
-footer .left{display:flex;align-items:center;gap:8px;font-size:13px;color:#3E4451}
+footer{padding:40px 48px;border-top:1px solid rgba(255,255,255,0.04);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
+footer .left{display:flex;align-items:center;gap:8px;font-size:13px;color:#333}
 footer .right{display:flex;gap:24px}
-footer .right a{color:#3E4451;text-decoration:none;font-size:13px;transition:color 0.2s}
-footer .right a:hover{color:#FFFFFF}
+footer .right a{color:#333;text-decoration:none;font-size:13px;transition:color 0.2s}
+footer .right a:hover{color:#fff}
 
 /* ── Animations ── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:0.6}50%{opacity:1}}
-.reveal{opacity:0;transform:translateY(30px);transition:all 0.8s ease-out}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(30px);transition:all 0.7s ease-out}
 .reveal.visible{opacity:1;transform:translateY(0)}
 
-@media(max-width:768px){
-  nav{padding:12px 20px}
-  .nav-links{display:none}
-  .hero{padding:100px 20px 60px}
-  .features,.modules,.cta{padding:80px 20px}
-  .stats{gap:40px}
-  .hero-buttons{flex-direction:column;width:100%}
-  .btn-primary,.btn-secondary{width:100%;text-align:center;justify-content:center}
+/* ── Stars ── */
+.star{position:fixed;width:2px;height:2px;background:#fff;border-radius:50%;opacity:0;pointer-events:none;z-index:0;animation:drift linear forwards}
+@keyframes drift{0%{opacity:0;transform:scale(0.5)}15%{opacity:0.7;transform:scale(1)}85%{opacity:0.5}100%{opacity:0;transform:translateY(60px) scale(0.3)}}
+
+@media(max-width:900px){
+  nav{padding:14px 20px}
+  .nav-link{display:none}
+  .features-wrap{grid-template-columns:repeat(2,1fr)}
+  .modes-grid{grid-template-columns:1fr}
+  .stats{gap:48px}
+  .dl-grid{grid-template-columns:1fr}
+  .hero{padding:120px 20px 80px}
+  .hero-btns{flex-direction:column;width:100%}
+  .btn-dl,.btn-gh{width:100%;text-align:center;justify-content:center}
+}
+@media(max-width:600px){
+  .features-wrap{grid-template-columns:1fr}
+  .feat{min-height:280px}
 }
 </style>
 </head>
 <body>
 
-<!-- Navbar -->
+<!-- Nav -->
 <nav id="nav">
-  <a class="nav-logo" href="#">
-    <svg viewBox="0 0 24 24" fill="none">
-      <circle cx="12" cy="12" r="10" fill="#000000"/>
-      <circle cx="12" cy="12" r="8" fill="none" stroke="#FFFFFF" stroke-width="0.5" opacity="0.3"/>
-      <ellipse cx="12" cy="12" rx="11" ry="4" fill="none" stroke="#E0E0E0" stroke-width="1.5" opacity="0.6"/>
-      <ellipse cx="12" cy="12" rx="9" ry="3" fill="none" stroke="#A0A0A0" stroke-width="0.8" opacity="0.4"/>
-      <circle cx="12" cy="12" r="4" fill="#000000"/>
-      <circle cx="12" cy="12" r="3" fill="none" stroke="#FFFFFF" stroke-width="0.3" opacity="0.5"/>
-    </svg>
-    <span>PULSAR</span>
+  <a class="nav-brand" href="#">
+    <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#000"/><circle cx="12" cy="12" r="8" fill="none" stroke="#fff" stroke-width="0.5" opacity="0.3"/><ellipse cx="12" cy="12" rx="11" ry="4" fill="none" stroke="#fff" stroke-width="1.5" opacity="0.5"/><circle cx="12" cy="12" r="4" fill="#000"/><circle cx="12" cy="12" r="3" fill="none" stroke="#fff" stroke-width="0.3" opacity="0.4"/></svg>
+    <span>Pulsar</span>
   </a>
-  <div class="nav-links">
-    <a href="#features">Features</a>
-    <a href="#modules">Modules</a>
-    <a href="https://github.com/ericpnag/pulsar">GitHub</a>
-    <a class="nav-cta" href="#download">Download</a>
+  <div class="nav-right">
+    <a class="nav-link" href="#features">Features</a>
+    <a class="nav-link" href="#modes">Game Modes</a>
+    <a class="nav-link" href="#modules">Modules</a>
+    <a class="nav-link" href="https://github.com/ericpnag/pulsar">GitHub</a>
+    <a class="nav-dl" href="#download">Download</a>
   </div>
 </nav>
 
 <!-- Hero -->
 <section class="hero">
+  <div class="hero-bg"></div>
   <div class="hero-glow"></div>
   <div class="hero-badge">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#000000"/><ellipse cx="12" cy="12" rx="11" ry="4" fill="none" stroke="#E0E0E0" stroke-width="1.5" opacity="0.6"/><circle cx="12" cy="12" r="4" fill="#000000"/><circle cx="12" cy="12" r="3" fill="none" stroke="#FFFFFF" stroke-width="0.3" opacity="0.5"/></svg>
-    <span>v1.0.0</span> — Now available for macOS, Windows & Linux
+    <b>v1.8.0</b> — Free on macOS, Windows & Linux
   </div>
-  <h1><span class="gradient">Pulsar</span> Client</h1>
-  <p>A universe themed Minecraft client with cosmetics, performance mods, and a beautiful custom UI.</p>
-  <div class="hero-buttons">
-    <a class="btn-primary" href="#download">
+  <h1>Pulsar Client</h1>
+  <p>The ultimate Minecraft client. 51+ mods, animated capes, game modes, and a beautiful space-themed UI.</p>
+  <div class="hero-btns">
+    <a class="btn-dl" href="#download">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-      Download Now
+      Download Free
     </a>
-    <a class="btn-secondary" href="https://github.com/ericpnag/pulsar">View on GitHub</a>
+    <a class="btn-gh" href="https://github.com/ericpnag/pulsar">View on GitHub</a>
   </div>
-  <div class="hero-image">
-    <div class="mockup">
-      <div class="mockup-text">PULSAR CLIENT</div>
+</section>
+
+<!-- Feature Cards -->
+<section class="features" id="features">
+  <div class="features-wrap">
+    <div class="feat reveal">
+      <div class="feat-bg"></div>
+      <div class="feat-overlay"></div>
+      <div class="feat-content">
+        <div class="feat-stat">51+</div>
+        <div class="feat-label">Built-in Mods</div>
+        <div class="feat-desc">Toggle Sprint, Zoom, CPS, Keystrokes, Motion Blur, Custom Crosshair, and more. All customizable.</div>
+      </div>
+    </div>
+    <div class="feat reveal">
+      <div class="feat-bg"></div>
+      <div class="feat-overlay"></div>
+      <div class="feat-content">
+        <div class="feat-stat">22</div>
+        <div class="feat-label">Animated Capes</div>
+        <div class="feat-desc">Galaxy, Black Hole, Flame, Neon, and more. Procedurally generated with per-tick animations.</div>
+      </div>
+    </div>
+    <div class="feat reveal">
+      <div class="feat-bg"></div>
+      <div class="feat-overlay"></div>
+      <div class="feat-content">
+        <div class="feat-stat">2x</div>
+        <div class="feat-label">FPS Boost</div>
+        <div class="feat-desc">Bundled with Sodium, Lithium, and EntityCulling. Auto-installed on every version.</div>
+      </div>
+    </div>
+    <div class="feat reveal">
+      <div class="feat-bg"></div>
+      <div class="feat-overlay"></div>
+      <div class="feat-content">
+        <div class="feat-stat">All</div>
+        <div class="feat-label">Versions</div>
+        <div class="feat-desc">Supports every Minecraft version. Java auto-downloads. One click to play 1.8.9, 1.16.1, or latest.</div>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- Stats -->
 <section class="stats">
-  <div class="stat reveal"><div class="stat-num">16+</div><div class="stat-label">Built-in Modules</div></div>
-  <div class="stat reveal"><div class="stat-num">22</div><div class="stat-label">Custom Capes</div></div>
-  <div class="stat reveal"><div class="stat-num">2x</div><div class="stat-label">FPS Boost</div></div>
-  <div class="stat reveal"><div class="stat-num">3</div><div class="stat-label">Platforms</div></div>
+  <div class="stat reveal"><div class="stat-num">51+</div><div class="stat-label">Built-in Modules</div></div>
+  <div class="stat reveal"><div class="stat-num">22</div><div class="stat-label">Animated Capes</div></div>
+  <div class="stat reveal"><div class="stat-num">3</div><div class="stat-label">Game Modes</div></div>
+  <div class="stat reveal"><div class="stat-num">0</div><div class="stat-label">Price Tag</div></div>
 </section>
 
-<!-- Features -->
-<section class="features" id="features">
-  <div class="section-label reveal">Features</div>
-  <h2 class="section-title reveal">Everything you need</h2>
-  <p class="section-sub reveal">Pulsar Client comes packed with features to enhance your Minecraft experience.</p>
-  <div class="features-grid">
-    <div class="feature-card reveal">
-      <div class="feature-icon">&#127756;</div>
-      <h3>Universe / Black Hole Theme</h3>
-      <p>Beautiful custom title screen, pause menu, and mod menu with gravitational swirl animations throughout.</p>
+<!-- Game Modes -->
+<section class="modes" id="modes">
+  <div class="section-label reveal">Game Modes</div>
+  <h2 class="section-title reveal">One client, every way to play</h2>
+  <p class="section-sub reveal">Switch between modes instantly. Each one auto-configures the right version, Java, and mods.</p>
+  <div class="modes-grid">
+    <div class="mode-card reveal">
+      <span class="mode-icon">▶</span>
+      <h3>Minecraft</h3>
+      <p>Latest version with all 51 Pulsar mods, animated capes, and black hole themed UI.</p>
+      <div class="mode-tag" style="background:rgba(255,255,255,0.08);color:#fff">1.21.11 + Fabric</div>
     </div>
-    <div class="feature-card reveal">
-      <div class="feature-icon">&#9889;</div>
-      <h3>FPS Boost</h3>
-      <p>One-click performance optimization. Bundled with Sodium, Lithium, and EntityCulling for maximum frames.</p>
+    <div class="mode-card reveal">
+      <span class="mode-icon">🛏</span>
+      <h3>Bedwars</h3>
+      <p>Hypixel Bedwars on 1.8.9. Classic PvP combat with resource tracker and bed alerts.</p>
+      <div class="mode-tag" style="background:rgba(255,80,80,0.1);color:#ff6666">1.8.9 + Hypixel</div>
     </div>
-    <div class="feature-card reveal">
-      <div class="feature-icon">&#128088;</div>
-      <h3>Cosmetics</h3>
-      <p>22 animated capes with in-game preview. Galaxy, Black Hole, Flame, Frost and more — earn with Pulsar Points.</p>
-    </div>
-    <div class="feature-card reveal">
-      <div class="feature-icon">&#127918;</div>
-      <h3>PvP Ready</h3>
-      <p>CPS counter, armor HUD, potion timers, low fire, low shield — everything for competitive play.</p>
-    </div>
-    <div class="feature-card reveal">
-      <div class="feature-icon">&#128295;</div>
-      <h3>Mod Store</h3>
-      <p>Browse and install Fabric mods, shaders, and texture packs directly from Modrinth without leaving the launcher.</p>
-    </div>
-    <div class="feature-card reveal">
-      <div class="feature-icon">&#128274;</div>
-      <h3>Microsoft Login</h3>
-      <p>Secure Microsoft OAuth2 authentication. Play on any server with your real Minecraft account.</p>
+    <div class="mode-card reveal">
+      <span class="mode-icon">⏱</span>
+      <h3>Speedrun</h3>
+      <p>Full legal speedrun setup. Atum, WorldPreview, SpeedRunIGT, and performance mods pre-installed.</p>
+      <div class="mode-tag" style="background:rgba(80,255,80,0.1);color:#66ff66">1.16.1 + Timer</div>
     </div>
   </div>
 </section>
@@ -205,81 +255,62 @@ footer .right a:hover{color:#FFFFFF}
 <!-- Modules -->
 <section class="modules" id="modules">
   <div class="section-label reveal">Modules</div>
-  <h2 class="section-title reveal">16 built-in modules</h2>
-  <p class="section-sub reveal">Toggle any module with Right Shift in-game. All customizable.</p>
-  <div class="modules-grid">
-    <div class="module-chip reveal"><div class="module-dot"></div>Toggle Sprint</div>
-    <div class="module-chip reveal"><div class="module-dot"></div>Fullbright</div>
-    <div class="module-chip reveal"><div class="module-dot"></div>FPS Display</div>
-    <div class="module-chip reveal"><div class="module-dot"></div>Coordinates</div>
-    <div class="module-chip reveal"><div class="module-dot"></div>Zoom</div>
-    <div class="module-chip reveal"><div class="module-dot"></div>Armor Status</div>
-    <div class="module-chip reveal"><div class="module-dot"></div>Ping Display</div>
-    <div class="module-chip reveal"><div class="module-dot"></div>CPS Counter</div>
-    <div class="module-chip reveal"><div class="module-dot"></div>Potion Effects</div>
-    <div class="module-chip reveal"><div class="module-dot"></div>Keystrokes</div>
-    <div class="module-chip reveal"><div class="module-dot"></div>Pulsar Cape</div>
-    <div class="module-chip reveal"><div class="module-dot"></div>FPS Boost</div>
-    <div class="module-chip reveal"><div class="module-dot"></div>Low Fire</div>
-    <div class="module-chip reveal"><div class="module-dot"></div>Low Shield</div>
-    <div class="module-chip reveal"><div class="module-dot"></div>Armor HUD</div>
-    <div class="module-chip reveal"><div class="module-dot"></div>Potion Timer</div>
+  <h2 class="section-title reveal">51 built-in modules</h2>
+  <p class="section-sub reveal">Press Right Shift in-game. Categories: HUD, PvP, Visual, Utility, Hypixel, Cosmetics.</p>
+  <div class="mod-grid">
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Toggle Sprint</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Fullbright</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>FPS Display</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Coordinates</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Zoom</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Freelook</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>CPS Counter</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Combo Counter</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Keystrokes</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Armor HUD</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Ping Display</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Motion Blur</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Custom Crosshair</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Potion Effects</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Bedwars Overlay</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Block Outline</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Boss Bar</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Damage Indicator</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Speed Display</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Time Changer</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Weather Changer</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Pulsar Cape</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Low Fire</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Low Shield</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Auto GG</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Auto Tip</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Hit Color</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>FOV Changer</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>Hitbox Display</div>
+    <div class="mod-chip reveal"><div class="mod-dot"></div>+ 22 more</div>
   </div>
 </section>
 
-<!-- Store -->
-<section class="modules" id="store" style="padding-bottom:60px">
-  <div class="section-label reveal">Store</div>
-  <h2 class="section-title reveal">Pulsar Points</h2>
-  <p class="section-sub reveal">Purchase points to unlock premium capes, halos, and more cosmetics.</p>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:900px;margin:40px auto 0;padding:0 24px">
-    <div class="feature-card reveal" style="text-align:center;cursor:pointer" onclick="window.location='store.html?tier=500'">
-      <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#5C6370;text-transform:uppercase;margin-bottom:8px">Pulsar Points</div>
-      <div style="font-size:36px;font-weight:800;color:#FFFFFF;line-height:1">500</div>
-      <div style="margin-top:12px;padding:6px 16px;border-radius:8px;background:rgba(255,255,255,0.08);font-weight:700;font-size:14px;display:inline-block">$2.99</div>
-    </div>
-    <div class="feature-card reveal" style="text-align:center;cursor:pointer;border-color:rgba(255,255,255,0.2);position:relative" onclick="window.location='store.html?tier=1500'">
-      <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#FFFFFF,#E0E0E0);color:#000000;font-size:10px;font-weight:800;padding:3px 12px;border-radius:10px;letter-spacing:0.05em">POPULAR</div>
-      <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#5C6370;text-transform:uppercase;margin-bottom:8px">Pulsar Points</div>
-      <div style="font-size:36px;font-weight:800;color:#FFFFFF;line-height:1">1,500</div>
-      <div style="font-size:11px;color:#98C379;font-weight:600;margin-top:4px">+200 bonus</div>
-      <div style="margin-top:8px;padding:6px 16px;border-radius:8px;background:rgba(255,255,255,0.08);font-weight:700;font-size:14px;display:inline-block">$6.99</div>
-    </div>
-    <div class="feature-card reveal" style="text-align:center;cursor:pointer" onclick="window.location='store.html?tier=3500'">
-      <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#5C6370;text-transform:uppercase;margin-bottom:8px">Pulsar Points</div>
-      <div style="font-size:36px;font-weight:800;color:#E0E0E0;line-height:1">3,500</div>
-      <div style="font-size:11px;color:#98C379;font-weight:600;margin-top:4px">+500 bonus</div>
-      <div style="margin-top:8px;padding:6px 16px;border-radius:8px;background:rgba(255,255,255,0.08);font-weight:700;font-size:14px;display:inline-block">$12.99</div>
-    </div>
-    <div class="feature-card reveal" style="text-align:center;cursor:pointer" onclick="window.location='store.html?tier=8000'">
-      <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#5C6370;text-transform:uppercase;margin-bottom:8px">Pulsar Points</div>
-      <div style="font-size:36px;font-weight:800;color:#A0A0A0;line-height:1">8,000</div>
-      <div style="font-size:11px;color:#98C379;font-weight:600;margin-top:4px">+1,500 bonus</div>
-      <div style="margin-top:8px;padding:6px 16px;border-radius:8px;background:rgba(255,255,255,0.08);font-weight:700;font-size:14px;display:inline-block">$24.99</div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
+<!-- Download CTA -->
 <section class="cta" id="download">
   <div class="cta-box reveal">
-    <h2>Ready to <span class="gradient">explore</span>?</h2>
-    <p>Download Pulsar Client for free. No admin required. Available on all platforms.</p>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:520px;margin:0 auto">
-      <a class="btn-primary" href="https://github.com/ericpnag/pulsar/releases/latest" style="font-size:13px;padding:16px 12px;flex-direction:column;gap:6px;text-align:center;text-decoration:none">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2"/><path d="M12 2c3 3.5 3 16.5 0 20"/><path d="M12 2c-3 3.5-3 16.5 0 20"/><path d="M2 12h20"/></svg>
+    <h2>Boosted frames, 51+ mods, animated capes, and it's completely free.</h2>
+    <p>So what are you waiting for?</p>
+    <div class="dl-grid">
+      <a class="dl-btn primary" href="https://github.com/ericpnag/pulsar/releases/latest">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2"/></svg>
         macOS
-        <span style="font-size:10px;opacity:0.6;font-weight:400">.dmg</span>
+        <span class="dl-sub">.dmg</span>
       </a>
-      <a href="https://github.com/ericpnag/pulsar/releases/latest" style="font-size:13px;padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;text-decoration:none;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#ABB2BF;border-radius:12px;font-weight:700;transition:all 0.25s">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      <a class="dl-btn secondary" href="https://github.com/ericpnag/pulsar/releases/latest">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
         Windows
-        <span style="font-size:10px;opacity:0.6;font-weight:400">.exe — no admin</span>
+        <span class="dl-sub">.exe — no admin</span>
       </a>
-      <a href="https://github.com/ericpnag/pulsar/releases/latest" style="font-size:13px;padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;text-decoration:none;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#ABB2BF;border-radius:12px;font-weight:700;transition:all 0.25s">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/></svg>
+      <a class="dl-btn secondary" href="https://github.com/ericpnag/pulsar/releases/latest">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
         Linux
-        <span style="font-size:10px;opacity:0.6;font-weight:400">.AppImage</span>
+        <span class="dl-sub">.AppImage</span>
       </a>
     </div>
   </div>
@@ -288,8 +319,8 @@ footer .right a:hover{color:#FFFFFF}
 <!-- Footer -->
 <footer>
   <div class="left">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#000000"/><ellipse cx="12" cy="12" rx="11" ry="4" fill="none" stroke="#E0E0E0" stroke-width="1.5" opacity="0.6"/><circle cx="12" cy="12" r="4" fill="#000000"/><circle cx="12" cy="12" r="3" fill="none" stroke="#FFFFFF" stroke-width="0.3" opacity="0.5"/></svg>
-    Pulsar Client — Universe Themed Minecraft Experience
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#000"/><ellipse cx="12" cy="12" rx="11" ry="4" fill="none" stroke="#fff" stroke-width="1.5" opacity="0.4"/><circle cx="12" cy="12" r="4" fill="#000"/></svg>
+    Pulsar Client — Free Minecraft Client
   </div>
   <div class="right">
     <a href="https://github.com/ericpnag/pulsar">GitHub</a>
@@ -298,35 +329,29 @@ footer .right a:hover{color:#FFFFFF}
 </footer>
 
 <script>
-// Swirling space particles
+// Stars
 function spawnStar(){
-  const p=document.createElement('div');
-  p.className='star';
-  const size=1+Math.random()*3;
-  p.style.width=size+'px';p.style.height=size+'px';
-  p.style.left=Math.random()*100+'vw';
-  p.style.top=Math.random()*100+'vh';
-  p.style.animationDuration=(2+Math.random()*4)+'s';
-  p.style.animationDelay=Math.random()*2+'s';
-  const colors=['#FFFFFF','#E0E0E0','#A0A0A0','#E0E0E8','#ffffff'];
-  p.style.background=colors[Math.floor(Math.random()*colors.length)];
-  p.style.borderRadius='50%';
+  const p=document.createElement('div');p.className='star';
+  const s=1+Math.random()*2.5;p.style.width=s+'px';p.style.height=s+'px';
+  p.style.left=Math.random()*100+'vw';p.style.top=Math.random()*100+'vh';
+  p.style.animationDuration=(3+Math.random()*5)+'s';
+  p.style.animationDelay=Math.random()+'s';
   document.body.appendChild(p);
   p.addEventListener('animationend',()=>p.remove());
 }
-setInterval(spawnStar,300);
-for(let i=0;i<20;i++)setTimeout(spawnStar,i*150);
+setInterval(spawnStar,400);
+for(let i=0;i<15;i++)setTimeout(spawnStar,i*200);
 
-// Nav scroll effect
+// Nav scroll
 window.addEventListener('scroll',()=>{
-  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>50);
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>60);
 });
 
-// Reveal on scroll
-const observer=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}});
-},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
-document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+// Reveal
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}});
+},{threshold:0.1,rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 </script>
 </body>
 </html>
