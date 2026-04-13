@@ -22,6 +22,15 @@ export interface AccountInfo {
   accessToken: string;
 }
 
+type GameMode = "default" | "bedwars" | "skywars" | "practice";
+
+const GAME_MODES: { id: GameMode; name: string; icon: string; desc: string; server?: string }[] = [
+  { id: "default", name: "Default", icon: "▶", desc: "Standard Minecraft" },
+  { id: "bedwars", name: "Bedwars", icon: "🛏", desc: "Hypixel Bedwars", server: "mc.hypixel.net" },
+  { id: "skywars", name: "SkyWars", icon: "☁", desc: "Hypixel SkyWars", server: "mc.hypixel.net" },
+  { id: "practice", name: "Practice", icon: "⚔", desc: "PvP Practice", server: "pvp.land" },
+];
+
 export default function App() {
   const [versions, setVersions] = useState<string[]>(["1.21.11"]);
   const [selectedVersion, setSelectedVersion] = useState("1.21.11");
@@ -32,7 +41,8 @@ export default function App() {
   const [loginModal, setLoginModal] = useState<{ phase: "waiting" | "code" | "error"; code?: string; url?: string; error?: string } | null>(null);
   const [page, setPage] = useState<Page>("play");
   const [showVersionPicker, setShowVersionPicker] = useState(false);
-  const [versionCategory, setVersionCategory] = useState<string | null>(null); // e.g. "1.21"
+  const [versionCategory, setVersionCategory] = useState<string | null>(null);
+  const [gameMode, setGameMode] = useState<GameMode>("default"); // e.g. "1.21"
 
   useEffect(() => {
     invoke<any>("get_account").then(a => {
@@ -203,6 +213,44 @@ export default function App() {
                 borderRadius: "var(--radius-sm)", lineHeight: 1.6,
               }}>
                 {status}
+              </div>
+            )}
+
+            {/* Game Mode Selector */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px" }}>
+              {GAME_MODES.map(mode => {
+                const active = gameMode === mode.id;
+                return (
+                  <div key={mode.id} onClick={() => setGameMode(mode.id)} style={{
+                    padding: "12px 10px", borderRadius: "var(--radius-sm)",
+                    background: active ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.02)",
+                    border: `1px solid ${active ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.04)"}`,
+                    cursor: "pointer", transition: "all 0.15s", textAlign: "center",
+                    position: "relative", overflow: "hidden",
+                  }}
+                  onMouseEnter={e => { if (!active) { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; }}}
+                  onMouseLeave={e => { if (!active) { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.04)"; }}}
+                  >
+                    {active && <div style={{ position: "absolute", top: 0, left: "20%", right: "20%", height: "2px", background: "#fff", borderRadius: "0 0 2px 2px" }} />}
+                    <div style={{ fontSize: "16px", marginBottom: "4px" }}>{mode.icon}</div>
+                    <div style={{ fontSize: "11px", fontWeight: "700", color: active ? "#fff" : "var(--text-muted)", letterSpacing: "0.02em" }}>{mode.name}</div>
+                    <div style={{ fontSize: "9px", color: "var(--text-faint)", marginTop: "2px" }}>{mode.desc}</div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {gameMode !== "default" && (
+              <div style={{
+                padding: "10px 14px", borderRadius: "var(--radius-sm)",
+                background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                fontSize: "12px",
+              }}>
+                <span style={{ color: "var(--text-secondary)" }}>
+                  {GAME_MODES.find(m => m.id === gameMode)?.icon} {GAME_MODES.find(m => m.id === gameMode)?.name} Mode — auto-join <span style={{ color: "#fff", fontWeight: "600" }}>{GAME_MODES.find(m => m.id === gameMode)?.server}</span>
+                </span>
+                <span style={{ color: "var(--accent-green)", fontWeight: "600", fontSize: "10px" }}>ACTIVE</span>
               </div>
             )}
 
