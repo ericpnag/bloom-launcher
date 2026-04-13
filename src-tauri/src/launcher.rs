@@ -433,9 +433,16 @@ fn install_mods(client: &Client, _game_dir: &PathBuf, mc_version: &str) -> Resul
 
     // Auto-install popular performance & utility mods from Modrinth
     let mut bundled_mods: Vec<(&str, &str)> = vec![
-        ("AANobbMI", "sodium.jar"),         // Sodium (FPS boost)
-        ("gvQqBUqZ", "lithium.jar"),        // Lithium (server tick optimization)
-        ("NNAgCjsB", "entityculling.jar"),   // Entity Culling
+        ("AANobbMI", "sodium.jar"),         // Sodium (rendering optimization, 2x FPS)
+        ("gvQqBUqZ", "lithium.jar"),        // Lithium (game logic optimization)
+        ("NNAgCjsB", "entityculling.jar"),   // Entity Culling (skip rendering hidden entities)
+        ("5ZwdcRci", "immediatelyfast.jar"), // ImmediatelyFast (HUD, text, entity rendering)
+        ("uXXizFIs", "ferritecore.jar"),     // FerriteCore (reduce RAM usage by 50%)
+        ("nmDcB62a", "modernfix.jar"),       // ModernFix (startup, memory, performance fixes)
+        ("H8CaAYZC", "starlight.jar"),       // Starlight (rewritten lighting engine)
+        ("hvFnDODi", "lazydfu.jar"),         // LazyDFU (faster game startup)
+        ("1eAoo2KR", "dynamicfps.jar"),      // Dynamic FPS (reduce FPS when unfocused)
+        ("fQEb0iXm", "krypton.jar"),         // Krypton (network stack optimization)
     ];
 
     // Speedrun mods for 1.16.x — full legal speedrun setup

@@ -13,8 +13,6 @@
     "HurtCamMixin",
     "WeatherMixin",
     "NametagMixin",
-    "FreelookMixin",
-    "FreelookCameraMixin",
     "WorldTimeMixin",
     "InGameHudMixin",
     "BossBarMixin",

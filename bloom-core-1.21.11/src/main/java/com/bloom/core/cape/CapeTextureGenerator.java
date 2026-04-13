@@ -50,6 +50,11 @@ public class CapeTextureGenerator {
             case "drift_cape.png" -> generateDrift(img);
             case "obsidian_cape.png" -> generateObsidian(img);
             case "blackhole_cape.png" -> generateBlackHole(img);
+            case "creator_cape.png" -> generateCreator(img);
+            case "youtube_cape.png" -> generateYouTube(img);
+            case "twitch_cape.png" -> generateTwitch(img);
+            case "tiktok_cape.png" -> generateTikTok(img);
+            case "og_cape.png" -> generateOG(img);
         }
     }
 
@@ -1983,6 +1988,110 @@ public class CapeTextureGenerator {
         }
 
         applyVignette(img, argb(255, 0, 0, 0), 0.25f);
+    }
+
+    // ========== CREATOR ==========
+    private static void generateCreator(NativeImage img) {
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            for (int x = 0; x < FW; x++) {
+                int r = lerp(255, 255, t), g = lerp(215, 69, t), b = lerp(0, 0, t);
+                fillFace(img, x, y, argb(255, r, g, b));
+                fillEdges(img, y, argb(255, r, g, b));
+                fillTop(img, x, argb(255, 255, 215, 0));
+            }
+        }
+        // Star pattern
+        for (int i = 0; i < 8; i++) {
+            int px = (int)(pseudoRand(i * 7, 33) * FW), py = (int)(pseudoRand(i * 11, 22) * FH);
+            fillFace(img, px, py, argb(255, 255, 255, 200));
+            blendFace(img, px+1, py, argb(255, 255, 255, 180), 0.5f);
+            blendFace(img, px, py+1, argb(255, 255, 255, 180), 0.5f);
+        }
+        applyVignette(img, argb(255, 100, 30, 0), 0.2f);
+    }
+
+    // ========== YOUTUBE ==========
+    private static void generateYouTube(NativeImage img) {
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            for (int x = 0; x < FW; x++) {
+                int r = lerp(255, 180, t), g = lerp(0, 0, t), b = lerp(0, 0, t);
+                fillFace(img, x, y, argb(255, r, g, b));
+                fillEdges(img, y, argb(255, r, g, b));
+                fillTop(img, x, argb(255, 255, 0, 0));
+            }
+        }
+        // Play button triangle
+        int cx = FW / 2, cy = FH / 2;
+        for (int dy = -12; dy <= 12; dy++) {
+            int width = 12 - Math.abs(dy);
+            for (int dx = -2; dx < width; dx++) {
+                fillFace(img, cx + dx - 3, cy + dy, argb(255, 255, 255, 255));
+            }
+        }
+        applyVignette(img, argb(255, 80, 0, 0), 0.2f);
+    }
+
+    // ========== TWITCH ==========
+    private static void generateTwitch(NativeImage img) {
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            for (int x = 0; x < FW; x++) {
+                int r = lerp(145, 100, t), g = lerp(70, 65, t), b2 = lerp(255, 165, t);
+                float n = fbm(x * 0.04f, y * 0.04f, 2);
+                r = Math.min(255, r + (int)(n * 30));
+                fillFace(img, x, y, argb(255, r, g, b2));
+                fillEdges(img, y, argb(255, r, g, b2));
+                fillTop(img, x, argb(255, 145, 70, 255));
+            }
+        }
+        applyVignette(img, argb(255, 50, 20, 80), 0.2f);
+    }
+
+    // ========== TIKTOK ==========
+    private static void generateTikTok(NativeImage img) {
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            for (int x = 0; x < FW; x++) {
+                // Cyan to pink gradient
+                int r = lerp(0, 255, t), g = lerp(242, 0, t), b = lerp(234, 80, t);
+                fillFace(img, x, y, argb(255, r, g, b));
+                fillEdges(img, y, argb(255, r, g, b));
+                fillTop(img, x, argb(255, 0, 242, 234));
+            }
+        }
+        // Music note shapes
+        for (int i = 0; i < 5; i++) {
+            int px = (int)(pseudoRand(i * 5, 44) * FW), py = (int)(pseudoRand(i * 9, 66) * FH);
+            fillFace(img, px, py, argb(255, 255, 255, 255));
+            fillFace(img, px, py-1, argb(255, 255, 255, 255));
+            fillFace(img, px, py-2, argb(255, 255, 255, 255));
+            fillFace(img, px-1, py, argb(255, 255, 255, 255));
+        }
+        applyVignette(img, argb(255, 0, 50, 50), 0.15f);
+    }
+
+    // ========== OG PULSAR ==========
+    private static void generateOG(NativeImage img) {
+        for (int y = 0; y < FH; y++) {
+            float t = (float) y / (FH - 1);
+            for (int x = 0; x < FW; x++) {
+                int v = lerp(255, 128, t);
+                float n = fbm(x * 0.03f, y * 0.03f, 3);
+                v = Math.min(255, v + (int)(n * 20));
+                fillFace(img, x, y, argb(255, v, v, v));
+                fillEdges(img, y, argb(255, v, v, v));
+                fillTop(img, x, argb(255, 255, 255, 255));
+            }
+        }
+        // Subtle diagonal lines
+        for (int y = 0; y < FH; y++) {
+            for (int x = 0; x < FW; x++) {
+                if ((x + y) % 8 < 2) blendFace(img, x, y, argb(255, 200, 200, 200), 0.15f);
+            }
+        }
+        applyVignette(img, argb(255, 60, 60, 60), 0.15f);
     }
 
     // ========== HELPERS ==========
