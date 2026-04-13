@@ -144,7 +144,18 @@ export function ShopPage() {
     if (!code || redeemLoading) return;
 
     // Hardcoded gift codes
-    const GIFT_CODES: Record<string, number> = { "ANGRYBANGRY500": 500, "WELCOME100": 100 };
+    const GIFT_CODES: Record<string, number> = {
+      "ANGRYBANGRY500": 500,
+      "WELCOME100": 100,
+      "PULSAR": 250,
+      "BLACKHOLE": 500,
+      "FREEPOINTS": 200,
+      "MINECRAFT": 150,
+      "BEDWARS": 300,
+      "SPEEDRUN": 300,
+      "SPACE": 100,
+      "LAUNCH": 500,
+    };
     const localUsed: string[] = JSON.parse(localStorage.getItem("pulsar-used-codes") || "[]");
     if (GIFT_CODES[code]) {
       if (localUsed.includes(code)) { setRedeemMsg({ text: "Code already used", ok: false }); return; }
