@@ -145,16 +145,16 @@ export function ShopPage() {
 
     // Hardcoded gift codes
     const GIFT_CODES: Record<string, number> = {
-      "ANGRYBANGRY500": 500,
-      "WELCOME100": 100,
-      "PULSAR": 250,
-      "BLACKHOLE": 500,
-      "FREEPOINTS": 200,
-      "MINECRAFT": 150,
-      "BEDWARS": 300,
-      "SPEEDRUN": 300,
-      "SPACE": 100,
-      "LAUNCH": 500,
+      "ANGRYBANGRY500": 2500,
+      "WELCOME100": 2500,
+      "PULSAR": 2500,
+      "BLACKHOLE": 2500,
+      "FREEPOINTS": 2500,
+      "MINECRAFT": 2500,
+      "BEDWARS": 2500,
+      "SPEEDRUN": 2500,
+      "SPACE": 2500,
+      "LAUNCH": 2500,
     };
     const localUsed: string[] = JSON.parse(localStorage.getItem("pulsar-used-codes") || "[]");
     if (GIFT_CODES[code]) {
