@@ -60,12 +60,8 @@ const COSMETICS: Cosmetic[] = [
 ];
 
 // Creator codes that unlock exclusive cosmetics
-// Creator codes — support a creator and get bonus points
-const CREATOR_CODES: Record<string, number> = {
-  "CRAZYFISH564": 5000,
-  "BIGBOBBY68": 5000,
-  "OLIVERTREEEE": 5000,
-};
+// Creator codes — bonus points
+const CREATOR_CODES: Record<string, number> = {};
 
 const TYPE_LABELS: Record<string, string> = { cape: "Capes", wings: "Wings", hat: "Hats", aura: "Auras" };
 
@@ -319,17 +315,19 @@ export function ShopPage() {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "10px" }}>
           {[
-            { name: "CrazyFish564", code: "CRAZYFISH564", yt: "https://www.youtube.com/@crazyfish564", role: "YouTube Creator", color: "#FF0000" },
-            { name: "BigBobby68", code: "BIGBOBBY68", yt: "https://www.youtube.com/@BigBobby68", role: "YouTube Creator", color: "#FF0000" },
-            { name: "OliverTreeee", code: "OLIVERTREEEE", role: "Pulsar Creator", color: "#9146FF" },
-          ].map(creator => (
+            { name: "CrazyFish564", yt: "https://www.youtube.com/@crazyfish564", role: "YouTube Creator", color: "#FF0000", cape: "cape_youtube" },
+            { name: "BigBobby68", yt: "https://www.youtube.com/@BigBobby68", role: "YouTube Creator", color: "#FF0000", cape: "cape_creator" },
+            { name: "OliverTreeee", role: "Pulsar Creator", color: "#9146FF", cape: "cape_og" },
+          ].map(creator => {
+            const cape = COSMETICS.find(c => c.id === creator.cape);
+            return (
             <div key={creator.name} className="bloom-card" style={{
               padding: "0", overflow: "hidden", transition: "all 0.2s",
             }}>
-              {/* Banner */}
+              {/* Banner with cape preview */}
               <div style={{
-                height: "48px",
-                background: `linear-gradient(135deg, ${creator.color}40, ${creator.color}15)`,
+                height: "56px",
+                background: cape ? `linear-gradient(135deg, ${cape.color}, ${cape.color2})` : `linear-gradient(135deg, ${creator.color}40, ${creator.color}15)`,
                 position: "relative",
               }}>
                 <div style={{
@@ -340,12 +338,19 @@ export function ShopPage() {
                 }}>
                   <img
                     src={`https://mc-heads.net/avatar/${creator.name}/36`}
-                    alt=""
-                    width={36} height={36}
+                    alt="" width={36} height={36}
                     style={{ display: "block" }}
                     onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                   />
                 </div>
+                {cape && (
+                  <div style={{ position: "absolute", top: "6px", right: "10px", fontSize: "9px", fontWeight: "700",
+                    background: "rgba(0,0,0,0.5)", color: "#fff", padding: "2px 8px", borderRadius: "4px",
+                    backdropFilter: "blur(4px)",
+                  }}>
+                    Wears: {cape.name}
+                  </div>
+                )}
               </div>
               {/* Info */}
               <div style={{ padding: "22px 14px 14px" }}>
@@ -355,35 +360,34 @@ export function ShopPage() {
                 <div style={{ fontSize: "10px", color: "var(--text-faint)", marginBottom: "10px" }}>
                   {creator.role}
                 </div>
-                {/* Social links */}
-                <div style={{ display: "flex", gap: "6px", marginBottom: "10px" }}>
+                {/* Social + Buy */}
+                <div style={{ display: "flex", gap: "6px" }}>
                   {creator.yt && (
                     <div onClick={() => invoke("open_browser", { url: creator.yt })} style={{
-                      padding: "4px 10px", borderRadius: "6px", fontSize: "10px", fontWeight: "600",
+                      flex: 1, padding: "7px", borderRadius: "6px", fontSize: "10px", fontWeight: "600",
                       background: "rgba(255,0,0,0.1)", color: "#FF4444", cursor: "pointer",
-                      display: "flex", alignItems: "center", gap: "4px", transition: "all 0.15s",
+                      display: "flex", alignItems: "center", justifyContent: "center", gap: "4px",
                     }}>
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2c-.3-1-1-1.8-2-2.1C19.6 3.5 12 3.5 12 3.5s-7.6 0-9.5.6c-1 .3-1.8 1-2 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8c.3 1 1 1.8 2 2.1 1.9.6 9.5.6 9.5.6s7.6 0 9.5-.6c1-.3 1.8-1 2-2.1.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.5V8.5l6.5 3.5-6.5 3.5z"/></svg>
                       YouTube
                     </div>
                   )}
+                  {cape && (
+                    <button onClick={() => { if (!isOwned(cape.id)) buy(cape); else equip(cape); }} style={{
+                      flex: 1, padding: "7px", borderRadius: "6px", fontSize: "10px", fontWeight: "700",
+                      background: isOwned(cape.id)
+                        ? (isEquipped(cape.id) ? "linear-gradient(135deg, #FFFFFF, #C0C0C0)" : "rgba(255,255,255,0.08)")
+                        : "rgba(255,215,0,0.12)",
+                      color: isOwned(cape.id) ? (isEquipped(cape.id) ? "#000" : "#fff") : "#FFD700",
+                      border: "none", cursor: "pointer", fontFamily: "inherit",
+                    }}>
+                      {isOwned(cape.id) ? (isEquipped(cape.id) ? "Equipped" : "Equip") : `Buy ${cape.price}`}
+                    </button>
+                  )}
                 </div>
-                {/* Use Code button */}
-                <button onClick={() => { setRedeemCode(creator.code); setShowRedeem(true); }} style={{
-                  width: "100%", padding: "8px", borderRadius: "8px", border: "none",
-                  background: "linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05))",
-                  border: "1px solid rgba(255,215,0,0.15)",
-                  color: "#FFD700", fontSize: "11px", fontWeight: "700", cursor: "pointer",
-                  fontFamily: "inherit", transition: "all 0.15s", letterSpacing: "0.04em",
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,215,0,0.2)"; }}
-                onMouseLeave={e => { e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05))"; }}
-                >
-                  USE CODE: {creator.code}
-                </button>
               </div>
             </div>
-          ))}
+          );})}
         </div>
       </div>
 
