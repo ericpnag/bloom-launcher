@@ -406,12 +406,21 @@ fn install_mods(client: &Client, _game_dir: &PathBuf, mc_version: &str) -> Resul
         let _ = fs::write(&bloom_dest, bloom_jar);
     }
 
-    // Download Fabric API from Modrinth (works for all Fabric versions)
+    // Download Fabric API from Modrinth
+    let is_legacy_version = mc_version.starts_with("1.8") || mc_version.starts_with("1.7")
+        || mc_version.starts_with("1.9") || mc_version.starts_with("1.10")
+        || mc_version.starts_with("1.11") || mc_version.starts_with("1.12");
     let fabric_api_dest = mods_dir.join("fabric-api.jar");
     if !fabric_api_dest.exists() {
+        // Use Legacy Fabric API for old versions
+        let (project, loader) = if is_legacy_version {
+            ("legacy-fabric-api", "fabric") // Legacy Fabric API on Modrinth
+        } else {
+            ("P7dR8mSH", "fabric")
+        };
         let url = format!(
-            "https://api.modrinth.com/v2/project/P7dR8mSH/version?game_versions=[\"{}\"]&loaders=[\"fabric\"]",
-            mc_version
+            "https://api.modrinth.com/v2/project/{}/version?game_versions=[\"{}\"]&loaders=[\"{}\"]",
+            project, mc_version, loader
         );
         if let Ok(resp) = client.get(&url)
             .header("User-Agent", "pulsar-launcher/1.0")
@@ -444,6 +453,12 @@ fn install_mods(client: &Client, _game_dir: &PathBuf, mc_version: &str) -> Resul
         ("1eAoo2KR", "dynamicfps.jar"),      // Dynamic FPS (reduce FPS when unfocused)
         ("fQEb0iXm", "krypton.jar"),         // Krypton (network stack optimization)
     ];
+
+    // 1.8.9 Bedwars mods (Legacy Fabric)
+    if mc_version == "1.8.9" || mc_version == "1.8" {
+        // Clear default mods that don't work on legacy
+        bundled_mods.clear();
+    }
 
     // Speedrun mods for 1.16.x — full legal speedrun setup
     if mc_version.starts_with("1.16") {
@@ -560,14 +575,27 @@ fn do_launch(app: &AppHandle, version: &str, username: Option<String>, uuid: Opt
     let mut fabric_json: Option<FabricVersionJson> = None;
     let mut fabric_classpath: Vec<PathBuf> = Vec::new();
 
+    // Try regular Fabric first, then Legacy Fabric for old versions (1.8-1.13)
     let fabric_meta_url = format!("https://meta.fabricmc.net/v2/versions/loader/{}", version);
-    if let Ok(resp) = client.get(&fabric_meta_url).send().and_then(|r| r.text()) {
+    let legacy_meta_url = format!("https://meta.legacyfabric.net/v2/versions/loader/{}", version);
+
+    let meta_url = {
+        let resp = client.get(&fabric_meta_url).send().and_then(|r| r.text()).unwrap_or_default();
+        if let Ok(loaders) = serde_json::from_str::<Vec<FabricLoaderVersion>>(&resp) {
+            if !loaders.is_empty() { fabric_meta_url.clone() } else { legacy_meta_url.clone() }
+        } else { legacy_meta_url.clone() }
+    };
+    let is_legacy = meta_url.contains("legacyfabric");
+    let meta_base = if is_legacy { "https://meta.legacyfabric.net" } else { "https://meta.fabricmc.net" };
+
+    if let Ok(resp) = client.get(&meta_url).send().and_then(|r| r.text()) {
         if let Ok(loaders) = serde_json::from_str::<Vec<FabricLoaderVersion>>(&resp) {
             if let Some(first) = loaders.first() {
                 let loader_version = &first.loader.version;
+                if is_legacy { emit(&app, 13, "Using Legacy Fabric for this version..."); }
                 let fabric_json_url = format!(
-                    "https://meta.fabricmc.net/v2/versions/loader/{}/{}/profile/json",
-                    version, loader_version
+                    "{}/v2/versions/loader/{}/{}/profile/json",
+                    meta_base, version, loader_version
                 );
                 if let Ok(fj_text) = client.get(&fabric_json_url).send().and_then(|r| r.text()) {
                     if let Ok(fj) = serde_json::from_str::<FabricVersionJson>(&fj_text) {
