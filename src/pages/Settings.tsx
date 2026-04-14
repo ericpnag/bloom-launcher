@@ -33,12 +33,12 @@ export function SettingsPage() {
           <label style={{ fontSize: "13px", fontWeight: "600", color: "var(--text)" }}>Memory (RAM)</label>
           <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--pink)" }}>{settings.ram / 1024} GB</span>
         </div>
-        <input type="range" min={1024} max={16384} step={512} value={settings.ram}
+        <input type="range" min={1024} max={32768} step={512} value={settings.ram}
           onChange={e => save({ ram: parseInt(e.target.value) })}
           style={{ width: "100%", accentColor: "var(--pink)", height: "4px" }}
         />
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: "var(--text-faint)", marginTop: "6px" }}>
-          <span>1 GB</span><span>4 GB</span><span>8 GB</span><span>16 GB</span>
+          <span>1 GB</span><span>8 GB</span><span>16 GB</span><span>32 GB</span>
         </div>
       </div>
 

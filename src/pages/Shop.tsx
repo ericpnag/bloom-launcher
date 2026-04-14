@@ -51,18 +51,14 @@ const COSMETICS: Cosmetic[] = [
   { id: "cape_drift", name: "Drift", type: "cape", price: 1250, color: "#C8B4DC", color2: "#B4D2DC", description: "Shifting pastel vaporwave" },
   { id: "cape_obsidian", name: "Obsidian", type: "cape", price: 3500, color: "#1E0F1E", color2: "#0A050F", description: "Dark obsidian purple cracks" },
   { id: "cape_blackhole", name: "Black Hole", type: "cape", price: 2500, color: "#FFA030", color2: "#080010", description: "Swirling accretion disk with event horizon" },
+  // Creator capes — verified only, not buyable with points
+  { id: "cape_creator", name: "Creator", type: "cape", price: -1, color: "#FFD700", color2: "#FF4500", description: "Verified content creators only" },
+  { id: "cape_youtube", name: "YouTube", type: "cape", price: -1, color: "#FF0000", color2: "#CC0000", description: "Verified YouTube creators only" },
+  { id: "cape_twitch", name: "Twitch", type: "cape", price: -1, color: "#9146FF", color2: "#6441A5", description: "Verified Twitch streamers only" },
+  { id: "cape_tiktok", name: "TikTok", type: "cape", price: -1, color: "#00F2EA", color2: "#FF0050", description: "Verified TikTok creators only" },
+  // OG cape — limited edition, claimed via button
+  { id: "cape_og", name: "OG Pulsar", type: "cape", price: -2, color: "#FFFFFF", color2: "#808080", description: "Limited edition — first 100 players" },
 ];
-
-// Verified creator capes — NOT buyable, only through verification
-const CREATOR_ONLY_CAPES: Cosmetic[] = [
-  { id: "cape_creator", name: "Creator", type: "cape", price: 0, color: "#FFD700", color2: "#FF4500", description: "Verified content creators only" },
-  { id: "cape_youtube", name: "YouTube", type: "cape", price: 0, color: "#FF0000", color2: "#CC0000", description: "Verified YouTube creators only" },
-  { id: "cape_twitch", name: "Twitch", type: "cape", price: 0, color: "#9146FF", color2: "#6441A5", description: "Verified Twitch streamers only" },
-  { id: "cape_tiktok", name: "TikTok", type: "cape", price: 0, color: "#00F2EA", color2: "#FF0050", description: "Verified TikTok creators only" },
-];
-
-// OG cape — free for first 100 claims
-const OG_CAPE: Cosmetic = { id: "cape_og", name: "OG Pulsar", type: "cape", price: 0, color: "#FFFFFF", color2: "#808080", description: "Limited edition — first 100 players" };
 
 // Creator codes that unlock exclusive cosmetics
 // Verified creator codes — only given to approved creators, unlocks exclusive capes
@@ -133,7 +129,7 @@ export function ShopPage() {
   }
 
   function buy(c: Cosmetic) {
-    if (c.price > points || isOwned(c.id)) return;
+    if (c.price < 0 || c.price > points || isOwned(c.id)) return;
     save(points - c.price, [...purchased, c.id], equipped);
   }
 
@@ -245,6 +241,13 @@ export function ShopPage() {
         </div>
       </div>
 
+      {/* OG Cape — Limited Edition — top of shop until sold out */}
+      <OGCapeSection purchased={purchased} onClaim={() => {
+        if (!purchased.includes("cape_og")) {
+          save(points, [...purchased, "cape_og"], equipped);
+        }
+      }} isOwned={purchased.includes("cape_og")} />
+
       {/* Points Store */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px" }}>
         {POINT_TIERS.map((tier, i) => (
@@ -314,15 +317,6 @@ export function ShopPage() {
           </span>
         )}
       </div>
-
-      <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
-
-      {/* OG Cape — Limited Edition */}
-      <OGCapeSection purchased={purchased} onClaim={() => {
-        if (!purchased.includes("cape_og")) {
-          save(points, [...purchased, "cape_og"], equipped);
-        }
-      }} isOwned={purchased.includes("cape_og")} />
 
       <div style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
 
@@ -480,23 +474,28 @@ export function ShopPage() {
                   {eq ? "Equipped" : "Equip"}
                 </button>
               ) : (
-                <button onClick={() => buy(c)} disabled={c.price > points}
+                <button onClick={() => { if (c.price >= 0) buy(c); }} disabled={c.price < 0 || c.price > points}
                   className="bloom-btn-ghost"
                   style={{
                     width: "100%", padding: "8px",
-                    borderColor: c.price > points ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.15)",
-                    color: c.price > points ? "var(--text-faint)" : "#FFFFFF",
-                    cursor: c.price > points ? "not-allowed" : "pointer",
+                    borderColor: c.price === -1 ? "rgba(255,215,0,0.15)" : c.price === -2 ? "rgba(255,255,255,0.1)" : c.price > points ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.15)",
+                    color: c.price === -1 ? "#FFD700" : c.price === -2 ? "#A0A0A0" : c.price > points ? "var(--text-faint)" : "#FFFFFF",
+                    cursor: c.price < 0 ? "default" : c.price > points ? "not-allowed" : "pointer",
                     display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
                     fontSize: "12px",
                   }}
                 >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="3" fill="currentColor" opacity="0.6"/>
-                    <ellipse cx="12" cy="6" rx="2.5" ry="3.5" fill="currentColor" opacity="0.4"/>
-                    <ellipse cx="17" cy="10" rx="2.5" ry="3.5" fill="currentColor" opacity="0.3" transform="rotate(72 12 12)"/>
-                  </svg>
-                  {c.price}
+                  {c.price === -1 ? (
+                    <><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Verified Only</>
+                  ) : c.price === -2 ? (
+                    <>Limited Edition</>
+                  ) : (
+                    <><svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="3" fill="currentColor" opacity="0.6"/>
+                      <ellipse cx="12" cy="6" rx="2.5" ry="3.5" fill="currentColor" opacity="0.4"/>
+                      <ellipse cx="17" cy="10" rx="2.5" ry="3.5" fill="currentColor" opacity="0.3" transform="rotate(72 12 12)"/>
+                    </svg>{c.price}</>
+                  )}
                 </button>
               )}
             </div>
@@ -974,6 +973,110 @@ function CosmeticPreview({ cosmetic: c }: { cosmetic: Cosmetic }) {
         ))}
         {/* Dark sheen */}
         <rect x={cx-22} y={30} width="44" height="2" fill="rgba(80,60,100,0.08)" transform={`rotate(-10 ${cx} 31)`} />
+      </>}
+      {c.id === "cape_blackhole" && <>
+        {/* Accretion disk ellipses */}
+        {[35,30,25,20].map((r,i) => (
+          <ellipse key={i} cx={cx} cy={45} rx={r} ry={r*0.3} fill="none" stroke="#FFA040"
+            strokeWidth={0.5+i*0.3} opacity={0.1+i*0.08}
+            style={{animation:`pv-spin ${20-i*3}s linear infinite`}} />
+        ))}
+        {/* Event horizon */}
+        <circle cx={cx} cy={45} r="8" fill="#000" />
+        <circle cx={cx} cy={45} r="9" fill="none" stroke="#FFA040" strokeWidth="0.5" opacity="0.4"
+          style={{animation:`pv-pulse 3s ease-in-out infinite`}} />
+        {/* Spiraling stars */}
+        {[0,1,2,3,4,5].map(i => {
+          const a = i * 1.05 + 0.5;
+          const r2 = 12 + i * 4;
+          return <circle key={i} cx={cx + Math.cos(a)*r2} cy={45 + Math.sin(a)*r2*0.3} r="1"
+            fill="#fff" opacity={0.3+i*0.08}
+            style={{animation:`pv-twinkle ${2+i*0.3}s ease-in-out ${i*0.4}s infinite`}} />;
+        })}
+        {/* Jets */}
+        <line x1={cx} y1={10} x2={cx} y2={30} stroke="#B0A0FF" strokeWidth="0.5" opacity="0.15"
+          style={{animation:`pv-glow 2.5s ease-in-out infinite`}} />
+        <line x1={cx} y1={60} x2={cx} y2={85} stroke="#B0A0FF" strokeWidth="0.5" opacity="0.15"
+          style={{animation:`pv-glow 2.5s ease-in-out 0.5s infinite`}} />
+      </>}
+      {c.id === "cape_creator" && <>
+        {/* Gold star burst */}
+        {[0,1,2,3,4].map(i => {
+          const a = i * Math.PI * 2 / 5 - Math.PI/2;
+          return <line key={i} x1={cx} y1={45} x2={cx+Math.cos(a)*20} y2={45+Math.sin(a)*20}
+            stroke="#FFD700" strokeWidth="1" opacity={0.3}
+            style={{animation:`pv-glow ${2+i*0.2}s ease-in-out ${i*0.3}s infinite`}} />;
+        })}
+        <circle cx={cx} cy={45} r="8" fill="#FFD700" opacity="0.3"
+          style={{animation:`pv-pulse 2s ease-in-out infinite`}} />
+        <circle cx={cx} cy={45} r="4" fill="#FFD700" opacity="0.6" />
+        {/* Sparkles */}
+        {[[cx-15,25],[cx+12,35],[cx-8,65],[cx+15,75],[cx,20]].map(([x,y],i) => (
+          <circle key={i} cx={x} cy={y} r="1.5" fill="#FFD700" opacity={0.4}
+            style={{animation:`pv-twinkle ${1.5+i*0.3}s ease-in-out ${i*0.2}s infinite`}} />
+        ))}
+      </>}
+      {c.id === "cape_youtube" && <>
+        {/* Play button */}
+        <rect x={cx-14} y={35} width="28" height="20" rx="4" fill="#fff" opacity="0.9" />
+        <polygon points={`${cx-4},40 ${cx-4},50 ${cx+6},45`} fill="#FF0000" />
+        {/* Subtle video reel lines */}
+        {[20,25,65,70].map((y,i) => (
+          <rect key={i} x={cx-18} y={y} width="36" height="1" fill="#fff" opacity="0.06" />
+        ))}
+        {/* Glow */}
+        <circle cx={cx} cy={45} r="18" fill="none" stroke="#FF0000" strokeWidth="0.5" opacity="0.15"
+          style={{animation:`pv-pulse 3s ease-in-out infinite`}} />
+      </>}
+      {c.id === "cape_twitch" && <>
+        {/* Twitch icon shape */}
+        <path d={`M${cx-10},30 L${cx-10},58 L${cx-4},64 L${cx+2},64 L${cx+8},58 L${cx+8},30 Z`}
+          fill="#9146FF" opacity="0.5" stroke="#9146FF" strokeWidth="0.5" />
+        <rect x={cx-5} y={40} width="3" height="10" fill="#fff" opacity="0.8" />
+        <rect x={cx+2} y={40} width="3" height="10" fill="#fff" opacity="0.8" />
+        {/* Chat bubbles */}
+        {[[cx-16,25,4],[cx+14,35,3],[cx-12,70,3.5]].map(([x,y,r],i) => (
+          <circle key={i} cx={x} cy={y} r={r} fill="#9146FF" opacity={0.15+i*0.05}
+            style={{animation:`pv-float ${3+i*0.5}s ease-in-out ${i*0.3}s infinite`}} />
+        ))}
+      </>}
+      {c.id === "cape_tiktok" && <>
+        {/* Music note */}
+        <circle cx={cx-4} cy={55} r="5" fill="#00F2EA" opacity="0.6" />
+        <rect x={cx-1} y={30} width="2" height="25" fill="#00F2EA" opacity="0.6" />
+        <circle cx={cx+6} cy={48} r="5" fill="#FF0050" opacity="0.4" />
+        <rect x={cx+5} y={25} width="2" height="23" fill="#FF0050" opacity="0.4" />
+        {/* Glitch offset lines */}
+        {[22,38,62,78].map((y,i) => (
+          <rect key={i} x={cx-18+i*3} y={y} width="12" height="1.5"
+            fill={i%2===0?"#00F2EA":"#FF0050"} opacity="0.12"
+            style={{animation:`pv-drift ${2+i*0.4}s ease-in-out ${i*0.2}s infinite`}} />
+        ))}
+      </>}
+      {c.id === "cape_og" && <>
+        {/* Clean minimal design — diagonal lines */}
+        {[0,1,2,3,4,5,6,7].map(i => (
+          <line key={i} x1={cx-25+i*8} y1={15} x2={cx-20+i*8} y2={88}
+            stroke="#fff" strokeWidth="0.5" opacity="0.06" />
+        ))}
+        {/* Pulsar logo outline */}
+        <circle cx={cx} cy={45} r="12" fill="none" stroke="#fff" strokeWidth="0.8" opacity="0.2" />
+        <ellipse cx={cx} cy={45} rx="16" ry="5" fill="none" stroke="#fff" strokeWidth="0.5" opacity="0.15" />
+        <circle cx={cx} cy={45} r="4" fill="#fff" opacity="0.1" />
+        {/* Corner dots */}
+        {[[cx-18,22],[cx+18,22],[cx-18,70],[cx+18,70]].map(([x,y],i) => (
+          <circle key={i} cx={x} cy={y} r="1" fill="#fff" opacity="0.15" />
+        ))}
+      </>}
+      {/* Default capes without custom detail */}
+      {!["cape_blossom","cape_midnight","cape_frost","cape_flame","cape_ocean","cape_emerald","cape_sunset","cape_galaxy","cape_phantom","cape_neon","cape_lava","cape_sakura","cape_storm","cape_solar","cape_amethyst","cape_inferno","cape_drift","cape_obsidian","cape_blackhole","cape_creator","cape_youtube","cape_twitch","cape_tiktok","cape_og"].includes(c.id) && c.id.startsWith("cape_") && <>
+        {/* Generic cape detail — stars and shimmer */}
+        {[0,1,2,3,4].map(i => (
+          <circle key={i} cx={cx-15+i*8} cy={20+i*14} r="1.5" fill="#fff" opacity={0.15+i*0.04}
+            style={{animation:`pv-twinkle ${2+i*0.3}s ease-in-out ${i*0.2}s infinite`}} />
+        ))}
+        <rect x={cx-20} y={40} width="40" height="1" fill="rgba(255,255,255,0.05)" transform={`rotate(-8 ${cx} 40)`}
+          style={{animation:`pv-shimmer 3s ease-in-out infinite`}} />
       </>}
     </svg>
   );
