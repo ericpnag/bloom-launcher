@@ -29,7 +29,7 @@ export interface Account {
   username: string;
   uuid: string;
   accessToken: string;
-  bloomToken: string;
+  pulsarToken: string;
 }
 
 export type Page = 'home' | 'library' | 'modstore' | 'texturepacks' | 'versions' | 'settings';

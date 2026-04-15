@@ -57,19 +57,19 @@ body { margin: 0; overflow: hidden; }
 ::selection { background: rgba(255, 255, 255, 0.2); color: #fff; }
 
 /* ── Cards ── */
-.bloom-card {
+.pulsar-card {
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   transition: all 0.2s ease;
 }
-.bloom-card:hover {
+.pulsar-card:hover {
   background: var(--bg-surface-hover);
   border-color: var(--border-hover);
 }
 
 /* ── Inputs ── */
-.bloom-input {
+.pulsar-input {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-input);
   color: var(--text-primary);
@@ -80,13 +80,13 @@ body { margin: 0; overflow: hidden; }
   transition: all 0.2s ease;
   font-family: inherit;
 }
-.bloom-input:focus {
+.pulsar-input:focus {
   border-color: rgba(255, 255, 255, 0.25);
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.04);
 }
-.bloom-input::placeholder { color: var(--text-faint); }
+.pulsar-input::placeholder { color: var(--text-faint); }
 
-.bloom-select {
+.pulsar-select {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-input);
   color: var(--text-primary);
@@ -97,10 +97,10 @@ body { margin: 0; overflow: hidden; }
   cursor: pointer;
   font-family: inherit;
 }
-.bloom-select option { background: var(--bg); }
+.pulsar-select option { background: var(--bg); }
 
 /* ── Buttons ── */
-.bloom-btn {
+.pulsar-btn {
   background: linear-gradient(135deg, #FFFFFF, #B0B0B0);
   color: #000000;
   border: none;
@@ -113,14 +113,14 @@ body { margin: 0; overflow: hidden; }
   transition: all 0.2s ease;
   letter-spacing: 0.02em;
 }
-.bloom-btn:hover {
+.pulsar-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(255, 255, 255, 0.1);
 }
-.bloom-btn:active { transform: translateY(0); }
-.bloom-btn:disabled { opacity: 0.4; cursor: default; transform: none; box-shadow: none; }
+.pulsar-btn:active { transform: translateY(0); }
+.pulsar-btn:disabled { opacity: 0.4; cursor: default; transform: none; box-shadow: none; }
 
-.bloom-btn-ghost {
+.pulsar-btn-ghost {
   background: transparent;
   border: 1px solid var(--border);
   color: var(--text-secondary);
@@ -131,13 +131,13 @@ body { margin: 0; overflow: hidden; }
   font-family: inherit;
   transition: all 0.15s ease;
 }
-.bloom-btn-ghost:hover {
+.pulsar-btn-ghost:hover {
   border-color: rgba(255, 255, 255, 0.25);
   color: #FFFFFF;
   background: rgba(255, 255, 255, 0.04);
 }
 
-.bloom-btn-install {
+.pulsar-btn-install {
   background: transparent;
   border: 1px solid var(--border);
   color: var(--text-secondary);
@@ -149,19 +149,19 @@ body { margin: 0; overflow: hidden; }
   transition: all 0.15s ease;
   flex-shrink: 0;
 }
-.bloom-btn-install:hover:not(:disabled) {
+.pulsar-btn-install:hover:not(:disabled) {
   border-color: rgba(255, 255, 255, 0.25);
   color: #FFFFFF;
   background: rgba(255, 255, 255, 0.04);
 }
-.bloom-btn-install.installed {
+.pulsar-btn-install.installed {
   border-color: rgba(112, 255, 112, 0.2);
   color: var(--accent-green);
   background: rgba(112, 255, 112, 0.04);
   cursor: default;
 }
-.bloom-btn-install.failed { border-color: rgba(255, 80, 80, 0.2); color: var(--accent-red); }
-.bloom-btn-install.loading { opacity: 0.5; cursor: wait; }
+.pulsar-btn-install.failed { border-color: rgba(255, 80, 80, 0.2); color: var(--accent-red); }
+.pulsar-btn-install.loading { opacity: 0.5; cursor: wait; }
 
 /* ── Typography ── */
 .page-title {
@@ -178,7 +178,7 @@ body { margin: 0; overflow: hidden; }
 }
 
 /* ── List items ── */
-.bloom-list-item {
+.pulsar-list-item {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -188,12 +188,12 @@ body { margin: 0; overflow: hidden; }
   border-radius: var(--radius);
   transition: all 0.15s ease;
 }
-.bloom-list-item:hover {
+.pulsar-list-item:hover {
   background: var(--bg-surface-hover);
   border-color: var(--border-hover);
 }
 
-.bloom-icon-placeholder {
+.pulsar-icon-placeholder {
   width: 42px;
   height: 42px;
   border-radius: var(--radius-sm);
@@ -206,7 +206,7 @@ body { margin: 0; overflow: hidden; }
   font-size: 16px;
 }
 
-.bloom-empty {
+.pulsar-empty {
   text-align: center;
   padding: 64px 20px;
   color: var(--text-faint);

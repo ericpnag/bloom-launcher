@@ -27,10 +27,10 @@ dist-ssr
 src-tauri/target/
 
 # Gradle/Java
-bloom-core/build/
-bloom-core/.gradle/
-bloom-core-1.21.11/build/
-bloom-core-1.21.11/.gradle/
+pulsar-core/build/
+pulsar-core/.gradle/
+pulsar-core-1.21.11/build/
+pulsar-core-1.21.11/.gradle/
 *.class
 *.jar
 
@@ -46,4 +46,4 @@ server/*.pem
 **/.gradle/
 **/build/
 pulsar-agent/build/
-bloom-core-1.8.9/build/
+pulsar-core-1.8.9/build/

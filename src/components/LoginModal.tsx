@@ -101,7 +101,7 @@ export function LoginModal({ phase, code, url, error, onClose }: Props) {
             }}>
               {error}
             </div>
-            <button className="bloom-btn" onClick={onClose} style={{ padding: "10px 32px" }}>Close</button>
+            <button className="pulsar-btn" onClick={onClose} style={{ padding: "10px 32px" }}>Close</button>
           </>
         )}
 

@@ -226,7 +226,7 @@ export function ShopPage() {
           <h2 className="page-title">Cosmetics Shop</h2>
           <p className="page-subtitle">Customize your character</p>
         </div>
-        <div className="bloom-card" style={{
+        <div className="pulsar-card" style={{
           padding: "10px 18px", display: "flex", alignItems: "center", gap: "8px",
         }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -251,7 +251,7 @@ export function ShopPage() {
       {/* Points Store */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px" }}>
         {POINT_TIERS.map((tier, i) => (
-          <div key={i} className="bloom-card" onClick={() => {
+          <div key={i} className="pulsar-card" onClick={() => {
             setPurchaseModal(tier);
             setPurchasePhase("confirm");
           }} style={{
@@ -299,14 +299,14 @@ export function ShopPage() {
         {showRedeem && (
           <>
             <input
-              className="bloom-input"
+              className="pulsar-input"
               value={redeemCode}
               onChange={e => { setRedeemCode(e.target.value); setRedeemMsg(null); }}
               onKeyDown={e => e.key === "Enter" && redeemPoints()}
               placeholder="Enter code..."
               style={{ flex: 1, padding: "7px 12px", fontSize: "12px" }}
             />
-            <button onClick={redeemPoints} className="bloom-btn" style={{ padding: "7px 16px", fontSize: "12px" }}>
+            <button onClick={redeemPoints} className="pulsar-btn" style={{ padding: "7px 16px", fontSize: "12px" }}>
               Redeem
             </button>
           </>
@@ -337,7 +337,7 @@ export function ShopPage() {
           ].map(creator => {
             const cape = COSMETICS.find(c => c.id === creator.cape);
             return (
-            <div key={creator.name} className="bloom-card" style={{
+            <div key={creator.name} className="pulsar-card" style={{
               padding: "0", overflow: "hidden", transition: "all 0.2s",
             }}>
               {/* Banner with cape preview */}
@@ -431,7 +431,7 @@ export function ShopPage() {
           const own = isOwned(c.id);
           const eq = isEquipped(c.id);
           return (
-            <div key={c.id} className="bloom-card" style={{
+            <div key={c.id} className="pulsar-card" style={{
               padding: "16px", position: "relative",
               borderColor: eq ? "rgba(255,255,255,0.22)" : undefined,
               background: eq ? "rgba(255,255,255,0.05)" : undefined,
@@ -465,7 +465,7 @@ export function ShopPage() {
 
               {/* Action */}
               {own ? (
-                <button onClick={() => equip(c)} className="bloom-btn" style={{
+                <button onClick={() => equip(c)} className="pulsar-btn" style={{
                   width: "100%", padding: "8px",
                   background: eq ? "linear-gradient(135deg, #FFFFFF, #C0C0C0)" : "rgba(255,255,255,0.04)",
                   color: eq ? "#000000" : "var(--text-muted)",
@@ -475,7 +475,7 @@ export function ShopPage() {
                 </button>
               ) : (
                 <button onClick={() => { if (c.price >= 0) buy(c); }} disabled={c.price < 0 || c.price > points}
-                  className="bloom-btn-ghost"
+                  className="pulsar-btn-ghost"
                   style={{
                     width: "100%", padding: "8px",
                     borderColor: c.price === -1 ? "rgba(255,215,0,0.15)" : c.price === -2 ? "rgba(255,255,255,0.1)" : c.price > points ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.15)",
@@ -1222,7 +1222,7 @@ function OGCapeSection({ purchased, onClaim, isOwned }: { purchased: string[]; o
   const soldOut = ogInfo && ogInfo.remaining <= 0 && !claimed;
 
   return (
-    <div className="bloom-card" style={{
+    <div className="pulsar-card" style={{
       padding: "0", overflow: "hidden",
       border: "1px solid rgba(255,255,255,0.12)",
     }}>

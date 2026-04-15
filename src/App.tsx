@@ -257,7 +257,7 @@ export default function App() {
             <DailyReward />
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div className="bloom-card" style={{ padding: "18px 20px" }}>
+              <div className="pulsar-card" style={{ padding: "18px 20px" }}>
                 <div style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.1em", color: "var(--text-muted)", marginBottom: "10px", textTransform: "uppercase" }}>
                   Pulsar Client
                 </div>
@@ -265,7 +265,7 @@ export default function App() {
                   Press <span style={{ color: "#FFFFFF", fontWeight: "600", background: "rgba(255,255,255,0.08)", padding: "1px 6px", borderRadius: "4px", fontSize: "11px" }}>Right Shift</span> in-game for modules
                 </div>
               </div>
-              <div className="bloom-card" style={{ padding: "18px 20px" }}>
+              <div className="pulsar-card" style={{ padding: "18px 20px" }}>
                 <div style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.1em", color: "var(--text-muted)", marginBottom: "10px", textTransform: "uppercase" }}>
                   Servers
                 </div>
@@ -461,7 +461,7 @@ function DailyReward() {
   const todayReward = REWARDS[todayIndex];
 
   return (
-    <div className="bloom-card" style={{
+    <div className="pulsar-card" style={{
       padding: "18px 22px",
       background: claimed ? "rgba(110,231,160,0.03)" : "rgba(255,255,255,0.02)",
       border: claimed ? "1px solid rgba(110,231,160,0.1)" : "1px solid rgba(255,255,255,0.06)",

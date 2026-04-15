@@ -69,10 +69,10 @@ export function ConsolePage() {
 
         <div style={{ flex: 1 }} />
 
-        <button className="bloom-btn-ghost" onClick={() => setLogs([])} style={{ fontSize: "11px", padding: "4px 10px" }}>
+        <button className="pulsar-btn-ghost" onClick={() => setLogs([])} style={{ fontSize: "11px", padding: "4px 10px" }}>
           Clear
         </button>
-        <button className="bloom-btn-ghost" onClick={() => {
+        <button className="pulsar-btn-ghost" onClick={() => {
           const text = logs.map(l => `[${l.time}] [${l.level.toUpperCase()}] ${l.message}`).join("\n");
           navigator.clipboard.writeText(text);
         }} style={{ fontSize: "11px", padding: "4px 10px" }}>
@@ -82,7 +82,7 @@ export function ConsolePage() {
 
       {/* Search */}
       <input
-        className="bloom-input"
+        className="pulsar-input"
         value={filter}
         onChange={e => setFilter(e.target.value)}
         placeholder="Filter logs..."
@@ -107,7 +107,7 @@ export function ConsolePage() {
         padding: "12px", fontFamily: "'JetBrains Mono', 'SF Mono', monospace", fontSize: "11px", lineHeight: 1.7,
       }}>
         {filtered.length === 0 && (
-          <div className="bloom-empty" style={{ padding: "40px" }}>No logs yet</div>
+          <div className="pulsar-empty" style={{ padding: "40px" }}>No logs yet</div>
         )}
         {filtered.map((log, i) => (
           <div key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.02)", padding: "2px 0" }}>

@@ -14,17 +14,17 @@ fn game_dir() -> PathBuf {
     #[cfg(target_os = "macos")]
     {
         let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-        PathBuf::from(home).join("Library/Application Support/bloom")
+        PathBuf::from(home).join("Library/Application Support/pulsar")
     }
     #[cfg(target_os = "windows")]
     {
         let appdata = std::env::var("APPDATA").unwrap_or_else(|_| ".".to_string());
-        PathBuf::from(appdata).join("bloom")
+        PathBuf::from(appdata).join("pulsar")
     }
     #[cfg(target_os = "linux")]
     {
         let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-        PathBuf::from(home).join(".bloom")
+        PathBuf::from(home).join(".pulsar")
     }
 }
 
@@ -399,28 +399,28 @@ fn install_mods(client: &Client, _game_dir: &PathBuf, mc_version: &str) -> Resul
     // Versions that bloom-core supports
     // 1.8.9 works on Windows via Legacy Fabric, macOS has native library issues
     #[cfg(target_os = "windows")]
-    let bloom_supported = ["1.21.11", "1.8.9"];
+    let pulsar_supported = ["1.21.11", "1.8.9"];
     #[cfg(not(target_os = "windows"))]
-    let bloom_supported = ["1.21.11"];
+    let pulsar_supported = ["1.21.11"];
 
     // Clean old bloom-core JARs
     if let Ok(entries) = fs::read_dir(&mods_dir) {
         for entry in entries.flatten() {
             let name = entry.file_name().to_string_lossy().to_string();
-            if name.starts_with("bloom-core-") && name.ends_with(".jar") {
+            if name.starts_with("pulsar-core-") && name.ends_with(".jar") {
                 let _ = fs::remove_file(entry.path());
             }
         }
     }
 
     // Only install bloom-core on supported versions
-    if bloom_supported.contains(&mc_version) {
+    if pulsar_supported.contains(&mc_version) {
         let (jar_name, jar_bytes): (&str, &[u8]) = match mc_version {
-            "1.8.9" => ("bloom-core-1.0.0.jar", include_bytes!("../../bloom-core-1.8.9/build/libs/bloom-core-1.0.0.jar")),
-            _ => ("bloom-core-1.2.0.jar", include_bytes!("../../bloom-core-1.21.11/build/libs/bloom-core-1.2.0.jar")),
+            "1.8.9" => ("pulsar-core-1.0.0.jar", include_bytes!("../../pulsar-core-1.8.9/build/libs/pulsar-core-1.0.0.jar")),
+            _ => ("pulsar-core-1.2.0.jar", include_bytes!("../../pulsar-core-1.21.11/build/libs/pulsar-core-1.2.0.jar")),
         };
-        let bloom_dest = mods_dir.join(jar_name);
-        let _ = fs::write(&bloom_dest, jar_bytes);
+        let pulsar_dest = mods_dir.join(jar_name);
+        let _ = fs::write(&pulsar_dest, jar_bytes);
     }
 
     // Download Fabric API from Modrinth
@@ -786,7 +786,7 @@ fn do_launch(app: &AppHandle, version: &str, username: Option<String>, uuid: Opt
 
     // Install mods only if Fabric is available
     if has_fabric {
-        emit(&app, 94, "Installing Bloom mods...");
+        emit(&app, 94, "Installing Pulsar mods...");
         install_mods(&client, &game_dir, &version)?;
     }
 
@@ -818,7 +818,7 @@ fn do_launch(app: &AppHandle, version: &str, username: Option<String>, uuid: Opt
         .collect::<Vec<_>>()
         .join(separator);
 
-    emit(&app, 99, "Launching Bloom Client...");
+    emit(&app, 99, "Launching Pulsar Client...");
 
     let ver_game_dir = version_game_dir(&version);
     fs::create_dir_all(&ver_game_dir).map_err(|e| e.to_string())?;
@@ -879,7 +879,7 @@ fn do_launch(app: &AppHandle, version: &str, username: Option<String>, uuid: Opt
     jvm_args.push(format!("-Djna.tmpdir={}", natives_dir_str));
     jvm_args.push(format!("-Dorg.lwjgl.system.SharedLibraryExtractPath={}", natives_dir_str));
     jvm_args.push(format!("-Dio.netty.native.workdir={}", natives_dir_str));
-    jvm_args.push("-Dminecraft.launcher.brand=bloom-launcher".to_string());
+    jvm_args.push("-Dminecraft.launcher.brand=pulsar-launcher".to_string());
     jvm_args.push("-Dminecraft.launcher.version=1.2.0".to_string());
     jvm_args.push("-cp".to_string());
     jvm_args.push(classpath);
@@ -946,14 +946,14 @@ fn do_launch(app: &AppHandle, version: &str, username: Option<String>, uuid: Opt
     jvm_args.push("--userProperties".to_string()); jvm_args.push("{}".to_string());
 
     // Open log file in the game directory so we can see what's happening
-    let log_path = ver_game_dir.join("bloom-game.log");
+    let log_path = ver_game_dir.join("pulsar-game.log");
     let log_file = std::fs::File::create(&log_path).ok();
 
     // Write the launch arguments to the log header (mask the access token for safety)
     if let Some(ref f) = log_file {
         use std::io::Write;
         let mut writer = std::io::BufWriter::new(f);
-        let _ = writeln!(writer, "=== Bloom Launcher v1.2.0 ===");
+        let _ = writeln!(writer, "=== Pulsar Launcher v1.2.0 ===");
         let _ = writeln!(writer, "Java: {}", java_cmd);
         let _ = writeln!(writer, "Args:");
         let mut mask_next = false;
@@ -1005,7 +1005,7 @@ pub fn install_mod(project_id: String, mc_version: String) -> Result<String, Str
         project_id, mc_version
     );
     let resp = client.get(&url)
-        .header("User-Agent", "bloom-launcher/1.0")
+        .header("User-Agent", "pulsar-launcher/1.0")
         .send().map_err(|e| e.to_string())?
         .text().map_err(|e| e.to_string())?;
 
@@ -1081,7 +1081,7 @@ pub fn install_resourcepack(project_id: String, mc_version: String) -> Result<St
         project_id, mc_version
     );
     let resp = client.get(&url)
-        .header("User-Agent", "bloom-launcher/1.0")
+        .header("User-Agent", "pulsar-launcher/1.0")
         .send().map_err(|e| e.to_string())?
         .text().map_err(|e| e.to_string())?;
 
@@ -1106,7 +1106,7 @@ pub fn install_resourcepack(project_id: String, mc_version: String) -> Result<St
 }
 
 fn cosmetics_path() -> PathBuf {
-    game_dir().join("bloom-cosmetics.json")
+    game_dir().join("pulsar-cosmetics.json")
 }
 
 #[tauri::command]

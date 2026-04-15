@@ -126,7 +126,7 @@ export function InstalledModsPage({ versions, selectedVersion }: Props) {
   }
 
   async function loadIcons(modList: string[]) {
-    const nonCoreMods = modList.filter(m => !m.includes("bloom-core"));
+    const nonCoreMods = modList.filter(m => !m.includes("pulsar-core"));
     if (nonCoreMods.length === 0) return;
 
     let hashMap: Record<string, string> = {};
@@ -259,10 +259,10 @@ export function InstalledModsPage({ versions, selectedVersion }: Props) {
 
       <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
         {mods.length === 0 && (
-          <div className="bloom-empty">No mods installed for {ver}</div>
+          <div className="pulsar-empty">No mods installed for {ver}</div>
         )}
         {mods.map(mod => {
-          const isCore = mod.includes("bloom-core");
+          const isCore = mod.includes("pulsar-core");
           const displayName = mod
             .replace(/\.jar$/i, "")
             .replace(/-mc\d[\d.]*.*$/i, "")
@@ -271,7 +271,7 @@ export function InstalledModsPage({ versions, selectedVersion }: Props) {
             .replace(/-/g, " ");
 
           return (
-            <div key={mod} className="bloom-list-item">
+            <div key={mod} className="pulsar-list-item">
               <div style={{
                 width: "36px", height: "36px", flexShrink: 0,
                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -296,7 +296,7 @@ export function InstalledModsPage({ versions, selectedVersion }: Props) {
                 <span style={{ fontSize: "11px", color: "var(--text-faint)", padding: "4px 10px" }}>Core</span>
               ) : (
                 <button
-                  className="bloom-btn-ghost"
+                  className="pulsar-btn-ghost"
                   onClick={() => removeMod(mod)}
                   disabled={removing[mod]}
                   style={{ borderColor: "rgba(255,80,80,0.15)", color: "var(--accent-red)", fontSize: "11px", padding: "5px 12px" }}

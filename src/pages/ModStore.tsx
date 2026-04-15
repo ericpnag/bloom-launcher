@@ -60,10 +60,10 @@ export function ModStorePage({ versions, selectedVersion }: Props) {
 
   function installClass(id: string) {
     const s = installing[id];
-    if (s === "done") return "bloom-btn-install installed";
-    if (s === "error") return "bloom-btn-install failed";
-    if (s === "loading") return "bloom-btn-install loading";
-    return "bloom-btn-install";
+    if (s === "done") return "pulsar-btn-install installed";
+    if (s === "error") return "pulsar-btn-install failed";
+    if (s === "loading") return "pulsar-btn-install loading";
+    return "pulsar-btn-install";
   }
 
   return (
@@ -75,31 +75,31 @@ export function ModStorePage({ versions, selectedVersion }: Props) {
 
       <div style={{ display: "flex", gap: "8px" }}>
         <select
-          className="bloom-select"
+          className="pulsar-select"
           value={searchVersion}
           onChange={e => { setSearchVersion(e.target.value); setLoaded(false); setInstalling({}); }}
         >
           {versions.map(v => <option key={v} value={v}>{v}</option>)}
         </select>
         <input
-          className="bloom-input"
+          className="pulsar-input"
           value={query}
           onChange={e => setQuery(e.target.value)}
           onKeyDown={e => e.key === "Enter" && search(query)}
           placeholder="Search mods..."
           style={{ flex: 1 }}
         />
-        <button className="bloom-btn" onClick={() => search(query)} disabled={loading}>
+        <button className="pulsar-btn" onClick={() => search(query)} disabled={loading}>
           {loading ? "..." : "Search"}
         </button>
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
         {results.map(mod => (
-          <div key={mod.project_id} className="bloom-list-item">
+          <div key={mod.project_id} className="pulsar-list-item">
             {mod.icon_url
               ? <img src={mod.icon_url} alt="" style={{ width: "40px", height: "40px", borderRadius: "6px", objectFit: "cover", flexShrink: 0 }} />
-              : <div className="bloom-icon-placeholder" />
+              : <div className="pulsar-icon-placeholder" />
             }
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: "600", fontSize: "13px", color: "var(--text)", marginBottom: "2px" }}>{mod.title}</div>
@@ -116,7 +116,7 @@ export function ModStorePage({ versions, selectedVersion }: Props) {
           </div>
         ))}
         {results.length === 0 && !loading && loaded && (
-          <div className="bloom-empty">No mods found</div>
+          <div className="pulsar-empty">No mods found</div>
         )}
       </div>
     </div>

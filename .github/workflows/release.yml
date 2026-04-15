@@ -56,8 +56,8 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Build bloom-core mod
-        working-directory: bloom-core-1.21.11
+      - name: Build pulsar-core mod
+        working-directory: pulsar-core-1.21.11
         run: |
           chmod +x gradlew
           ./gradlew build

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "pulsar-core",
+  "version": "${version}",
+  "name": "Pulsar Core",
+  "description": "Bloom Client module system — ToggleSprint, Fullbright, FPS, Zoom, and more",
+  "authors": ["Bloom"],
+  "contact": {},
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.bloom.core.PulsarCore"]
+  },
+  "mixins": [
+    "pulsar-core.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21",
+    "fabric-api": "*"
+  }
+}

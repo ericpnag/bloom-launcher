@@ -28,7 +28,7 @@ export function SettingsPage() {
       <p className="page-subtitle" style={{ marginBottom: "24px" }}>Configure your Pulsar Client</p>
 
       {/* RAM */}
-      <div className="bloom-card" style={{ padding: "20px", marginBottom: "12px" }}>
+      <div className="pulsar-card" style={{ padding: "20px", marginBottom: "12px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px" }}>
           <label style={{ fontSize: "13px", fontWeight: "600", color: "var(--text)" }}>Memory (RAM)</label>
           <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--pink)" }}>{settings.ram / 1024} GB</span>
@@ -43,12 +43,12 @@ export function SettingsPage() {
       </div>
 
       {/* Java Path */}
-      <div className="bloom-card" style={{ padding: "20px", marginBottom: "12px" }}>
+      <div className="pulsar-card" style={{ padding: "20px", marginBottom: "12px" }}>
         <label style={{ fontSize: "13px", fontWeight: "600", color: "var(--text)", display: "block", marginBottom: "10px" }}>
           Java Path
         </label>
         <input
-          className="bloom-input"
+          className="pulsar-input"
           type="text"
           value={settings.javaPath}
           onChange={e => save({ javaPath: e.target.value })}
@@ -59,7 +59,7 @@ export function SettingsPage() {
       </div>
 
       {/* Close on launch */}
-      <div className="bloom-card" style={{ padding: "18px 20px", marginBottom: "12px" }}>
+      <div className="pulsar-card" style={{ padding: "18px 20px", marginBottom: "12px" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text)" }}>Close launcher when game starts</span>
           <div onClick={() => save({ closeOnLaunch: !settings.closeOnLaunch })} style={{
@@ -82,7 +82,7 @@ export function SettingsPage() {
       </div>
 
       {/* About */}
-      <div className="bloom-card" style={{ padding: "20px", marginTop: "24px" }}>
+      <div className="pulsar-card" style={{ padding: "20px", marginTop: "24px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="10" fill="#000000"/>
@@ -101,7 +101,7 @@ export function SettingsPage() {
           A universe themed Minecraft experience.
         </div>
         <div style={{ fontSize: "11px", color: "var(--text-faint)", marginTop: "8px" }}>
-          github.com/ericpnag/bloom-launcher
+          github.com/ericpnag/pulsar
         </div>
       </div>
     </div>
