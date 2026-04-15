@@ -41,3 +41,9 @@ server/.env
 
 server/*.pem
 .vercel
+
+# Build caches
+**/.gradle/
+**/build/
+pulsar-agent/build/
+bloom-core-1.8.9/build/
