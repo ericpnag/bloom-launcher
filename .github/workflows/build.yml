@@ -1,4 +1,4 @@
-name: Build Bloom Client
+name: Build Pulsar Client
 
 on:
   push:
@@ -35,14 +35,20 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Build bloom-core (1.21.1)
-        working-directory: bloom-core
+      - name: Build pulsar-core (1.21.11)
+        working-directory: pulsar-core-1.21.11
         run: |
           chmod +x gradlew
           ./gradlew build --no-daemon
 
-      - name: Build bloom-core (1.21.11)
-        working-directory: bloom-core-1.21.11
+      - name: Build pulsar-core (1.8.9)
+        working-directory: pulsar-core-1.8.9
+        run: |
+          chmod +x gradlew
+          ./gradlew build --no-daemon
+
+      - name: Build pulsar-agent
+        working-directory: pulsar-agent
         run: |
           chmod +x gradlew
           ./gradlew build --no-daemon
@@ -76,7 +82,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: bloom-client-${{ matrix.name }}
+          name: pulsar-client-${{ matrix.name }}
           path: |
             src-tauri/target/${{ matrix.target }}/release/bundle/dmg/*.dmg
             src-tauri/target/${{ matrix.target }}/release/bundle/macos/*.app
